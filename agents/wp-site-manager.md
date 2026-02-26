@@ -54,15 +54,42 @@ Infrastructure and hosting management:
 - **Domains**: `domains_getDomainListV1`, `domains_getDomainDetailsV1`, `domains_checkDomainAvailabilityV1`
 - **Email Marketing**: `reach_listContactsV1`, `reach_createANewProfileContactV1`
 
+### 3. WordPress.com MCP (`mcp__claude_ai_WordPress_com__*`)
+WordPress.com hosted site management (available as built-in Claude Code integration):
+- **Content**: `wpcom-mcp-content-authoring` — posts, pages, media, taxonomies, patterns
+- **Theme**: `wpcom-mcp-site-editor-context` — theme presets, blocks, style variations
+- **Settings**: `wpcom-mcp-site-settings` — site configuration
+- **Stats**: `wpcom-mcp-site-statistics` — traffic and engagement data
+- **Users**: `wpcom-mcp-site-users` — user management
+- **Plugins**: `wpcom-mcp-site-plugins` — plugin management
+
+**Note**: WordPress.com MCP is authenticated separately via the WordPress.com OAuth integration in Claude Code. It does NOT use `WP_SITES_CONFIG` or Application Passwords.
+
+## Dual-Mode Site Management
+
+This agent manages two categories of WordPress sites through different tool sets:
+
+| Site Type | Tool Prefix | Auth Method | Capabilities |
+|-----------|------------|-------------|-------------|
+| Self-hosted (Hostinger, etc.) | `mcp__wp-rest-bridge__*` + `mcp__hostinger-mcp__*` | Application Password via `WP_SITES_CONFIG` | Full: content, plugins, users, infrastructure, DNS |
+| WordPress.com hosted | `mcp__claude_ai_WordPress_com__*` | WordPress.com OAuth (built-in) | Content authoring, themes, settings, stats |
+
+When the user mentions a site:
+1. Determine if it's self-hosted or WordPress.com based on context
+2. Use the appropriate tool set
+3. For cross-platform operations (e.g., migrate content), use both tool sets
+
 ## Operating Procedures
 
 ### Site Status Check
 When asked about site status:
-1. Use `list_sites` and `get_active_site` to show configured sites
+1. Use `list_sites` and `get_active_site` to show configured self-hosted sites
 2. Use `discover_content_types` to verify API connectivity
 3. Use `list_content` with `per_page: 5` to check recent content
 4. Use `list_plugins` to check plugin state
-5. If Hostinger-hosted, use `hosting_listWebsites` for infrastructure status
+5. If Hostinger-hosted: use `hosting_listWebsites` for infrastructure status
+6. Check SSL certificate via Bash: `echo | openssl s_client -servername <domain> -connect <domain>:443 2>/dev/null | openssl x509 -noout -enddate`
+7. If WordPress.com site: use `wpcom-mcp-site-settings` and `wpcom-mcp-site-statistics`
 
 ### Content Operations
 - Always confirm `get_active_site` before content operations

@@ -66,12 +66,17 @@ wordpress-manager/
 
 ## Safety Hooks
 
-Four `PreToolUse` prompt-based hooks protect against accidental destructive operations:
+Six `PreToolUse` hooks protect against accidental destructive operations:
 
+**Prompt-based (LLM validation):**
 1. **Content Deletion** - Confirms before `delete_content`, `delete_media`, `delete_user`, `delete_term`
 2. **Plugin Deactivation** - Confirms before `deactivate_plugin` (dependency risk)
 3. **WordPress Import** - Confirms before `hosting_importWordpressWebsite` (overwrites site)
 4. **DNS Changes** - Confirms before `DNS_updateDNSRecordsV1`, `DNS_resetDNSRecordsV1`
+
+**Command-based (script validation):**
+5. **Pre-deploy Check** - `pre-deploy-check.sh` validates site reachability and auth before deploy tools
+6. **Backup Reminder** - `backup-reminder.sh` advisory reminder before import operations
 
 ## Setup
 
@@ -116,6 +121,14 @@ export WP_DEFAULT_SITE="mysite"
 cd ~/.claude/plugins/local/wordpress-manager/servers/wp-rest-bridge
 npm install
 npx tsc
+```
+
+### 5. Verify Setup
+
+Run the health check script to validate all connections:
+```bash
+source ~/.claude/mcp-secrets.env
+bash ~/.claude/plugins/local/wordpress-manager/scripts/health-check.sh
 ```
 
 ## Tool Inventory
@@ -169,6 +182,7 @@ npx tsc              # Compile TypeScript to build/
 | 1.0.0 | Phase 1 | Core plugin: 2 agents, 1 skill, 2 commands, 4 hooks, 2 MCP servers |
 | 1.1.0 | Phase 2 | +3 agents (content, security, performance), +2 skills (audit, content) |
 | 1.2.0 | Phase 3 | +3 commands (audit, backup, setup), +2 skills (migrate, backup) |
+| 1.3.0 | Phase 4 | E2E testing, utility scripts, command hooks, WordPress.com dual-mode support |
 
 ## License
 

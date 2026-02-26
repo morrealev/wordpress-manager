@@ -23,6 +23,11 @@
         "matcher": "mcp__hostinger-mcp__hosting_importWordpressWebsite",
         "hooks": [
           {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/backup-reminder.sh",
+            "timeout": 5
+          },
+          {
             "type": "prompt",
             "prompt": "The user is about to IMPORT a full WordPress site, which will OVERWRITE the existing installation. This is a major destructive operation. Verify the user explicitly requested this and understands the consequences. Respond 'approve' only if clearly intentional."
           }
@@ -34,6 +39,16 @@
           {
             "type": "prompt",
             "prompt": "The user is about to MODIFY DNS records. Incorrect DNS changes can make the site unreachable. Confirm the user explicitly requested this change and verify the record details look correct. Respond 'approve' if intentional."
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__hostinger-mcp__hosting_deployWordpressPlugin|mcp__hostinger-mcp__hosting_deployWordpressTheme|mcp__hostinger-mcp__hosting_deployStaticWebsite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-deploy-check.sh",
+            "timeout": 15
           }
         ]
       }
