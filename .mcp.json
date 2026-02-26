@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "hostinger-mcp": {
+      "command": "npx",
+      "args": ["hostinger-api-mcp@latest"],
+      "env": {
+        "API_TOKEN": "${HOSTINGER_API_TOKEN}"
+      }
+    },
+    "wp-rest-bridge": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servers/wp-rest-bridge/build/server.js"],
+      "env": {
+        "WP_SITES_CONFIG": "${WP_SITES_CONFIG}",
+        "WP_DEFAULT_SITE": "${WP_DEFAULT_SITE}"
+      }
+    }
+  }
+}

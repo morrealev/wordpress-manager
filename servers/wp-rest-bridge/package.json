@@ -1,0 +1,26 @@
+{
+  "name": "wp-rest-bridge",
+  "version": "1.0.0",
+  "description": "Lightweight MCP server bridging WordPress REST API for multi-site management",
+  "type": "module",
+  "main": "./build/server.js",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "start": "node ./build/server.js",
+    "dev": "tsx watch src/server.ts",
+    "clean": "rm -rf build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "axios": "^1.7.9",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

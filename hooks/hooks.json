@@ -1,0 +1,42 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__wp-rest-bridge__delete_content|mcp__wp-rest-bridge__delete_media|mcp__wp-rest-bridge__delete_user|mcp__wp-rest-bridge__delete_term",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "The user is about to DELETE WordPress content. This operation may be irreversible if force=true. Verify the user explicitly requested this deletion and confirm the target (site, content type, ID). If uncertain, respond with 'deny' and ask the user to confirm. Respond with 'approve' only if the deletion was clearly and explicitly requested."
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__wp-rest-bridge__deactivate_plugin",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "The user is about to DEACTIVATE a WordPress plugin. This could break site functionality if other plugins depend on it. Confirm the user explicitly requested this. Respond 'approve' if intentional, 'deny' if it seems accidental."
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__hostinger-mcp__hosting_importWordpressWebsite",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "The user is about to IMPORT a full WordPress site, which will OVERWRITE the existing installation. This is a major destructive operation. Verify the user explicitly requested this and understands the consequences. Respond 'approve' only if clearly intentional."
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__hostinger-mcp__DNS_updateDNSRecordsV1|mcp__hostinger-mcp__DNS_resetDNSRecordsV1",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "The user is about to MODIFY DNS records. Incorrect DNS changes can make the site unreachable. Confirm the user explicitly requested this change and verify the record details look correct. Respond 'approve' if intentional."
+          }
+        ]
+      }
+    ]
+  }
+}
