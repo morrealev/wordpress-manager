@@ -1,17 +1,17 @@
 # WordPress Manager Plugin for Claude Code
 
-Unified WordPress management plugin that orchestrates multiple MCP servers, specialized agents, and knowledge-rich skills to manage self-hosted WordPress sites and Hostinger infrastructure from Claude Code.
+Unified WordPress management **and** development plugin that orchestrates multiple MCP servers, specialized agents, and knowledge-rich skills to manage self-hosted WordPress sites, Hostinger infrastructure, and guide WordPress development — all from Claude Code.
 
 ## Architecture
 
 ```
 wordpress-manager/
-├── .claude-plugin/plugin.json    # Plugin manifest
+├── .claude-plugin/plugin.json    # Plugin manifest (v1.4.0)
 ├── .mcp.json                     # MCP server definitions
 ├── agents/                       # 5 specialized agents
 ├── commands/                     # 5 slash commands
-├── skills/                       # 5 skills with reference libraries
-├── hooks/hooks.json              # 4 safety hooks (PreToolUse)
+├── skills/                       # 18 skills (5 operational + 13 development)
+├── hooks/hooks.json              # 6 safety hooks (PreToolUse)
 └── servers/wp-rest-bridge/       # Custom MCP server (TypeScript)
 ```
 
@@ -56,6 +56,8 @@ wordpress-manager/
 
 ## Skills
 
+### Operational Skills (5) — managing live WordPress sites
+
 | Skill | Trigger Phrases | Reference Files |
 |-------|----------------|-----------------|
 | `wp-deploy` | "deploy", "push to production", "update site" | hostinger-deploy.md, ssh-deploy.md |
@@ -63,6 +65,26 @@ wordpress-manager/
 | `wp-content` | "create blog post", "manage content", "SEO" | content-templates.md, seo-optimization.md |
 | `wp-migrate` | "migrate my site", "move to Hostinger", "transfer" | hostinger-migration.md, cross-platform.md |
 | `wp-backup` | "backup my site", "create backup", "restore" | backup-strategies.md, restore-procedures.md |
+
+### Development Skills (13) — building WordPress projects
+
+Integrated from [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (GPL-2.0-or-later).
+
+| Skill | Purpose | Key References |
+|-------|---------|----------------|
+| `wordpress-router` | Unified router: classifies tasks (dev vs ops) and routes to correct skill/agent | decision-tree.md |
+| `wp-project-triage` | Auto-detects project type (plugin, theme, block theme, core) | detect_wp_project.mjs, triage.schema.json |
+| `wp-block-development` | Gutenberg block creation: block.json, attributes, save, edit | 10 references, list_blocks.mjs |
+| `wp-block-themes` | Block theme development: theme.json, templates, patterns | 6 references, detect_block_themes.mjs |
+| `wp-plugin-development` | Plugin architecture: hooks, activation, Settings API, admin pages | 6 references, detect_plugins.mjs |
+| `wp-rest-api` | REST endpoint development: register_rest_route, permissions | 6 references |
+| `wp-interactivity-api` | Interactivity API: data-wp-* directives, viewScriptModule | 3 references |
+| `wp-abilities-api` | Abilities API: wp_register_ability, capability management | 2 references |
+| `wp-wpcli-and-ops` | WP-CLI usage: commands, wp-cli.yml, scaffolding | 7 references, wpcli_inspect.mjs |
+| `wp-phpstan` | Static analysis: PHPStan for WordPress, phpstan.neon | 3 references, phpstan_inspect.mjs |
+| `wp-performance` | Backend profiling: WP-CLI profile/doctor, query optimization | 10 references, perf_inspect.mjs |
+| `wp-playground` | WordPress Playground: disposable instances, blueprints, snapshots | 3 references |
+| `wpds` | WordPress Design System: @wordpress/components, tokens, patterns | Requires WPDS MCP server |
 
 ## Safety Hooks
 
@@ -183,7 +205,9 @@ npx tsc              # Compile TypeScript to build/
 | 1.1.0 | Phase 2 | +3 agents (content, security, performance), +2 skills (audit, content) |
 | 1.2.0 | Phase 3 | +3 commands (audit, backup, setup), +2 skills (migrate, backup) |
 | 1.3.0 | Phase 4 | E2E testing, utility scripts, command hooks, WordPress.com dual-mode support |
+| 1.4.0 | Phase 5 | +13 development skills from WordPress/agent-skills community repo (blocks, themes, plugins, REST API, Interactivity API, Abilities API, WP-CLI, PHPStan, Performance, Playground, WPDS, Router, Triage) |
 
 ## License
 
-MIT
+MIT — Original plugin code.
+GPL-2.0-or-later — Development skills integrated from [WordPress/agent-skills](https://github.com/WordPress/agent-skills).

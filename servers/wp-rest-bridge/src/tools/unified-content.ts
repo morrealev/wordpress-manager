@@ -1,30 +1,31 @@
 // src/tools/unified-content.ts
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
-import { makeWordPressRequest, logToFile } from '../wordpress.js';
+import { makeWordPressRequest, logToFile, getActiveSite } from '../wordpress.js';
 import { z } from 'zod';
 
-// Cache for post types to reduce API calls
-let postTypesCache: any = null;
-let cacheTimestamp: number = 0;
+// Site-aware cache for post types to reduce API calls
+const postTypesCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Helper function to get all post types with caching
+// Helper function to get all post types with caching (per-site)
 async function getPostTypes(forceRefresh = false) {
+  const siteId = getActiveSite();
   const now = Date.now();
-  
-  if (!forceRefresh && postTypesCache && (now - cacheTimestamp) < CACHE_DURATION) {
-    logToFile('Using cached post types');
-    return postTypesCache;
+  const cached = postTypesCache.get(siteId);
+
+  if (!forceRefresh && cached && (now - cached.timestamp) < CACHE_DURATION) {
+    logToFile(`Using cached post types for site: ${siteId}`);
+    return cached.data;
   }
 
   try {
-    logToFile('Fetching post types from API');
+    logToFile(`Fetching post types from API for site: ${siteId}`);
     const response = await makeWordPressRequest('GET', 'types');
-    postTypesCache = response;
-    cacheTimestamp = now;
+    postTypesCache.set(siteId, { data: response, timestamp: now });
     return response;
   } catch (error: any) {
-    logToFile(`Error fetching post types: ${error.message}`);
+    const errorMessage = error.response?.data?.message || error.message;
+    logToFile(`Error fetching post types: ${errorMessage}`);
     throw error;
   }
 }
@@ -112,12 +113,17 @@ const listContentSchema = z.object({
   orderby: z.string().optional().describe("Sort content by parameter"),
   order: z.enum(['asc', 'desc']).optional().describe("Order sort attribute"),
   after: z.string().optional().describe("ISO8601 date string to get content published after this date"),
-  before: z.string().optional().describe("ISO8601 date string to get content published before this date")
+  before: z.string().optional().describe("ISO8601 date string to get content published before this date"),
+  _embed: z.boolean().optional().describe("Inline related resources (author, featured_media, terms)"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return"),
+  include_pagination: z.boolean().optional().describe("Include pagination metadata (total, totalPages) in response")
 });
 
 const getContentSchema = z.object({
   content_type: z.string().describe("The content type slug"),
-  id: z.number().describe("Content ID")
+  id: z.number().describe("Content ID"),
+  _embed: z.boolean().optional().describe("Inline related resources (author, featured_media, terms)"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return")
 });
 
 const createContentSchema = z.object({
@@ -240,15 +246,17 @@ export const unifiedContentHandlers = {
   list_content: async (params: ListContentParams) => {
     try {
       const endpoint = getContentEndpoint(params.content_type);
-      const { content_type, ...queryParams } = params;
-      
-      const response = await makeWordPressRequest('GET', endpoint, queryParams);
-      
+      const { content_type, include_pagination, ...queryParams } = params;
+
+      const response = await makeWordPressRequest('GET', endpoint, queryParams, {
+        includePagination: include_pagination,
+      });
+
       return {
         toolResult: {
-          content: [{ 
-            type: 'text', 
-            text: JSON.stringify(response, null, 2) 
+          content: [{
+            type: 'text',
+            text: JSON.stringify(response, null, 2)
           }],
           isError: false
         }
@@ -256,9 +264,9 @@ export const unifiedContentHandlers = {
     } catch (error: any) {
       return {
         toolResult: {
-          content: [{ 
-            type: 'text', 
-            text: `Error listing content: ${error.message}` 
+          content: [{
+            type: 'text',
+            text: `Error listing content: ${error.response?.data?.message || error.message}`
           }],
           isError: true
         }
@@ -269,13 +277,17 @@ export const unifiedContentHandlers = {
   get_content: async (params: GetContentParams) => {
     try {
       const endpoint = getContentEndpoint(params.content_type);
-      const response = await makeWordPressRequest('GET', `${endpoint}/${params.id}`);
-      
+      const queryParams: any = {};
+      if (params._embed) queryParams._embed = true;
+      if (params._fields) queryParams._fields = params._fields;
+
+      const response = await makeWordPressRequest('GET', `${endpoint}/${params.id}`, queryParams);
+
       return {
         toolResult: {
-          content: [{ 
-            type: 'text', 
-            text: JSON.stringify(response, null, 2) 
+          content: [{
+            type: 'text',
+            text: JSON.stringify(response, null, 2)
           }],
           isError: false
         }
@@ -283,9 +295,9 @@ export const unifiedContentHandlers = {
     } catch (error: any) {
       return {
         toolResult: {
-          content: [{ 
-            type: 'text', 
-            text: `Error getting content: ${error.message}` 
+          content: [{
+            type: 'text',
+            text: `Error getting content: ${error.response?.data?.message || error.message}`
           }],
           isError: true
         }
@@ -345,7 +357,7 @@ export const unifiedContentHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error creating content: ${error.message}` 
+            text: `Error creating content: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -395,7 +407,7 @@ export const unifiedContentHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error updating content: ${error.message}` 
+            text: `Error updating content: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -425,7 +437,7 @@ export const unifiedContentHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error deleting content: ${error.message}` 
+            text: `Error deleting content: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -462,7 +474,7 @@ export const unifiedContentHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error discovering content types: ${error.message}` 
+            text: `Error discovering content types: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -627,7 +639,7 @@ export const unifiedContentHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error finding content by URL: ${error.message}` 
+            text: `Error finding content by URL: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -661,7 +673,7 @@ export const unifiedContentHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error getting content by slug: ${error.message}` 
+            text: `Error getting content by slug: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }

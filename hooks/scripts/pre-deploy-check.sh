@@ -6,6 +6,9 @@
 
 set -euo pipefail
 
+# Consume stdin (Claude Code sends tool input as JSON on stdin to command hooks)
+cat > /dev/null
+
 # Resolve site URL from WP_SITES_CONFIG
 if [ -z "${WP_SITES_CONFIG:-}" ]; then
     echo "WARN: WP_SITES_CONFIG not set, cannot validate target site"

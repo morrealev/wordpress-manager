@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 const server = new McpServer({
   name: 'wp-rest-bridge',
-  version: '1.0.0',
+  version: '1.1.0',
 });
 
 // Register multi-site management tools

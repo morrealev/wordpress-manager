@@ -17,12 +17,17 @@ const listCommentsSchema = z.object({
   status: z.enum(['approve', 'hold', 'spam', 'trash']).optional().describe("Comment status"),
   type: z.string().optional().describe("Comment type"),
   orderby: z.enum(['date', 'date_gmt', 'id', 'include', 'post', 'parent', 'type']).optional().describe("Sort comments by parameter"),
-  order: z.enum(['asc', 'desc']).optional().describe("Order sort attribute ascending or descending")
+  order: z.enum(['asc', 'desc']).optional().describe("Order sort attribute ascending or descending"),
+  _embed: z.boolean().optional().describe("Inline related resources"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return"),
+  include_pagination: z.boolean().optional().describe("Include pagination metadata in response")
 });
 
 // Schema for getting a single comment
 const getCommentSchema = z.object({
-  id: z.number().describe("Comment ID")
+  id: z.number().describe("Comment ID"),
+  _embed: z.boolean().optional().describe("Inline related resources"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return")
 }).strict();
 
 // Schema for creating a comment
@@ -96,11 +101,13 @@ export const commentTools: Tool[] = [
 export const commentHandlers = {
   list_comments: async (params: ListCommentsParams) => {
     try {
-      const response = await makeWordPressRequest('GET', "comments", params);
-      const comments: WPComment[] = response;
+      const { include_pagination, ...queryParams } = params;
+      const response = await makeWordPressRequest('GET', "comments", queryParams, {
+        includePagination: include_pagination,
+      });
       return {
         toolResult: {
-          content: [{ type: 'text', text: JSON.stringify(comments, null, 2) }],
+          content: [{ type: 'text', text: JSON.stringify(response, null, 2) }],
         },
       };
     } catch (error: any) {
@@ -113,14 +120,16 @@ export const commentHandlers = {
       };
     }
   },
-  
+
   get_comment: async (params: GetCommentParams) => {
     try {
-      const response = await makeWordPressRequest('GET', `comments/${params.id}`);
-      const comment: WPComment = response;
+      const queryParams: any = {};
+      if (params._embed) queryParams._embed = true;
+      if (params._fields) queryParams._fields = params._fields;
+      const response = await makeWordPressRequest('GET', `comments/${params.id}`, queryParams);
       return {
         toolResult: {
-          content: [{ type: 'text', text: JSON.stringify(comment, null, 2) }],
+          content: [{ type: 'text', text: JSON.stringify(response, null, 2) }],
         },
       };
     } catch (error: any) {

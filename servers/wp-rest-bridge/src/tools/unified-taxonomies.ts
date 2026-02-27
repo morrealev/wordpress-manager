@@ -1,30 +1,31 @@
 // src/tools/unified-taxonomies.ts
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
-import { makeWordPressRequest, logToFile } from '../wordpress.js';
+import { makeWordPressRequest, logToFile, getActiveSite } from '../wordpress.js';
 import { z } from 'zod';
 
-// Cache for taxonomies to reduce API calls
-let taxonomiesCache: any = null;
-let taxonomyCacheTimestamp: number = 0;
+// Site-aware cache for taxonomies to reduce API calls
+const taxonomiesCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Helper function to get all taxonomies with caching
+// Helper function to get all taxonomies with caching (per-site)
 async function getTaxonomies(forceRefresh = false) {
+  const siteId = getActiveSite();
   const now = Date.now();
-  
-  if (!forceRefresh && taxonomiesCache && (now - taxonomyCacheTimestamp) < CACHE_DURATION) {
-    logToFile('Using cached taxonomies');
-    return taxonomiesCache;
+  const cached = taxonomiesCache.get(siteId);
+
+  if (!forceRefresh && cached && (now - cached.timestamp) < CACHE_DURATION) {
+    logToFile(`Using cached taxonomies for site: ${siteId}`);
+    return cached.data;
   }
 
   try {
-    logToFile('Fetching taxonomies from API');
+    logToFile(`Fetching taxonomies from API for site: ${siteId}`);
     const response = await makeWordPressRequest('GET', 'taxonomies');
-    taxonomiesCache = response;
-    taxonomyCacheTimestamp = now;
+    taxonomiesCache.set(siteId, { data: response, timestamp: now });
     return response;
   } catch (error: any) {
-    logToFile(`Error fetching taxonomies: ${error.message}`);
+    const errorMessage = error.response?.data?.message || error.message;
+    logToFile(`Error fetching taxonomies: ${errorMessage}`);
     throw error;
   }
 }
@@ -66,12 +67,17 @@ const listTermsSchema = z.object({
   slug: z.string().optional().describe("Limit result to terms with a specific slug"),
   hide_empty: z.boolean().optional().describe("Whether to hide terms not assigned to any content"),
   orderby: z.enum(['id', 'include', 'name', 'slug', 'term_group', 'description', 'count']).optional().describe("Sort terms by parameter"),
-  order: z.enum(['asc', 'desc']).optional().describe("Order sort attribute")
+  order: z.enum(['asc', 'desc']).optional().describe("Order sort attribute"),
+  _embed: z.boolean().optional().describe("Inline related resources"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return"),
+  include_pagination: z.boolean().optional().describe("Include pagination metadata in response")
 });
 
 const getTermSchema = z.object({
   taxonomy: z.string().describe("The taxonomy slug"),
-  id: z.number().describe("Term ID")
+  id: z.number().describe("Term ID"),
+  _embed: z.boolean().optional().describe("Inline related resources"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return")
 });
 
 const createTermSchema = z.object({
@@ -206,7 +212,7 @@ export const unifiedTaxonomyHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error discovering taxonomies: ${error.message}` 
+            text: `Error discovering taxonomies: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -217,15 +223,17 @@ export const unifiedTaxonomyHandlers = {
   list_terms: async (params: ListTermsParams) => {
     try {
       const endpoint = getTaxonomyEndpoint(params.taxonomy);
-      const { taxonomy, ...queryParams } = params;
-      
-      const response = await makeWordPressRequest('GET', endpoint, queryParams);
-      
+      const { taxonomy, include_pagination, ...queryParams } = params;
+
+      const response = await makeWordPressRequest('GET', endpoint, queryParams, {
+        includePagination: include_pagination,
+      });
+
       return {
         toolResult: {
-          content: [{ 
-            type: 'text', 
-            text: JSON.stringify(response, null, 2) 
+          content: [{
+            type: 'text',
+            text: JSON.stringify(response, null, 2)
           }],
           isError: false
         }
@@ -233,9 +241,9 @@ export const unifiedTaxonomyHandlers = {
     } catch (error: any) {
       return {
         toolResult: {
-          content: [{ 
-            type: 'text', 
-            text: `Error listing terms: ${error.message}` 
+          content: [{
+            type: 'text',
+            text: `Error listing terms: ${error.response?.data?.message || error.message}`
           }],
           isError: true
         }
@@ -246,14 +254,17 @@ export const unifiedTaxonomyHandlers = {
   get_term: async (params: GetTermParams) => {
     try {
       const endpoint = getTaxonomyEndpoint(params.taxonomy);
-      
-      const response = await makeWordPressRequest('GET', `${endpoint}/${params.id}`);
-      
+      const queryParams: any = {};
+      if (params._embed) queryParams._embed = true;
+      if (params._fields) queryParams._fields = params._fields;
+
+      const response = await makeWordPressRequest('GET', `${endpoint}/${params.id}`, queryParams);
+
       return {
         toolResult: {
-          content: [{ 
-            type: 'text', 
-            text: JSON.stringify(response, null, 2) 
+          content: [{
+            type: 'text',
+            text: JSON.stringify(response, null, 2)
           }],
           isError: false
         }
@@ -261,9 +272,9 @@ export const unifiedTaxonomyHandlers = {
     } catch (error: any) {
       return {
         toolResult: {
-          content: [{ 
-            type: 'text', 
-            text: `Error getting term: ${error.message}` 
+          content: [{
+            type: 'text',
+            text: `Error getting term: ${error.response?.data?.message || error.message}`
           }],
           isError: true
         }
@@ -300,7 +311,7 @@ export const unifiedTaxonomyHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error creating term: ${error.message}` 
+            text: `Error creating term: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -336,7 +347,7 @@ export const unifiedTaxonomyHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error updating term: ${error.message}` 
+            text: `Error updating term: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -366,7 +377,7 @@ export const unifiedTaxonomyHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error deleting term: ${error.message}` 
+            text: `Error deleting term: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -435,7 +446,7 @@ export const unifiedTaxonomyHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error assigning terms to content: ${error.message}` 
+            text: `Error assigning terms to content: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }
@@ -519,7 +530,7 @@ export const unifiedTaxonomyHandlers = {
         toolResult: {
           content: [{ 
             type: 'text', 
-            text: `Error getting content terms: ${error.message}` 
+            text: `Error getting content terms: ${error.response?.data?.message || error.message}` 
           }],
           isError: true
         }

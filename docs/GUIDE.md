@@ -1,7 +1,7 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 1.3.0
-**Ultimo aggiornamento:** 2026-02-26
+**Versione:** 1.4.0
+**Ultimo aggiornamento:** 2026-02-27
 **Repository:** https://github.com/morrealev/wordpress-manager
 
 ---
@@ -14,14 +14,15 @@
 4. [Guida Rapida - Primi Passi](#4-guida-rapida---primi-passi)
 5. [Comandi Slash - Riferimento Completo](#5-comandi-slash---riferimento-completo)
 6. [Agenti Specializzati](#6-agenti-specializzati)
-7. [Skills - Conoscenza di Dominio](#7-skills---conoscenza-di-dominio)
-8. [Hook di Sicurezza](#8-hook-di-sicurezza)
-9. [MCP Server - Architettura Tecnica](#9-mcp-server---architettura-tecnica)
-10. [Gestione Multi-Sito](#10-gestione-multi-sito)
-11. [Scenari d'Uso Comuni](#11-scenari-duso-comuni)
-12. [Amministrazione Avanzata](#12-amministrazione-avanzata)
-13. [Troubleshooting](#13-troubleshooting)
-14. [Glossario](#14-glossario)
+7. [Skills Operative - Gestione Siti Live](#7-skills-operative---gestione-siti-live)
+8. [Skills di Sviluppo - Costruire Progetti WordPress](#8-skills-di-sviluppo---costruire-progetti-wordpress)
+9. [Hook di Sicurezza](#9-hook-di-sicurezza)
+10. [MCP Server - Architettura Tecnica](#10-mcp-server---architettura-tecnica)
+11. [Gestione Multi-Sito](#11-gestione-multi-sito)
+12. [Scenari d'Uso Comuni](#12-scenari-duso-comuni)
+13. [Amministrazione Avanzata](#13-amministrazione-avanzata)
+14. [Troubleshooting](#14-troubleshooting)
+15. [Glossario](#15-glossario)
 
 ---
 
@@ -40,6 +41,12 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **Gestire backup**: creare, verificare e ripristinare backup completi
 - **Migrare siti**: trasferire WordPress tra hosting diversi
 - **Amministrare infrastruttura**: DNS, domini, certificati SSL via Hostinger
+- **Sviluppare blocchi Gutenberg**: creare e testare blocchi custom con block.json
+- **Costruire temi a blocchi**: sviluppare block theme con theme.json, template e pattern
+- **Creare plugin**: architettura plugin, hook, Settings API, REST endpoint
+- **Analizzare codice**: static analysis con PHPStan, profiling con WP-CLI
+- **Testare in sandbox**: WordPress Playground per ambienti disposable
+- **Progettare UI WordPress**: componenti WPDS, design token, pattern
 
 ### Requisiti
 
@@ -76,34 +83,47 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/
-+-- .claude-plugin/plugin.json    # Manifest - identita del plugin
-+-- .mcp.json                     # Server MCP bundled
-+-- agents/                       # 5 agenti specializzati
-|   +-- wp-site-manager.md            # Orchestratore centrale
-|   +-- wp-deployment-engineer.md     # Specialista deploy
-|   +-- wp-content-strategist.md      # Contenuti e SEO
-|   +-- wp-security-auditor.md        # Audit sicurezza
-|   +-- wp-performance-optimizer.md   # Performance e CWV
-+-- commands/                     # 5 slash commands
-|   +-- wp-status.md                  # Health check
-|   +-- wp-deploy.md                  # Deploy
-|   +-- wp-audit.md                   # Audit
-|   +-- wp-backup.md                  # Backup
-|   +-- wp-setup.md                   # Onboarding
-+-- skills/                       # 5 skill con reference files
-|   +-- wp-deploy/                    # Procedure deploy
-|   +-- wp-audit/                     # Checklist audit
-|   +-- wp-content/                   # Template contenuti
-|   +-- wp-migrate/                   # Procedure migrazione
-|   +-- wp-backup/                    # Strategie backup
-+-- hooks/                        # Hook di sicurezza
-|   +-- hooks.json                    # 6 hook (4 prompt + 2 command)
-|   +-- scripts/                      # Script per hook command-type
-+-- scripts/                      # Utility
-|   +-- health-check.sh               # Diagnostica completa
-|   +-- validate-wp-operation.sh      # Pre-flight check
-+-- servers/wp-rest-bridge/       # MCP Server custom (TypeScript)
+wordpress-manager/                          # v1.4.0
++-- .claude-plugin/plugin.json              # Manifest
++-- .mcp.json                               # Server MCP bundled
++-- LICENSE                                 # MIT + GPL-2.0-or-later
++-- CHANGELOG.md                            # Cronologia versioni
++-- agents/                                 # 5 agenti specializzati
+|   +-- wp-site-manager.md                      # Orchestratore centrale
+|   +-- wp-deployment-engineer.md               # Specialista deploy
+|   +-- wp-content-strategist.md                # Contenuti e SEO
+|   +-- wp-security-auditor.md                  # Audit sicurezza
+|   +-- wp-performance-optimizer.md             # Performance e CWV
++-- commands/                               # 5 slash commands
+|   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
++-- skills/                                 # 18 skill totali
+|   +-- [OPERATIVE - 5 skill]
+|   +-- wp-deploy/                              # Procedure deploy
+|   +-- wp-audit/                               # Checklist audit
+|   +-- wp-content/                             # Template contenuti
+|   +-- wp-migrate/                             # Procedure migrazione
+|   +-- wp-backup/                              # Strategie backup
+|   +-- [SVILUPPO - 13 skill da WordPress/agent-skills]
+|   +-- wordpress-router/                       # Router unificato (dev + ops)
+|   +-- wp-project-triage/                      # Auto-detect tipo progetto
+|   +-- wp-block-development/                   # Blocchi Gutenberg
+|   +-- wp-block-themes/                        # Temi a blocchi
+|   +-- wp-plugin-development/                  # Architettura plugin
+|   +-- wp-rest-api/                            # Endpoint REST
+|   +-- wp-interactivity-api/                   # Interactivity API
+|   +-- wp-abilities-api/                       # Abilities API
+|   +-- wp-wpcli-and-ops/                       # WP-CLI
+|   +-- wp-phpstan/                             # Analisi statica
+|   +-- wp-performance/                         # Profiling backend
+|   +-- wp-playground/                          # Sandbox disposable
+|   +-- wpds/                                   # WordPress Design System
++-- hooks/                                  # 6 hook di sicurezza
+|   +-- hooks.json                              # 4 prompt + 2 command
+|   +-- scripts/                                # Script per hook command-type
++-- scripts/                                # Utility
++-- servers/wp-rest-bridge/                 # MCP Server custom (TypeScript)
++-- docs/                                   # Documentazione
+    +-- GUIDE.md                                # Questa guida
 ```
 
 ### Come Interagiscono i Componenti
@@ -548,11 +568,11 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 
 ---
 
-## 7. Skills - Conoscenza di Dominio
+## 7. Skills Operative - Gestione Siti Live
 
 Le skill sono "librerie di conoscenza" che Claude attiva automaticamente quando il contesto della conversazione corrisponde alla loro area. Non sono comandi - sono conoscenza specializzata che migliora le risposte.
 
-### Panoramica Skills
+### Panoramica Skills Operative (5)
 
 | Skill | Si attiva quando... | Reference files inclusi |
 |-------|---------------------|------------------------|
@@ -574,7 +594,109 @@ Le skill NON sostituiscono i comandi slash. I comandi sono entry point espliciti
 
 ---
 
-## 8. Hook di Sicurezza
+## 8. Skills di Sviluppo - Costruire Progetti WordPress
+
+### Origine
+
+Le 13 skill di sviluppo sono integrate dal repository community [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (licenza GPL-2.0-or-later). Forniscono conoscenza specializzata per **sviluppare** codice WordPress — blocchi, temi, plugin, endpoint REST, analisi statica e testing.
+
+### Il Router Unificato
+
+La skill `wordpress-router` e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task:
+
+```
+Utente: "Crea un blocco custom per la gallery"
+  |
+wordpress-router: TASK = sviluppo
+  |
+wp-project-triage: TIPO = wp-block-plugin
+  |
+wp-block-development: guida creazione blocco
+```
+
+```
+Utente: "Deploya il plugin su opencactus"
+  |
+wordpress-router: TASK = operativo
+  |
+wp-deploy + wp-deployment-engineer: esegue deploy
+```
+
+### Panoramica Skills di Sviluppo (13)
+
+| Skill | Si attiva quando... | Risorse |
+|-------|---------------------|---------|
+| `wordpress-router` | Qualsiasi task WordPress (classifica e instrada) | decision-tree.md |
+| `wp-project-triage` | Analisi automatica tipo progetto nella directory corrente | detect_wp_project.mjs, triage.schema.json |
+| `wp-block-development` | "crea un blocco", "block.json", "registerBlockType" | 10 reference files, list_blocks.mjs |
+| `wp-block-themes` | "theme.json", "crea un template", "pattern", "Global Styles" | 6 reference files, detect_block_themes.mjs |
+| `wp-plugin-development` | "crea un plugin", "hook", "add_action", "Settings API" | 6 reference files, detect_plugins.mjs |
+| `wp-rest-api` | "register_rest_route", "endpoint REST", "permission_callback" | 6 reference files |
+| `wp-interactivity-api` | "data-wp-*", "Interactivity API", "viewScriptModule" | 3 reference files |
+| `wp-abilities-api` | "wp_register_ability", "Abilities API", "capabilities" | 2 reference files |
+| `wp-wpcli-and-ops` | "WP-CLI", "wp-cli.yml", "scaffold", "wp command" | 7 reference files, wpcli_inspect.mjs |
+| `wp-phpstan` | "PHPStan", "analisi statica", "phpstan.neon" | 3 reference files, phpstan_inspect.mjs |
+| `wp-performance` | "profiling", "wp profile", "wp doctor", "query lente" | 10 reference files, perf_inspect.mjs |
+| `wp-playground` | "Playground", "sandbox", "blueprint", "test disposable" | 3 reference files |
+| `wpds` | "Design System", "@wordpress/components", "design token" | wpds-mcp-setup.md (richiede WPDS MCP server) |
+
+### Script di Rilevamento Automatico
+
+Le skill di sviluppo includono 7 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
+
+| Script | Cosa rileva |
+|--------|-------------|
+| `detect_wp_project.mjs` | Tipo progetto: plugin, theme, block theme, wp-core, gutenberg |
+| `list_blocks.mjs` | Blocchi registrati nel progetto (block.json files) |
+| `detect_block_themes.mjs` | Struttura block theme: theme.json, templates, patterns |
+| `detect_plugins.mjs` | Plugin headers, hooks registrati, dipendenze |
+| `perf_inspect.mjs` | WP-CLI availability, autoloaded options, object cache |
+| `wpcli_inspect.mjs` | WP-CLI versione, comandi disponibili, configurazione |
+| `phpstan_inspect.mjs` | Configurazione PHPStan, livello analisi, baseline |
+
+### WordPress Playground — Ambienti Disposable
+
+La skill `wp-playground` permette di creare istanze WordPress temporanee per testing:
+
+```bash
+# Spin-up rapido con mount automatico del plugin
+cd mio-plugin/
+npx @wp-playground/cli@latest server --auto-mount
+
+# Esecuzione blueprint per setup riproducibile
+npx @wp-playground/cli@latest run-blueprint --blueprint=test-setup.json
+
+# Snapshot per condivisione o CI
+npx @wp-playground/cli@latest build-snapshot --blueprint=setup.json --outfile=./site.zip
+```
+
+Requisiti: Node.js >= 20.18. Playground gira in WebAssembly con SQLite — **mai** puntare a dati di produzione.
+
+### WordPress Design System (WPDS)
+
+La skill `wpds` guida la costruzione di UI conformi al Design System di WordPress. Funziona al meglio con il **WPDS MCP server** che espone:
+
+- `wpds://components` — catalogo componenti (Button, Modal, TextControl, ...)
+- `wpds://design-tokens` — token di design (colori, spaziatura, tipografia)
+- `wpds://pages` — documentazione e linee guida
+
+Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components` e `@wordpress/ui`.
+
+### Workflow Tipico di Sviluppo
+
+```
+1. cd mio-progetto-wordpress/
+2. Claude esegue wp-project-triage → rileva "wp-block-plugin"
+3. wordpress-router → instrada a wp-block-development
+4. Claude guida la creazione con block.json, edit.js, save.js
+5. wp-playground → test in sandbox disposable
+6. wp-phpstan → analisi statica del codice
+7. wp-deploy → deploy in produzione quando pronto
+```
+
+---
+
+## 9. Hook di Sicurezza
 
 Gli hook sono guardiani automatici che intercettano operazioni pericolose prima che vengano eseguite. Funzionano senza bisogno di attivarli manualmente.
 
@@ -616,7 +738,7 @@ Se approvato -> Esecuzione hosting_importWordpressWebsite
 
 ---
 
-## 9. MCP Server - Architettura Tecnica
+## 10. MCP Server - Architettura Tecnica
 
 ### Cos'e MCP
 
@@ -673,7 +795,7 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 
 ---
 
-## 10. Gestione Multi-Sito
+## 11. Gestione Multi-Sito
 
 ### Configurazione
 
@@ -719,7 +841,7 @@ Il wp-site-manager agent determina automaticamente quale set di tool usare:
 
 ---
 
-## 11. Scenari d'Uso Comuni
+## 12. Scenari d'Uso Comuni
 
 ### Scenario 1: Check-up Mattutino del Sito
 
@@ -791,11 +913,40 @@ Claude (attiva skill wp-migrate):
 7. Verifica SSL
 ```
 
+### Scenario 6: Sviluppare un Blocco Gutenberg Custom
+
+```
+Tu: "Crea un blocco gallery per mostrare i prodotti con filtri per categoria"
+
+Claude (attiva wordpress-router → wp-block-development):
+1. Rileva il progetto (wp-project-triage → wp-block-plugin)
+2. Crea la struttura: block.json, edit.js, save.js, style.scss
+3. Configura attributi (columns, category, imageSize)
+4. Implementa InspectorControls per le opzioni laterali
+5. Implementa il render frontend con PHP
+6. Testa in WordPress Playground (sandbox disposable)
+7. Deploy quando pronto
+```
+
+### Scenario 7: Analisi Statica e Profiling
+
+```
+Tu: "Analizza il codice del mio plugin con PHPStan e controlla le performance"
+
+Claude (attiva wp-phpstan + wp-performance):
+1. Rileva configurazione PHPStan (phpstan.neon o crea baseline)
+2. Esegue analisi statica a livello 6
+3. Segnala errori tipizzazione, chiamate deprecate, pattern non sicuri
+4. Profila con wp profile stage → identifica hook lenti
+5. Verifica autoloaded options e object cache
+6. Report con fix prioritizzati
+```
+
 ---
 
-## 12. Amministrazione Avanzata
+## 13. Amministrazione Avanzata
 
-### 12.1 Personalizzare gli Hook
+### 13.1 Personalizzare gli Hook
 
 Puoi modificare `hooks/hooks.json` per aggiungere o rimuovere hook. Struttura di un hook:
 
@@ -820,7 +971,7 @@ Puoi modificare `hooks/hooks.json` per aggiungere o rimuovere hook. Struttura di
 - `prompt`: Claude valuta semanticamente se l'operazione e legittima
 - `command`: Uno script bash esegue validazione tecnica (exit 0 = allow, exit 2 = block)
 
-### 12.2 Aggiungere un Nuovo Sito Manualmente
+### 13.2 Aggiungere un Nuovo Sito Manualmente
 
 Se preferisci non usare `/wordpress-manager:wp-setup`:
 
@@ -835,7 +986,7 @@ Se preferisci non usare `/wordpress-manager:wp-setup`:
 3. Riavvia la sessione Claude Code (per ricaricare le variabili d'ambiente)
 4. Verifica: `"Elenca i siti configurati"`
 
-### 12.3 Script di Health Check Automatizzato
+### 13.3 Script di Health Check Automatizzato
 
 Puoi schedulare il health check con cron per monitoraggio proattivo:
 
@@ -845,7 +996,7 @@ Puoi schedulare il health check con cron per monitoraggio proattivo:
 0 */6 * * * source ~/.claude/mcp-secrets.env && bash ~/.claude/plugins/local/wordpress-manager/scripts/health-check.sh >> /var/log/wp-health.log 2>&1
 ```
 
-### 12.4 Aggiornare il Plugin
+### 13.4 Aggiornare il Plugin
 
 ```bash
 cd ~/.claude/plugins/local/wordpress-manager
@@ -857,7 +1008,7 @@ npm install
 npx tsc
 ```
 
-### 12.5 Disabilitare Temporaneamente il Plugin
+### 13.5 Disabilitare Temporaneamente il Plugin
 
 In `~/.claude/settings.json`:
 
@@ -871,7 +1022,7 @@ In `~/.claude/settings.json`:
 
 I server MCP non si avvieranno e i comandi non saranno disponibili fino alla riattivazione.
 
-### 12.6 Sicurezza delle Credenziali
+### 13.6 Sicurezza delle Credenziali
 
 **Dove sono le credenziali**:
 - `~/.claude/mcp-secrets.env` - File locale, NON nel repository
@@ -883,7 +1034,7 @@ I server MCP non si avvieranno e i comandi non saranno disponibili fino alla ria
 - Usa una Application Password dedicata per Claude (non la password dell'account)
 - Se un token viene compromesso, revocalo immediatamente dal pannello WordPress/Hostinger
 
-### 12.7 Struttura dei Permessi File WordPress
+### 13.7 Struttura dei Permessi File WordPress
 
 Per riferimento, i permessi standard su Hostinger:
 
@@ -895,7 +1046,7 @@ wp-config.php:  440 (r--r-----)
 
 ---
 
-## 13. Troubleshooting
+## 14. Troubleshooting
 
 ### Problemi di Connessione
 
@@ -1004,7 +1155,7 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 
 ---
 
-## 14. Glossario
+## 15. Glossario
 
 | Termine | Definizione |
 |---------|------------|
@@ -1022,8 +1173,18 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **stdio** | Standard Input/Output - trasporto usato dai server MCP per comunicare con Claude |
 | **WP REST Bridge** | Server MCP custom che traduce tool call Claude in chiamate WordPress REST API |
 | **WP_SITES_CONFIG** | Variabile d'ambiente JSON con credenziali dei siti WordPress configurati |
+| **Block Theme** | Tema WordPress basato su template HTML e theme.json (Full Site Editing) |
+| **block.json** | Manifest di un blocco Gutenberg: nome, attributi, script, stili |
+| **Blueprint** | File JSON che descrive la configurazione di un'istanza WordPress Playground |
+| **Gutenberg** | Editor a blocchi di WordPress, progetto open-source per Full Site Editing |
+| **Interactivity API** | API WordPress per interattivita lato client con direttive `data-wp-*` |
+| **PHPStan** | Tool di analisi statica per PHP; la skill wp-phpstan lo configura per WordPress |
+| **theme.json** | File di configurazione centrale per temi a blocchi (colori, font, layout, spacing) |
+| **WordPress Playground** | Ambiente WordPress disposable che gira in WebAssembly con SQLite |
+| **WPDS** | WordPress Design System — componenti UI, token di design e pattern per l'ecosistema WP |
+| **WP-CLI** | Command-line interface per WordPress: gestione plugin, utenti, database da terminale |
 
 ---
 
-*Guida v1.3.0 - WordPress Manager Plugin per Claude Code*
-*Ultimo aggiornamento: 2026-02-26*
+*Guida v1.4.0 - WordPress Manager Plugin per Claude Code*
+*Ultimo aggiornamento: 2026-02-27*

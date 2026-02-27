@@ -11,12 +11,22 @@ const listUsersSchema = z.object({
   context: z.enum(['view', 'embed', 'edit']).optional().describe("Scope under which the request is made"),
   orderby: z.enum(['id', 'include', 'name', 'registered_date', 'slug', 'email', 'url']).optional().describe("Sort users by parameter"),
   order: z.enum(['asc', 'desc']).optional().describe("Order sort attribute ascending or descending"),
-  roles: z.array(z.string()).optional().describe("Array of role names to filter by")
+  roles: z.array(z.string()).optional().describe("Array of role names to filter by"),
+  _embed: z.boolean().optional().describe("Inline related resources"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return"),
+  include_pagination: z.boolean().optional().describe("Include pagination metadata in response")
 });
 
 const getUserSchema = z.object({
   id: z.number().describe("User ID"),
-  context: z.enum(['view', 'embed', 'edit']).optional().describe("Scope under which the request is made")
+  context: z.enum(['view', 'embed', 'edit']).optional().describe("Scope under which the request is made"),
+  _embed: z.boolean().optional().describe("Inline related resources"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return")
+}).strict();
+
+const getMeSchema = z.object({
+  context: z.enum(['view', 'embed', 'edit']).optional().describe("Scope under which the request is made"),
+  _fields: z.string().optional().describe("Comma-separated list of fields to return")
 }).strict();
 
 const createUserSchema = z.object({
@@ -74,6 +84,11 @@ export const userTools: Tool[] = [
     inputSchema: { type: "object", properties: getUserSchema.shape }
   },
   {
+    name: "get_me",
+    description: "Gets the currently authenticated user",
+    inputSchema: { type: "object", properties: getMeSchema.shape }
+  },
+  {
     name: "create_user",
     description: "Creates a new user",
     inputSchema: { type: "object", properties: createUserSchema.shape }
@@ -93,11 +108,13 @@ export const userTools: Tool[] = [
 export const userHandlers = {
   list_users: async (params: ListUsersParams) => {
     try {
-      const response = await makeWordPressRequest('GET', "users", params);
-      const users: WPUser[] = response;
+      const { include_pagination, ...queryParams } = params;
+      const response = await makeWordPressRequest('GET', "users", queryParams, {
+        includePagination: include_pagination,
+      });
       return {
         toolResult: {
-          content: [{ type: 'text', text: JSON.stringify(users, null, 2) }],
+          content: [{ type: 'text', text: JSON.stringify(response, null, 2) }],
         },
       };
     } catch (error: any) {
@@ -112,11 +129,13 @@ export const userHandlers = {
   },
   get_user: async (params: GetUserParams) => {
     try {
-      const response = await makeWordPressRequest('GET', `users/${params.id}`, { context: params.context });
-      const user: WPUser = response;
+      const queryParams: any = { context: params.context };
+      if (params._embed) queryParams._embed = true;
+      if (params._fields) queryParams._fields = params._fields;
+      const response = await makeWordPressRequest('GET', `users/${params.id}`, queryParams);
       return {
         toolResult: {
-          content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
+          content: [{ type: 'text', text: JSON.stringify(response, null, 2) }],
         },
       };
     } catch (error: any) {
@@ -125,6 +144,27 @@ export const userHandlers = {
         toolResult: {
           isError: true,
           content: [{ type: 'text', text: `Error getting user: ${errorMessage}` }],
+        },
+      };
+    }
+  },
+  get_me: async (params: z.infer<typeof getMeSchema>) => {
+    try {
+      const queryParams: any = {};
+      if (params.context) queryParams.context = params.context;
+      if (params._fields) queryParams._fields = params._fields;
+      const response = await makeWordPressRequest('GET', 'users/me', queryParams);
+      return {
+        toolResult: {
+          content: [{ type: 'text', text: JSON.stringify(response, null, 2) }],
+        },
+      };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      return {
+        toolResult: {
+          isError: true,
+          content: [{ type: 'text', text: `Error getting current user: ${errorMessage}` }],
         },
       };
     }

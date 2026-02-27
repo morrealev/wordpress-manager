@@ -7,16 +7,18 @@ import { mediaTools, mediaHandlers } from './media.js';
 import { userTools, userHandlers } from './users.js';
 import { pluginRepositoryTools, pluginRepositoryHandlers } from './plugin-repository.js';
 import { commentTools, commentHandlers } from './comments.js';
+import { searchTools, searchHandlers } from './search.js';
 
-// Combine all tools - now significantly reduced from ~65 to ~35 tools
+// Combine all tools
 export const allTools: Tool[] = [
-  ...unifiedContentTools,        // 8 tools (replaces posts, pages, custom-post-types)
-  ...unifiedTaxonomyTools,       // 8 tools (replaces categories, custom-taxonomies)
-  ...pluginTools,               // ~5 tools
-  ...mediaTools,                // ~5 tools
-  ...userTools,                 // ~5 tools
-  ...pluginRepositoryTools,     // ~2 tools
-  ...commentTools               // ~5 tools
+  ...unifiedContentTools,        // 8 tools
+  ...unifiedTaxonomyTools,       // 8 tools
+  ...pluginTools,                // 6 tools
+  ...mediaTools,                 // 5 tools
+  ...userTools,                  // 6 tools
+  ...pluginRepositoryTools,      // 2 tools
+  ...commentTools,               // 5 tools
+  ...searchTools                 // 1 tool
 ];
 
 // Combine all handlers
@@ -27,5 +29,6 @@ export const toolHandlers = {
   ...mediaHandlers,
   ...userHandlers,
   ...pluginRepositoryHandlers,
-  ...commentHandlers
+  ...commentHandlers,
+  ...searchHandlers
 };

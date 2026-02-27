@@ -2,7 +2,6 @@
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import { searchWordPressPluginRepository } from '../wordpress.js';
 import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 
 // Define the schema for plugin repository search
 const searchPluginRepositorySchema = z.object({

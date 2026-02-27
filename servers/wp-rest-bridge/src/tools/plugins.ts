@@ -14,15 +14,15 @@ const listPluginsSchema = z.object({
 }).strict();
 
 const getPluginSchema = z.object({
-  plugin: z.string().describe("Plugin slug (e.g., 'akismet', 'elementor', 'wordpress-seo')")
+  plugin: z.string().describe("Plugin identifier in folder/file.php format (e.g., 'akismet/akismet.php', 'elementor/elementor.php')")
 }).strict();
 
 const activatePluginSchema = z.object({
-  plugin: z.string().describe("Plugin slug (e.g., 'akismet', 'elementor', 'wordpress-seo')")
+  plugin: z.string().describe("Plugin identifier in folder/file.php format (e.g., 'akismet/akismet.php', 'elementor/elementor.php')")
 }).strict();
 
 const deactivatePluginSchema = z.object({
-  plugin: z.string().describe("Plugin slug (e.g., 'akismet', 'elementor', 'wordpress-seo')")
+  plugin: z.string().describe("Plugin identifier in folder/file.php format (e.g., 'akismet/akismet.php', 'elementor/elementor.php')")
 }).strict();
 
 const createPluginSchema = z.object({
@@ -30,11 +30,16 @@ const createPluginSchema = z.object({
   status: z.enum(['inactive', 'active']).optional().default('active').describe("Plugin activation status")
 }).strict();
 
+const deletePluginSchema = z.object({
+  plugin: z.string().describe("Plugin identifier in folder/file.php format (e.g., 'akismet/akismet.php')")
+}).strict();
+
 type ListPluginsParams = z.infer<typeof listPluginsSchema>;
 type GetPluginParams = z.infer<typeof getPluginSchema>;
 type ActivatePluginParams = z.infer<typeof activatePluginSchema>;
 type DeactivatePluginParams = z.infer<typeof deactivatePluginSchema>;
 type CreatePluginParams = z.infer<typeof createPluginSchema>;
+type DeletePluginParams = z.infer<typeof deletePluginSchema>;
 
 // Define tool set for plugin operations
 export const pluginTools: Tool[] = [
@@ -62,6 +67,11 @@ export const pluginTools: Tool[] = [
     name: "create_plugin",
     description: "Creates a plugin from the WordPress.org repository",
     inputSchema: { type: "object", properties: createPluginSchema.shape }
+  },
+  {
+    name: "delete_plugin",
+    description: "Deletes an installed plugin (must be deactivated first)",
+    inputSchema: { type: "object", properties: deletePluginSchema.shape }
   }
 ];
 
@@ -105,7 +115,7 @@ export const pluginHandlers = {
   },
   activate_plugin: async (params: z.infer<typeof activatePluginSchema>) => {
     try {
-      const response = await makeWordPressRequest("POST", `plugins/${params.plugin}/activate`, params);
+      const response = await makeWordPressRequest("PUT", `plugins/${params.plugin}`, { status: 'active' });
       return {
         toolResult: {
           content: [{ type: "text", text: JSON.stringify(response, null, 2) }]
@@ -123,7 +133,7 @@ export const pluginHandlers = {
   },
   deactivate_plugin: async (params: z.infer<typeof deactivatePluginSchema>) => {
     try {
-      const response = await makeWordPressRequest("POST", `plugins/${params.plugin}/deactivate`, params);
+      const response = await makeWordPressRequest("PUT", `plugins/${params.plugin}`, { status: 'inactive' });
       return {
         toolResult: {
           content: [{ type: "text", text: JSON.stringify(response, null, 2) }]
@@ -153,6 +163,24 @@ export const pluginHandlers = {
         toolResult: {
           isError: true,
           content: [{ type: "text", text: `Error creating plugin: ${errorMessage}` }]
+        }
+      };
+    }
+  },
+  delete_plugin: async (params: z.infer<typeof deletePluginSchema>) => {
+    try {
+      const response = await makeWordPressRequest("DELETE", `plugins/${params.plugin}`);
+      return {
+        toolResult: {
+          content: [{ type: "text", text: JSON.stringify(response, null, 2) }]
+        }
+      };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      return {
+        toolResult: {
+          isError: true,
+          content: [{ type: "text", text: `Error deleting plugin: ${errorMessage}` }]
         }
       };
     }
