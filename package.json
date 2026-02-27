@@ -1,0 +1,46 @@
+{
+  "name": "claude-plugin-wordpress-manager",
+  "version": "1.4.0",
+  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge, and WordPress.com MCP with 18 skills, 5 agents, and security hooks.",
+  "author": {
+    "name": "vinmor",
+    "email": "morreale.v@gmail.com"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "wordpress",
+    "hostinger",
+    "mcp",
+    "deployment",
+    "cms",
+    "multi-site",
+    "gutenberg",
+    "block-development",
+    "wp-cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/morrealev/wordpress-manager.git"
+  },
+  "homepage": "https://github.com/morrealev/wordpress-manager#readme",
+  "bugs": {
+    "url": "https://github.com/morrealev/wordpress-manager/issues"
+  },
+  "files": [
+    ".claude-plugin/",
+    ".mcp.json",
+    "agents/",
+    "commands/",
+    "skills/",
+    "hooks/",
+    "scripts/",
+    "servers/wp-rest-bridge/build/",
+    "servers/wp-rest-bridge/package.json",
+    "docs/",
+    "LICENSE",
+    "CHANGELOG.md",
+    "README.md"
+  ]
+}
