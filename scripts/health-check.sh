@@ -18,6 +18,10 @@ warn() { echo -e "  ${YELLOW}WARN${NC} $1"; }
 # Resolve site config
 if [ $# -ge 1 ]; then
     SITE_URL="$1"
+    # Ensure URL has https:// prefix
+    if [[ ! "$SITE_URL" =~ ^https?:// ]]; then
+        SITE_URL="https://$SITE_URL"
+    fi
     CREDS="${2:-}"
 elif [ -n "${WP_SITES_CONFIG:-}" ]; then
     SITE_URL=$(echo "$WP_SITES_CONFIG" | python3 -c "import json,sys; print(json.load(sys.stdin)[0]['url'])" 2>/dev/null)
@@ -89,13 +93,12 @@ fi
 # 5. Hostinger API (if token available)
 echo "[5/5] Hostinger API"
 if [ -n "${HOSTINGER_API_TOKEN:-}" ]; then
-    HAPI_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 -H "Authorization: Bearer $HOSTINGER_API_TOKEN" "https://api.hostinger.com/api/dns/v1/zones" 2>/dev/null || echo "000")
-    if [ "$HAPI_CODE" = "200" ]; then
-        pass "Hostinger API reachable (HTTP $HAPI_CODE)"
-    elif [ "$HAPI_CODE" = "530" ]; then
-        warn "Hostinger API: HTTP 530 (Site Frozen — check subscription at hostinger.com)"
-    elif [ "$HAPI_CODE" = "401" ]; then
-        fail "Hostinger API: HTTP 401 (Invalid or expired token)"
+    HAPI_RESP=$(curl -s --max-time 10 -H "Authorization: Bearer $HOSTINGER_API_TOKEN" "https://developers.hostinger.com/api/hosting/v1/websites" 2>/dev/null)
+    HAPI_CODE=$(echo "$HAPI_RESP" | python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('data',d)) if isinstance(d,dict) and 'message' not in d else d.get('message','error'))" 2>/dev/null || echo "error")
+    if [[ "$HAPI_CODE" =~ ^[0-9]+$ ]]; then
+        pass "Hostinger API reachable ($HAPI_CODE sites found)"
+    elif [ "$HAPI_CODE" = "Unauthenticated." ]; then
+        fail "Hostinger API: Unauthenticated (token invalid or expired)"
     else
         warn "Hostinger API: HTTP $HAPI_CODE"
     fi
