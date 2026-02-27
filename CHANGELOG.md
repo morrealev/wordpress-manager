@@ -2,6 +2,25 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [1.5.0] - 2026-02-27
+
+### Added
+- **`wp-local-env` skill** — Unified local WordPress development environment management
+  - Cross-platform detection script (`detect_local_env.mjs`) for Studio, LocalWP, wp-env
+  - 4 reference files: `studio-adapter.md`, `localwp-adapter.md`, `wpenv-adapter.md`, `mcp-adapter-setup.md`
+  - 8 procedure sections: detection, lifecycle, WP-CLI, symlink dev workflow, REST API, database ops, version switching, preview/share
+  - MCP Adapter integration guide (STDIO + HTTP transports)
+
+### Changed
+- **Router upgraded to v3** — three-category routing (development + local environment + operations)
+  - `decision-tree.md` upgraded from v2 to v3 with Step 2c for local environment routing
+  - Added local environment keywords and overlap resolution with dev/ops
+  - Added local environment guardrails
+- **`wp-wpcli-and-ops`** — Added local environment WP-CLI invocation methods (Studio/LocalWP/wp-env)
+- **`wp-deploy`** — Added "Deploying from Local Environment" section with export instructions
+- **`wp-playground`** — Added comparison table with `wp-local-env` and escalation paths
+- Version bumps: plugin.json + package.json → 1.5.0
+
 ## [1.4.0] - 2026-02-27
 
 ### Added

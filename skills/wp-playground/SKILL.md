@@ -99,5 +99,17 @@ npx @wp-playground/cli@latest build-snapshot --blueprint=<file> --outfile=./site
 
 ## Escalation
 
-- If PHP extensions or native DB access are required, Playground may be unsuitable; fall back to full WP stack or wp-env/Docker.
+- If PHP extensions or native DB access are required, Playground may be unsuitable; fall back to a local dev environment.
+- For persistent local development, use the `wp-local-env` skill which supports WordPress Studio (WASM-based, lightweight), LocalWP (native MySQL, production-parity), and wp-env (Docker, CI-friendly).
 - For browser-only embedding or VS Code extension specifics, consult the upstream docs: https://wordpress.github.io/wordpress-playground/
+
+## Relationship with wp-local-env
+
+| Need | Use |
+|------|-----|
+| Quick disposable test | wp-playground (this skill) |
+| Persistent local dev with DB | `wp-local-env` (Studio/LocalWP/wp-env) |
+| CI/CD testing | wp-playground (blueprints) or wp-env |
+| Plugin/theme development | `wp-local-env` (symlink workflow) |
+| Version switching (ephemeral) | wp-playground (`--wp=` / `--php=`) |
+| Version switching (persistent) | `wp-local-env` (tool-specific settings) |

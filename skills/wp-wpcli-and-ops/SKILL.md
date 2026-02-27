@@ -49,6 +49,11 @@ Run the inspector:
 
 If WP-CLI isn’t available, fall back to installing it via the project’s documented tooling (Composer, container, or system package), or ask for the expected execution environment.
 
+**Local environment WP-CLI**: If operating on a local site (Studio, LocalWP, wp-env), each tool has its own WP-CLI invocation method. See `wp-local-env` skill for tool-specific commands:
+- **Studio**: `studio wp <command> --path=<site>`
+- **LocalWP**: `<bundled-wp-cli> --path=<site-root> <command>`
+- **wp-env**: `npx wp-env run cli wp <command>`
+
 ### 2) Choose the right workflow
 
 #### A) Safe URL/domain migration (`search-replace`)
@@ -123,3 +128,4 @@ See:
 
 - If you cannot confirm environment safety, do not run write operations.
 - If the repo uses containerized tooling (Docker/wp-env) but you can’t access it, ask for the intended command runner or CI job.
+- If working with a local dev environment (Studio/LocalWP/wp-env), route to the `wp-local-env` skill for environment-specific WP-CLI setup.

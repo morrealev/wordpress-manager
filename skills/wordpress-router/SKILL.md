@@ -4,7 +4,7 @@ description: “Use when the user asks about WordPress — whether development (
   blocks, REST API) or operations (deploy, audit, backup, migrate, content management).
   Classifies the task and routes to the correct development or operational skill/agent.”
 compatibility: “Targets WordPress 6.9+ (PHP 7.2.24+). Filesystem-based agent with bash + node. Some workflows require WP-CLI.”
-version: 1.0.0
+version: 1.1.0
 source: “WordPress/agent-skills (GPL-2.0-or-later) + wordpress-manager extensions”
 ---
 
@@ -14,9 +14,10 @@ source: “WordPress/agent-skills (GPL-2.0-or-later) + wordpress-manager extensi
 
 Use this skill at the start of most WordPress tasks to:
 
-- identify what kind of WordPress task this is (development vs operations),
+- identify what kind of WordPress task this is (development vs operations vs local environment),
 - for development: classify the repo (plugin vs theme vs block theme vs WP core),
 - for operations: identify the operation type (deploy, audit, backup, migrate, content),
+- for local environment: detect tools (Studio, LocalWP, wp-env) and manage local sites,
 - route to the most relevant skill(s) and/or agent(s).
 
 ## Inputs required
@@ -35,6 +36,14 @@ Use this skill at the start of most WordPress tasks to:
 - Sandbox testing via WordPress Playground
 - Route via project triage → development skills
 
+**Local Environment tasks** (managing local WordPress dev environments):
+- Setting up, starting, stopping local WordPress sites
+- Using WordPress Studio, LocalWP, or wp-env
+- Running WP-CLI commands on local sites
+- Symlink-based plugin/theme development
+- Local database operations, PHP/WP version switching
+- Route → `wp-local-env` skill (runs detection first)
+
 **Operational tasks** (managing live WordPress sites):
 - Deploying, auditing, backing up, migrating, managing content
 - Route directly → operational skills and agents
@@ -46,7 +55,17 @@ Use this skill at the start of most WordPress tasks to:
 2. Classify from triage output.
 3. Route to development skills — see `references/decision-tree.md`.
 
-### 3) For Operational tasks
+### 3) For Local Environment tasks
+
+1. Run detection: `node skills/wp-local-env/scripts/detect_local_env.mjs`
+2. Route to `wp-local-env` skill with detected environment context.
+3. For detailed tool guidance, see adapter references:
+   - `wp-local-env/references/studio-adapter.md`
+   - `wp-local-env/references/localwp-adapter.md`
+   - `wp-local-env/references/wpenv-adapter.md`
+4. For MCP integration: `wp-local-env/references/mcp-adapter-setup.md`
+
+### 4) For Operational tasks
 
 Route by intent keywords:
 
@@ -58,9 +77,10 @@ Route by intent keywords:
 - **Performance / slow / PageSpeed / optimize** → `wp-audit` skill + `wp-performance-optimizer` agent
 - **Site status / plugins / users / multi-site** → `wp-site-manager` agent
 
-### 4) Apply guardrails
+### 5) Apply guardrails
 
 - For development: prefer repo’s existing tooling and conventions.
+- For local environment: verify tool availability and site status before operations.
 - For operations: confirm target site, verify backups, get user confirmation for destructive ops.
 
 ## Verification
@@ -75,4 +95,4 @@ Route by intent keywords:
 
 ## Escalation
 
-- If routing is ambiguous, ask: “Are you looking to develop/modify WordPress code, or manage/operate a live WordPress site?”
+- If routing is ambiguous, ask: “Are you looking to develop/modify WordPress code, manage a local dev environment, or operate a live WordPress site?”

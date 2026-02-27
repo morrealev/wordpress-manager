@@ -1,13 +1,17 @@
-# Router decision tree (v2 — unified development + operations)
+# Router decision tree (v3 — development + local environment + operations)
 
-This routing guide covers both WordPress **development** and **operations** workflows.
+This routing guide covers WordPress **development**, **local environment**, and **operations** workflows.
 
 ## Step 0: determine task category
 
 Before repo triage, classify the user’s intent:
 
 - **Development** (modifying code) → proceed to Step 1
+- **Local Environment** (managing local dev sites) → skip to Step 2c
 - **Operations** (managing live sites) → skip to Step 2b
+
+Keywords that indicate **local environment**:
+local site, Studio, LocalWP, Local by Flywheel, wp-env, local WordPress, start site, stop site, create local site, local development, symlink plugin, local database, switch PHP version, localhost, local preview, detect environment, WASM, SQLite local
 
 Keywords that indicate **operations**:
 deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit
@@ -73,12 +77,54 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
 - **DNS / domain / SSL / hosting configuration**
   → `wp-site-manager` agent (Hostinger MCP tools)
 
+## Step 2c: route by local environment intent (keywords)
+
+First, run detection to discover installed tools and sites:
+```bash
+node skills/wp-local-env/scripts/detect_local_env.mjs
+```
+
+Then route by intent:
+
+- **Create / new site / setup local / install WordPress locally**
+  → `wp-local-env` skill (Section 1: Site lifecycle → Create)
+- **Start site / stop site / delete site / site status**
+  → `wp-local-env` skill (Section 1: Site lifecycle)
+- **WP-CLI / plugin list / scaffold / export / local command**
+  → `wp-local-env` skill (Section 2: WP-CLI operations)
+- **Symlink / link plugin / develop locally / local dev workflow**
+  → `wp-local-env` skill (Section 3: Development workflow)
+- **Local REST API / localhost API / application password local**
+  → `wp-local-env` skill (Section 4: REST API access)
+- **Local database / SQLite / export DB / backup local / mysql local**
+  → `wp-local-env` skill (Section 5: Database operations)
+- **Switch PHP / switch WordPress version / test version / local testing**
+  → `wp-local-env` skill (Section 6: Testing and version switching)
+- **Preview / share local / ngrok / tunnel / demo site**
+  → `wp-local-env` skill (Section 7: Preview and share)
+- **MCP adapter / local MCP / WordPress MCP server**
+  → `wp-local-env` skill (Section 8: MCP integration) + `references/mcp-adapter-setup.md`
+- **Which tool / Studio vs LocalWP / which local env / recommend tool**
+  → `wp-local-env` skill (run detection, present comparison)
+
+**Overlap with Development**: If the user is developing a plugin/theme AND needs a local site to test it, route to `wp-local-env` first (symlink workflow), then to development skills for the code changes.
+
+**Overlap with Operations**: If the user mentions "deploy from local" or "push local to production", route to `wp-local-env` for export, then to `wp-deploy` for the deployment.
+
 ## Step 3: guardrails checklist (always)
 
 ### Development guardrails
 - Verify detected tooling before suggesting commands (Composer vs npm/yarn/pnpm).
 - Prefer existing lint/test scripts if present.
 - If version constraints aren’t detectable, ask for target WP core and PHP versions.
+
+### Local environment guardrails
+- Run `detect_local_env.mjs` before assuming which tool is available.
+- For LocalWP: verify the site is started (GUI) before WP-CLI or DB operations.
+- For Studio: verify the Studio app is running before CLI operations.
+- For wp-env: verify Docker is running (`docker info`) before starting.
+- Never delete a local site without explicit user confirmation.
+- When multiple tools are detected, use the `recommended` field from detection output.
 
 ### Operations guardrails
 - Confirm target site before any operation.

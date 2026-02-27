@@ -1,6 +1,6 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 1.4.0
+**Versione:** 1.5.0
 **Ultimo aggiornamento:** 2026-02-27
 **Repository:** https://github.com/morrealev/wordpress-manager
 
@@ -16,13 +16,14 @@
 6. [Agenti Specializzati](#6-agenti-specializzati)
 7. [Skills Operative - Gestione Siti Live](#7-skills-operative---gestione-siti-live)
 8. [Skills di Sviluppo - Costruire Progetti WordPress](#8-skills-di-sviluppo---costruire-progetti-wordpress)
-9. [Hook di Sicurezza](#9-hook-di-sicurezza)
-10. [MCP Server - Architettura Tecnica](#10-mcp-server---architettura-tecnica)
-11. [Gestione Multi-Sito](#11-gestione-multi-sito)
-12. [Scenari d'Uso Comuni](#12-scenari-duso-comuni)
-13. [Amministrazione Avanzata](#13-amministrazione-avanzata)
-14. [Troubleshooting](#14-troubleshooting)
-15. [Glossario](#15-glossario)
+9. [Ambienti di Sviluppo Locali](#9-ambienti-di-sviluppo-locali)
+10. [Hook di Sicurezza](#10-hook-di-sicurezza)
+11. [MCP Server - Architettura Tecnica](#11-mcp-server---architettura-tecnica)
+12. [Gestione Multi-Sito](#12-gestione-multi-sito)
+13. [Scenari d'Uso Comuni](#13-scenari-duso-comuni)
+14. [Amministrazione Avanzata](#14-amministrazione-avanzata)
+15. [Troubleshooting](#15-troubleshooting)
+16. [Glossario](#16-glossario)
 
 ---
 
@@ -696,7 +697,59 @@ Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components`
 
 ---
 
-## 9. Hook di Sicurezza
+## 9. Ambienti di Sviluppo Locali
+
+La skill `wp-local-env` fornisce gestione unificata degli ambienti di sviluppo WordPress locali.
+
+### Strumenti Supportati
+
+| Strumento | Tipo | Database | CLI | Quando Usarlo |
+|-----------|------|----------|-----|---------------|
+| **WordPress Studio** | WASM (Electron) | SQLite | `studio` CLI | Setup rapido, sviluppo leggero |
+| **LocalWP** | Nativo (Electron) | MySQL | GUI only + WP-CLI bundled | Parita con produzione, multisite |
+| **wp-env** | Docker | MySQL | `npx wp-env` | CI/CD, contribuzione WordPress core |
+
+### Rilevamento Automatico
+
+```
+"Rileva i miei ambienti WordPress locali"
+```
+
+Il plugin esegue `detect_local_env.mjs` che:
+1. Cerca WordPress Studio (`studio` CLI + `~/Studio/`)
+2. Cerca LocalWP (`sites.json` + WP-CLI bundled)
+3. Cerca wp-env (`.wp-env.json` + Docker)
+4. Raccomanda lo strumento migliore per automazione
+
+### Operazioni Comuni
+
+```
+"Crea un sito locale con WordPress Studio"
+→ studio site create --path ~/Studio/mio-sito
+
+"Elenca i plugin del mio sito LocalWP"
+→ <wp-cli-bin> --path="~/Local Sites/mio-sito/app/public" plugin list
+
+"Avvia wp-env con il mio plugin"
+→ npx wp-env start
+
+"Collega il mio plugin al sito locale (symlink)"
+→ ln -s /path/to/plugin ~/Studio/mio-sito/wp-content/plugins/plugin
+
+"Esporta il database locale per il deploy"
+→ studio wp db export backup.sql --path=<sito>
+```
+
+### Reference Files
+
+- `studio-adapter.md` — CLI Studio, percorsi, SQLite, limitazioni
+- `localwp-adapter.md` — sites.json, binari bundled, MySQL, log
+- `wpenv-adapter.md` — Docker, .wp-env.json, comandi
+- `mcp-adapter-setup.md` — Configurazione MCP Adapter (STDIO + HTTP)
+
+---
+
+## 10. Hook di Sicurezza
 
 Gli hook sono guardiani automatici che intercettano operazioni pericolose prima che vengano eseguite. Funzionano senza bisogno di attivarli manualmente.
 
@@ -738,7 +791,7 @@ Se approvato -> Esecuzione hosting_importWordpressWebsite
 
 ---
 
-## 10. MCP Server - Architettura Tecnica
+## 11. MCP Server - Architettura Tecnica
 
 ### Cos'e MCP
 
@@ -795,7 +848,7 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 
 ---
 
-## 11. Gestione Multi-Sito
+## 12. Gestione Multi-Sito
 
 ### Configurazione
 
@@ -841,7 +894,7 @@ Il wp-site-manager agent determina automaticamente quale set di tool usare:
 
 ---
 
-## 12. Scenari d'Uso Comuni
+## 13. Scenari d'Uso Comuni
 
 ### Scenario 1: Check-up Mattutino del Sito
 
@@ -944,7 +997,7 @@ Claude (attiva wp-phpstan + wp-performance):
 
 ---
 
-## 13. Amministrazione Avanzata
+## 14. Amministrazione Avanzata
 
 ### 13.1 Personalizzare gli Hook
 
@@ -1046,7 +1099,7 @@ wp-config.php:  440 (r--r-----)
 
 ---
 
-## 14. Troubleshooting
+## 15. Troubleshooting
 
 ### Problemi di Connessione
 
@@ -1155,7 +1208,7 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 
 ---
 
-## 15. Glossario
+## 16. Glossario
 
 | Termine | Definizione |
 |---------|------------|

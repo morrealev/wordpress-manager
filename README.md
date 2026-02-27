@@ -6,11 +6,11 @@ Unified WordPress management **and** development plugin that orchestrates multip
 
 ```
 wordpress-manager/
-├── .claude-plugin/plugin.json    # Plugin manifest (v1.4.0)
+├── .claude-plugin/plugin.json    # Plugin manifest (v1.5.0)
 ├── .mcp.json                     # MCP server definitions
 ├── agents/                       # 5 specialized agents
 ├── commands/                     # 5 slash commands
-├── skills/                       # 18 skills (5 operational + 13 development)
+├── skills/                       # 19 skills (5 operational + 13 development + 1 local env)
 ├── hooks/hooks.json              # 6 safety hooks (PreToolUse)
 └── servers/wp-rest-bridge/       # Custom MCP server (TypeScript)
 ```
@@ -66,13 +66,19 @@ wordpress-manager/
 | `wp-migrate` | "migrate my site", "move to Hostinger", "transfer" | hostinger-migration.md, cross-platform.md |
 | `wp-backup` | "backup my site", "create backup", "restore" | backup-strategies.md, restore-procedures.md |
 
+### Local Environment Skill (1) — managing local WordPress dev environments
+
+| Skill | Purpose | Key References |
+|-------|---------|----------------|
+| `wp-local-env` | Unified local env management: Studio, LocalWP, wp-env detection, lifecycle, WP-CLI, symlinks, DB ops | studio-adapter.md, localwp-adapter.md, wpenv-adapter.md, mcp-adapter-setup.md |
+
 ### Development Skills (13) — building WordPress projects
 
 Integrated from [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (GPL-2.0-or-later).
 
 | Skill | Purpose | Key References |
 |-------|---------|----------------|
-| `wordpress-router` | Unified router: classifies tasks (dev vs ops) and routes to correct skill/agent | decision-tree.md |
+| `wordpress-router` | Unified router v3: classifies tasks (dev vs local env vs ops) and routes to correct skill/agent | decision-tree.md |
 | `wp-project-triage` | Auto-detects project type (plugin, theme, block theme, core) | detect_wp_project.mjs, triage.schema.json |
 | `wp-block-development` | Gutenberg block creation: block.json, attributes, save, edit | 10 references, list_blocks.mjs |
 | `wp-block-themes` | Block theme development: theme.json, templates, patterns | 6 references, detect_block_themes.mjs |
@@ -206,6 +212,7 @@ npx tsc              # Compile TypeScript to build/
 | 1.2.0 | Phase 3 | +3 commands (audit, backup, setup), +2 skills (migrate, backup) |
 | 1.3.0 | Phase 4 | E2E testing, utility scripts, command hooks, WordPress.com dual-mode support |
 | 1.4.0 | Phase 5 | +13 development skills from WordPress/agent-skills community repo (blocks, themes, plugins, REST API, Interactivity API, Abilities API, WP-CLI, PHPStan, Performance, Playground, WPDS, Router, Triage) |
+| 1.5.0 | Phase 6 | +1 local environment skill (`wp-local-env`): WordPress Studio, LocalWP, wp-env detection, unified management, router v3 |
 
 ## License
 
