@@ -2,6 +2,20 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.0.0] - 2026-02-28
+
+### Added
+- **CI/CD support** — new skill and agent for WordPress pipeline automation
+- **New skill**: `wp-cicd` with 7 reference files (GitHub Actions, GitLab CI, Bitbucket Pipelines, wp-env CI, deploy strategies, secrets management, quality gates)
+- **New agent**: `wp-cicd-engineer` (color: cyan) — pipeline generation, quality gates, deploy automation, CI troubleshooting
+- **Detection script**: `cicd_inspect.mjs` — detects CI platforms, quality tools, wp-env readiness
+
+### Changed
+- Router decision-tree.md upgraded to v7 with CI/CD keywords and routing
+- `wp-e2e-testing`, `wp-deploy`, `wp-phpstan` skills: added CI/CD cross-references
+- `wp-site-manager` agent: added CI/CD delegation row
+- Plugin now has 10 agents and 27 skills
+
 ## [1.9.0] - 2026-02-28
 
 ### Added

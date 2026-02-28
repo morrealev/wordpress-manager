@@ -1,4 +1,4 @@
-# Router decision tree (v6 — development + local environment + operations + multisite)
+# Router decision tree (v7 — development + local environment + operations + multisite + CI/CD)
 
 This routing guide covers WordPress **development**, **local environment**, and **operations** workflows.
 
@@ -17,7 +17,7 @@ Keywords that indicate **operations**:
 deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit, WooCommerce, prodotto, ordine, coupon, negozio, catalogo, inventario, vendite, carrello, multisite, network, sub-site, sub-sito, domain mapping, super admin, network activate
 
 Keywords that indicate **development**:
-create block, block.json, theme.json, register_rest_route, plugin development, hooks, PHPStan, build, test, scaffold, i18n, translation, accessibility, a11y, headless, decoupled, WPGraphQL
+create block, block.json, theme.json, register_rest_route, plugin development, hooks, PHPStan, build, test, scaffold, i18n, translation, accessibility, a11y, headless, decoupled, WPGraphQL, CI, CD, pipeline, GitHub Actions, GitLab CI, deploy automatico, workflow, quality gate
 
 ## Step 1: classify repo kind (from triage — development only)
 
@@ -65,6 +65,8 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
   → `wp-accessibility` skill + `wp-accessibility-auditor` agent
 - **Headless / decoupled / WPGraphQL / Next.js / Nuxt / Astro / Gatsby / CORS / ISR / SSG / frontend integration**
   → `wp-headless`
+- **CI / CD / pipeline / GitHub Actions / GitLab CI / Bitbucket Pipelines / quality gate / deploy automatico / continuous integration**
+  → `wp-cicd` skill + `wp-cicd-engineer` agent
 
 ## Step 2b: route by operational intent (keywords)
 

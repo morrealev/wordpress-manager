@@ -184,3 +184,7 @@ After completing the setup, verify:
 ## Recommended Agent
 
 For hands-on test execution, debugging, and CI setup, use the **`wp-test-engineer`** agent.
+
+### CI/CD Integration
+
+For integrating WordPress tests into CI/CD pipelines (GitHub Actions, GitLab CI, Bitbucket Pipelines), see the `wp-cicd` skill and `wp-cicd-engineer` agent.

@@ -97,3 +97,7 @@ See:
 
 - If a type depends on a third-party plugin API you can’t confirm, ask for the dependency version or source before inventing types.
 - If fixing requires adding new Composer dependencies (stubs/extensions), confirm it with the user first.
+
+### CI/CD Quality Gates
+
+For integrating PHPStan as a quality gate in CI/CD pipelines, see the `wp-cicd` skill (`references/quality-gates.md`).

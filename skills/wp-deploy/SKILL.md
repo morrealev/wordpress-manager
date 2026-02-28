@@ -63,3 +63,7 @@ For full details on local environment operations, see the `wp-local-env` skill.
 - **`references/hostinger-deploy.md`** - Hostinger MCP deployment details
 - **`references/ssh-deploy.md`** - SSH/SFTP deployment procedures
 - For deploying WooCommerce stores, see `wp-woocommerce` skill
+
+### Automated Deployment
+
+For automated deployments via CI/CD pipelines, see the `wp-cicd` skill and `wp-cicd-engineer` agent.

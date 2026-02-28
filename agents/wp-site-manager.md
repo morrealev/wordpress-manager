@@ -148,3 +148,4 @@ For domain-specific tasks, delegate to specialized agents:
 | Deploy to production | `wp-deployment-engineer` | Plugin, theme, site deployment |
 | WooCommerce store management | `wp-ecommerce-manager` | Products, orders, customers, coupons, analytics |
 | Multisite network management | `wp-site-manager` (this agent) | Sub-sites, network plugins, Super Admin — see section above |
+| CI/CD pipeline setup and troubleshooting | `wp-cicd-engineer` | GitHub Actions, GitLab CI, Bitbucket, quality gates |
