@@ -2,6 +2,11 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [1.7.1] - 2026-02-28
+
+### Changed
+- README aggiornato per v1.7.0: tabella 8 agent con colonna "Paired Skill", collaboration patterns, 24 skill, version history
+
 ## [1.7.0] - 2026-02-28
 
 ### Added
