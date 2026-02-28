@@ -241,6 +241,19 @@ export interface WCCoupon {
   maximum_amount: string;
 }
 
+export interface WCWebhook {
+  id: number;
+  name: string;
+  status: string;        // active, paused, disabled
+  topic: string;         // e.g., "order.created", "product.updated"
+  resource: string;      // e.g., "order", "product"
+  event: string;         // e.g., "created", "updated"
+  delivery_url: string;
+  secret: string;
+  date_created: string;
+  date_modified: string;
+}
+
 // ── WordPress Multisite Types ────────────────────────────────────────
 
 export interface WPNetworkSite {

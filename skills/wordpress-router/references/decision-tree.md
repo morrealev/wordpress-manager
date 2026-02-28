@@ -1,4 +1,4 @@
-# Router decision tree (v8 — development + local environment + operations + multisite + CI/CD + monitoring)
+# Router decision tree (v9 — development + local environment + operations + multisite + CI/CD + monitoring + webhooks + content repurposing)
 
 This routing guide covers WordPress **development**, **local environment**, and **operations** workflows.
 
@@ -14,7 +14,7 @@ Keywords that indicate **local environment**:
 local site, Studio, LocalWP, Local by Flywheel, wp-env, local WordPress, start site, stop site, create local site, local development, symlink plugin, local database, switch PHP version, localhost, local preview, detect environment, WASM, SQLite local
 
 Keywords that indicate **operations**:
-deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit, WooCommerce, prodotto, ordine, coupon, negozio, catalogo, inventario, vendite, carrello, multisite, network, sub-site, sub-sito, domain mapping, super admin, network activate, monitor, uptime, health report, trend, scansione periodica, alerting, performance baseline
+deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit, WooCommerce, prodotto, ordine, coupon, negozio, catalogo, inventario, vendite, carrello, multisite, network, sub-site, sub-sito, domain mapping, super admin, network activate, monitor, uptime, health report, trend, scansione periodica, alerting, performance baseline, fleet, all sites, network health, cross-site, webhook, outbound notification, event propagation, Zapier, content sync, repurpose content, social posts from blog, content atomization, newsletter from posts, content distribution
 
 Keywords that indicate **development**:
 create block, block.json, theme.json, register_rest_route, plugin development, hooks, PHPStan, build, test, scaffold, i18n, translation, accessibility, a11y, headless, decoupled, WPGraphQL, CI, CD, pipeline, GitHub Actions, GitLab CI, deploy automatico, workflow, quality gate
@@ -92,8 +92,12 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
   → `wp-woocommerce` skill + `wp-ecommerce-manager` agent
 - **Multisite / network / sub-sites / domain mapping / super admin / network activate**
   → `wp-multisite` skill + `wp-site-manager` agent
-- **Monitor / uptime / health report / trend / scansione periodica / alerting / performance baseline / ongoing checks**
+- **Monitor / uptime / health report / trend / scansione periodica / alerting / performance baseline / ongoing checks / fleet / all sites / cross-site comparison**
   → `wp-monitoring` skill + `wp-monitoring-agent` agent
+- **Webhook / outbound notification / event propagation / Zapier / Make / n8n / content sync webhook**
+  → `wp-webhooks` skill + `wp-site-manager` agent
+- **Repurpose content / social posts from blog / newsletter from content / atomize / content distribution / turn blog into social**
+  → `wp-content-repurposing` skill + `wp-content-strategist` agent
 
 ## Step 2c: route by local environment intent (keywords)
 

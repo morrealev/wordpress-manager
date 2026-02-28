@@ -2,6 +2,31 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.2.0] - 2026-02-28
+
+### Added
+- **Fleet monitoring** — cross-site health assessment for all configured WordPress sites
+  - New reference file: `skills/wp-monitoring/references/fleet-monitoring.md` (fleet iteration, cross-site patterns, fleet baselines, site grouping, scheduling, P0 escalation)
+  - Detection script updated: `detectFleetConfiguration()` checks WP_SITES_CONFIG and sites.json for multi-site fleet
+  - Agent updated: Procedure 7 (Fleet Monitoring) + Fleet Report Template in `wp-monitoring-agent`
+
+- **Content repurposing skill** (`wp-content-repurposing`) — transform WordPress content into multi-channel outputs
+  - 4 reference files: social-formats (Twitter/LinkedIn/Instagram/Facebook templates), email-newsletter (digest/drip/subject lines), content-atomization (pillar→atoms workflow, repurposing matrix), platform-specs (character limits, image dimensions, posting frequency)
+  - Detection script: `repurposing_inspect.mjs` — detects social plugins, email plugins, content volume
+  - Agent updated: `wp-content-strategist` now includes Content Repurposing Workflow and repurposing example
+
+- **Webhook propagation skill** (`wp-webhooks`) — WordPress outbound webhook configuration and management
+  - 5 reference files: woocommerce-webhooks (API, topics, MCP tools), wordpress-core-webhooks (mu-plugin, action hooks), integration-recipes (Zapier/Make/n8n/Slack/CDN), payload-formats (JSON payloads, WC examples), webhook-security (HMAC-SHA256, signatures, rate limiting)
+  - Detection script: `webhook_inspect.mjs` — detects WC webhooks, mu-plugin webhooks, webhook plugins, wp-config constants
+  - 4 new MCP tools via WP REST Bridge: `wc_list_webhooks`, `wc_create_webhook`, `wc_update_webhook`, `wc_delete_webhook`
+  - `WCWebhook` TypeScript interface added to types.ts
+  - Safety hook for `wc_delete_webhook` (PreToolUse prompt confirmation)
+
+### Changed
+- Router decision-tree.md upgraded to v9 with fleet, webhook, and content repurposing keywords and routing
+- Cross-references added: `wp-content` → wp-content-repurposing, `wp-headless` → wp-webhooks, `wp-woocommerce` → wp-webhooks
+- Plugin now has 30 skills, 11 agents, and 85 MCP tools
+
 ## [2.1.1] - 2026-02-28
 
 ### Changed

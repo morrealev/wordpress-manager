@@ -24,6 +24,13 @@ description: |
   assistant: "I'll use the wp-monitoring-agent to analyze performance metrics and compare with the baseline."
   <commentary>Performance trend analysis requires collecting current metrics and comparing with historical data.</commentary>
   </example>
+
+  <example>
+  Context: User wants to check all their WordPress sites at once.
+  user: "Run a health check across all my sites"
+  assistant: "I'll use the wp-monitoring-agent to perform a fleet-wide health assessment across all configured sites."
+  <commentary>Fleet monitoring requires iterating over all configured sites and aggregating findings.</commentary>
+  </example>
 model: inherit
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
@@ -109,6 +116,23 @@ Run a full assessment to create a monitoring baseline:
 4. Check robots.txt via WebFetch: verify no unexpected rules
 5. Report content changes, spam levels, and SEO health
 
+### Procedure 7: Fleet Monitoring
+
+Run health assessments across all configured sites and generate a fleet-wide comparison:
+
+1. **Enumerate sites**: Use `list_sites` to get all configured sites
+2. **Iterate**: For each site:
+   a. `switch_site` to target the site
+   b. Run Procedures 3-6 (uptime, performance, security, content)
+   c. Record per-site metrics and findings
+3. **Aggregate**: Combine per-site results into a fleet comparison table
+4. **Cross-site pattern detection**:
+   - Same plugin vulnerability across multiple sites
+   - Correlated performance degradation (shared hosting, CDN issue)
+   - Identical outdated WordPress core versions
+   - Common configuration drift from baselines
+5. **Generate fleet report** (see Fleet Report template below)
+
 ## Report Generation
 
 After completing relevant procedures, generate a report following the templates in `references/reporting-templates.md`:
@@ -155,6 +179,31 @@ After completing relevant procedures, generate a report following the templates 
 3. [Third priority]
 ```
 
+### Fleet Report Template
+
+```
+## Fleet Health Report
+**Date:** [date] | **Sites:** [count] | **Scope:** [full / quick]
+
+### Fleet Overview
+| Site | Uptime | Performance | Security | Content | Overall |
+|------|--------|-------------|----------|---------|---------|
+| [site-1] | [✅/⚠️/❌] | [✅/⚠️/❌] | [✅/⚠️/❌] | [✅/⚠️/❌] | [✅/⚠️/❌] |
+| [site-2] | [✅/⚠️/❌] | [✅/⚠️/❌] | [✅/⚠️/❌] | [✅/⚠️/❌] | [✅/⚠️/❌] |
+
+### Fleet Summary
+- **Healthy sites:** X/N
+- **Degraded sites:** X/N (list)
+- **Critical sites:** X/N (list)
+
+### Cross-Site Patterns
+[findings or "No cross-site patterns detected"]
+
+### Fleet Recommendations (Priority Order)
+1. [Fleet-wide action]
+2. [Site-specific action]
+```
+
 ## Safety Rules
 
 - **NEVER modify any site data** — this agent is strictly read-only
@@ -175,6 +224,7 @@ For issues found during monitoring:
 | Content or SEO issues | `wp-content-strategist` agent |
 | Plugin/deployment issues | `wp-deployment-engineer` agent |
 | Infrastructure/hosting issues | `wp-site-manager` agent |
+| Fleet-wide infrastructure issue | `wp-site-manager` agent (multi-site coordination) |
 
 ## Related Skills
 

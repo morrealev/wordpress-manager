@@ -193,6 +193,52 @@ function detectContentIntegrity(cwd) {
   return indicators.length > 0 ? { found: true, indicators } : { found: false };
 }
 
+function detectFleetConfiguration() {
+  const indicators = [];
+
+  // Check WP_SITES_CONFIG environment variable
+  const sitesConfig = process.env.WP_SITES_CONFIG;
+  if (sitesConfig) {
+    try {
+      const sites = JSON.parse(sitesConfig);
+      if (Array.isArray(sites) && sites.length > 1) {
+        indicators.push(`multi_site_config: ${sites.length} sites`);
+      } else if (Array.isArray(sites) && sites.length === 1) {
+        indicators.push('single_site_config');
+      }
+    } catch {
+      // Not valid JSON, might be a file path
+      indicators.push('sites_config_present');
+    }
+  }
+
+  // Check for sites.json file
+  if (existsSafe(join(process.cwd(), 'sites.json'))) {
+    const content = readFileSafe(join(process.cwd(), 'sites.json'));
+    if (content) {
+      try {
+        const sites = JSON.parse(content);
+        if (Array.isArray(sites) && sites.length > 1) {
+          indicators.push(`sites_json: ${sites.length} sites`);
+        }
+      } catch { /* ignore */ }
+    }
+  }
+
+  const siteCount = indicators.find(i => i.startsWith('multi_site_config'))
+    ? parseInt(indicators.find(i => i.startsWith('multi_site_config')).split(': ')[1])
+    : indicators.find(i => i.startsWith('sites_json'))
+      ? parseInt(indicators.find(i => i.startsWith('sites_json')).split(': ')[1])
+      : 0;
+
+  return {
+    found: indicators.length > 0,
+    indicators,
+    site_count: siteCount,
+    fleet_monitoring_possible: siteCount > 1,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -206,8 +252,9 @@ function main() {
   const security = detectSecurityScanning(cwd);
   const logging = detectLogging(cwd);
   const contentIntegrity = detectContentIntegrity(cwd);
+  const fleet = detectFleetConfiguration();
 
-  const hasMonitoring = uptime.found || performance.found || security.found || logging.found || contentIntegrity.found;
+  const hasMonitoring = uptime.found || performance.found || security.found || logging.found || contentIntegrity.found || fleet.found;
 
   const recommendations = [];
 
@@ -232,6 +279,11 @@ function main() {
   if (logging.found && logging.indicators.includes('debug_log_exists')) {
     recommendations.push('debug.log file exists — ensure it is not publicly accessible');
   }
+  if (fleet.fleet_monitoring_possible) {
+    recommendations.push(`Fleet monitoring available — ${fleet.site_count} sites configured. Use Procedure 7 for cross-site health checks.`);
+  } else if (!fleet.found) {
+    recommendations.push('No multi-site configuration detected — configure WP_SITES_CONFIG with multiple sites for fleet monitoring');
+  }
   if (!hasMonitoring) {
     recommendations.push('No monitoring setup found — use wp-monitoring skill to establish a baseline');
   }
@@ -248,6 +300,7 @@ function main() {
       security,
       logging,
       content_integrity: contentIntegrity,
+      fleet,
     },
     recommendations,
   };

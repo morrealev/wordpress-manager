@@ -101,3 +101,6 @@ Tool: assign_terms_to_content — assign terms to content
 ### Reference Files
 - **`references/content-templates.md`** - Templates for different content types
 - **`references/seo-optimization.md`** - On-page SEO patterns for WordPress
+
+### Related Skills
+- **`wp-content-repurposing`** — transform existing content for social media, email, and multi-channel distribution

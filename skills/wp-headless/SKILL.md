@@ -166,3 +166,4 @@ Read: `references/webhooks.md`
 - Astro WordPress integration: https://docs.astro.build/en/guides/cms/wordpress/
 - For REST endpoint development, use the `wp-rest-api` skill
 - For authentication security, use the `wp-security` skill
+- For webhook configuration and management, use the `wp-webhooks` skill

@@ -24,6 +24,13 @@ description: |
   assistant: "I'll use the wp-content-strategist agent to set up the taxonomy structure."
   <commentary>Taxonomy design impacts content architecture and SEO.</commentary>
   </example>
+
+  <example>
+  Context: User wants to repurpose blog content for social media.
+  user: "Turn my latest blog posts into social media content"
+  assistant: "I'll use the wp-content-strategist agent to extract key insights from your posts and generate platform-specific social content."
+  <commentary>Content repurposing requires selecting source content and applying platform templates.</commentary>
+  </example>
 model: inherit
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
@@ -147,6 +154,28 @@ Excerpt: [Meta description with keyword, under 160 chars]
 - ALWAYS preserve existing SEO-optimized slugs when updating content
 - ALWAYS check for duplicate slugs before creating new content
 
+## Content Repurposing Workflow
+
+When repurposing existing WordPress content into multi-channel formats:
+
+1. **Select source content**: Use `list_content` to find recent/popular posts
+   - Filter by `orderby: "date"` for recent or by popularity metrics
+   - Prioritize evergreen content with broad appeal
+2. **Extract key elements** from source post:
+   - Headline and hook
+   - 3-5 key insights or data points
+   - Quotable passages
+   - Statistics or results
+   - Call to action
+3. **Apply platform templates** from `wp-content-repurposing` skill:
+   - Social formats: `references/social-formats.md`
+   - Email newsletter: `references/email-newsletter.md`
+   - Atomization: `references/content-atomization.md`
+4. **Generate formatted outputs** per target channel
+5. **Present all variants** to user for review before distribution
+
+See the `wp-content-repurposing` skill for detailed templates and platform specifications.
+
 ## Multilingual Content
 
 When creating content for multilingual sites:
@@ -164,3 +193,4 @@ When creating content for multilingual sites:
 
 - **`wp-content` skill** — content lifecycle management, editorial workflows
 - **`wp-i18n` skill** — internationalization and localization procedures
+- **`wp-content-repurposing` skill** — content transformation for multi-channel distribution

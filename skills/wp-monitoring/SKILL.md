@@ -3,8 +3,9 @@ name: wp-monitoring
 description: This skill should be used when the user asks to "monitor my site", "set up
   uptime checks", "performance baseline", "health report", "security scanning schedule",
   "content integrity check", "alerting", "reporting", "trend analysis", "is my site up",
-  "site health over time", or mentions any form of ongoing WordPress monitoring and
-  observability. Orchestrates uptime, performance, security, and content monitoring.
+  "site health over time", "fleet monitoring", "all sites", "cross-site comparison",
+  "network health", or mentions any form of ongoing WordPress monitoring and
+  observability. Orchestrates uptime, performance, security, content, and fleet monitoring.
 version: 1.0.0
 ---
 
@@ -40,6 +41,7 @@ Provides strategies and procedures for continuous WordPress monitoring across fi
    - "content changed" / "broken links" / "spam" → Content integrity (Section 4)
    - "alert me" / "notify" / "threshold" → Alerting strategies (Section 5)
    - "report" / "weekly summary" / "dashboard" → Reporting templates (Section 6)
+   - "fleet" / "all sites" / "network health" / "cross-site" → Fleet monitoring (Section 7)
    - "full monitoring" / "set up everything" → All sections, start with detection
 
 2. **Run detection first:**
@@ -98,6 +100,13 @@ See `references/reporting-templates.md`
 - Quarterly trend analysis
 - Executive dashboard format
 
+### Section 7: Fleet Monitoring
+See `references/fleet-monitoring.md`
+- Cross-site health iteration using `list_sites` + `switch_site`
+- Fleet-wide pattern detection (correlated issues)
+- Fleet comparison reports
+- Site grouping and fleet baselines
+
 ## Reference Files
 
 | File | Content |
@@ -108,6 +117,7 @@ See `references/reporting-templates.md`
 | `references/content-integrity.md` | Change detection, link checking, spam |
 | `references/alerting-strategies.md` | Thresholds, escalation, notification channels |
 | `references/reporting-templates.md` | Daily/weekly/monthly report templates |
+| `references/fleet-monitoring.md` | Fleet iteration, cross-site comparison, fleet reports |
 
 ## Recommended Agent
 

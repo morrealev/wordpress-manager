@@ -16,6 +16,7 @@ import { wcReportTools, wcReportHandlers } from './wc-reports.js';
 import { wcSettingTools, wcSettingHandlers } from './wc-settings.js';
 import { multisiteSiteTools, multisiteSiteHandlers } from './multisite-sites.js';
 import { multisiteNetworkTools, multisiteNetworkHandlers } from './multisite-network.js';
+import { wcWebhookTools, wcWebhookHandlers } from './wc-webhooks.js';
 
 // Combine all tools
 export const allTools: Tool[] = [
@@ -35,6 +36,7 @@ export const allTools: Tool[] = [
   ...wcSettingTools,             // 4 tools
   ...multisiteSiteTools,         // 5 tools
   ...multisiteNetworkTools,      // 5 tools
+  ...wcWebhookTools,             // 4 tools
 ];
 
 // Combine all handlers
@@ -55,4 +57,5 @@ export const toolHandlers = {
   ...wcSettingHandlers,
   ...multisiteSiteHandlers,
   ...multisiteNetworkHandlers,
+  ...wcWebhookHandlers,
 };

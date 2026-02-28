@@ -108,3 +108,4 @@ For complex multi-step WooCommerce operations, use the `wp-ecommerce-manager` ag
 - `wp-deploy` — Deploy WooCommerce store changes to production
 - `wp-audit` — Audit WooCommerce store security and performance
 - `wp-backup` — Backup WooCommerce database and uploads
+- `wp-webhooks` — WooCommerce webhook management (order/product/customer event notifications)
