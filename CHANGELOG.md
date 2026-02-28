@@ -2,6 +2,11 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.2.1] - 2026-02-28
+
+### Changed
+- **GUIDE.md**: aggiornamento completo da v2.1.0 a v2.2.0 — documenta fleet monitoring, content repurposing, webhook propagation (19 scenari, 30 skill, 85 tool, router v9, +6 termini glossario)
+
 ## [2.2.0] - 2026-02-28
 
 ### Added
