@@ -208,3 +208,4 @@ Use both tool sets together for a complete picture — WP REST Bridge tells you 
 
 - **`wp-performance` skill** — backend profiling with WP-CLI doctor/profile, query optimization, database analysis
 - **`wp-audit` skill** — performance audit checklists and scoring framework
+- **`wp-monitoring` skill** — for ongoing performance trend tracking and baseline comparison (via `wp-monitoring-agent`)

@@ -117,3 +117,4 @@ Combine findings into a unified report with:
 ## Related skills
 
 - `wp-security` — Deep security hardening, filesystem permissions, HTTP headers, incident response procedures
+- `wp-monitoring` — For ongoing monitoring (uptime, performance trends, security scanning, content integrity) beyond one-time audits

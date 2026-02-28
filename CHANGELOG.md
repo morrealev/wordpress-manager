@@ -2,6 +2,22 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.1.0] - 2026-02-28
+
+### Added
+- **WordPress monitoring support** — new skill and agent for ongoing site observability
+- **New skill**: `wp-monitoring` with 6 reference files (uptime checks, performance baseline, security scanning, content integrity, alerting strategies, reporting templates)
+- **New agent**: `wp-monitoring-agent` (color: teal) — read-only monitoring, health reports, anomaly detection, baseline comparison
+- **Detection script**: `monitoring_inspect.mjs` — detects existing monitoring setup (uptime, performance, security, logging, content integrity)
+
+### Changed
+- Router decision-tree.md upgraded to v8 with monitoring keywords and routing
+- `wp-audit` skill: added monitoring cross-reference
+- `wp-security-auditor` agent: added periodic scanning cross-reference to wp-monitoring
+- `wp-performance-optimizer` agent: added trend tracking cross-reference to wp-monitoring
+- `wp-site-manager` agent: added monitoring delegation row
+- Plugin now has 11 agents and 28 skills
+
 ## [2.0.0] - 2026-02-28
 
 ### Added

@@ -179,3 +179,4 @@ This checks wp-config constants, file permissions, .htaccess rules, and active s
 
 - **`wp-security` skill** — comprehensive hardening references (filesystem, headers, auth, API, incident response)
 - **`wp-audit` skill** — security/performance/SEO audit checklists and scoring
+- **`wp-monitoring` skill** — for scheduled periodic security scans and trend tracking (via `wp-monitoring-agent`)

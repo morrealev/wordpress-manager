@@ -149,3 +149,4 @@ For domain-specific tasks, delegate to specialized agents:
 | WooCommerce store management | `wp-ecommerce-manager` | Products, orders, customers, coupons, analytics |
 | Multisite network management | `wp-site-manager` (this agent) | Sub-sites, network plugins, Super Admin — see section above |
 | CI/CD pipeline setup and troubleshooting | `wp-cicd-engineer` | GitHub Actions, GitLab CI, Bitbucket, quality gates |
+| Site monitoring and health reports | `wp-monitoring-agent` | Uptime, performance trends, security scanning, content integrity |

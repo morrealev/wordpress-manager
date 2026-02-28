@@ -1,7 +1,7 @@
 {
   "name": "claude-plugin-wordpress-manager",
-  "version": "2.0.0",
-  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (81 tools incl. 30 WooCommerce + 10 Multisite), and WordPress.com MCP with 27 skills, 10 agents, and security hooks. v2.0.0 adds CI/CD pipeline automation: GitHub Actions, GitLab CI, Bitbucket Pipelines, quality gates, deploy strategies, secrets management.",
+  "version": "2.1.0",
+  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (81 tools incl. 30 WooCommerce + 10 Multisite), and WordPress.com MCP with 28 skills, 11 agents, and security hooks. v2.1.0 adds site monitoring: uptime checks, performance baseline, security scanning, content integrity, alerting strategies, and reporting templates.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -30,7 +30,10 @@
     "network",
     "ci-cd",
     "github-actions",
-    "gitlab-ci"
+    "gitlab-ci",
+    "monitoring",
+    "uptime",
+    "health-check"
   ],
   "repository": {
     "type": "git",
