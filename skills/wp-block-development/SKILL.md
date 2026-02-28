@@ -174,3 +174,8 @@ If you’re uncertain about upstream behavior/version support, consult canonical
 
 - WordPress Developer Resources (Block Editor Handbook, Theme Handbook, Plugin Handbook)
 - Gutenberg repo docs for bleeding-edge behaviors
+
+## Related skills
+
+- `wp-e2e-testing` — Playwright E2E tests, Jest unit tests for block JavaScript, wp-env test environments
+- `wp-accessibility` — Block ARIA patterns, keyboard navigation, color contrast checks

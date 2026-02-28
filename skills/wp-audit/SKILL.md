@@ -112,3 +112,7 @@ Combine findings into a unified report with:
 - **`references/security-checklist.md`** - WordPress security audit checklist
 - **`references/performance-checklist.md`** - Performance analysis checklist
 - **`references/seo-checklist.md`** - SEO audit checklist
+
+## Related skills
+
+- `wp-security` — Deep security hardening, filesystem permissions, HTTP headers, incident response procedures

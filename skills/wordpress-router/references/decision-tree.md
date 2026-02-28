@@ -1,4 +1,4 @@
-# Router decision tree (v3 — development + local environment + operations)
+# Router decision tree (v4 — development + local environment + operations)
 
 This routing guide covers WordPress **development**, **local environment**, and **operations** workflows.
 
@@ -17,7 +17,7 @@ Keywords that indicate **operations**:
 deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit
 
 Keywords that indicate **development**:
-create block, block.json, theme.json, register_rest_route, plugin development, hooks, PHPStan, build, test, scaffold
+create block, block.json, theme.json, register_rest_route, plugin development, hooks, PHPStan, build, test, scaffold, i18n, translation, accessibility, a11y, headless, decoupled, WPGraphQL
 
 ## Step 1: classify repo kind (from triage — development only)
 
@@ -57,6 +57,14 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
   → `wpds` (WordPress Design System)
 - **Playground / disposable WP / blueprint / sandbox / test environment / version switching**
   → `wp-playground`
+- **Test / E2E / Playwright / Jest / PHPUnit / wp-env testing / coverage / visual regression**
+  → `wp-e2e-testing`
+- **i18n / translation / .pot / gettext / text domain / RTL / Polylang / WPML / multilingual**
+  → `wp-i18n`
+- **Accessibility / a11y / WCAG / ARIA / screen reader / keyboard navigation / focus management**
+  → `wp-accessibility`
+- **Headless / decoupled / WPGraphQL / Next.js / Nuxt / Astro / Gatsby / CORS / ISR / SSG / frontend integration**
+  → `wp-headless`
 
 ## Step 2b: route by operational intent (keywords)
 
@@ -64,6 +72,8 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
   → `wp-deploy` skill + `wp-deployment-engineer` agent
 - **Audit / security check / vulnerability / hacked / health check**
   → `wp-audit` skill + `wp-security-auditor` agent
+- **Harden / permissions / headers / WAF / malware / compromised / incident response / security hardening**
+  → `wp-security` skill
 - **Backup / snapshot / disaster recovery / restore**
   → `wp-backup` skill
 - **Migrate / move / transfer / clone site / change hosting**

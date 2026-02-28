@@ -179,3 +179,7 @@ See `references/debugging.md`.
   - `references/server-side-rendering.md`
   - `references/directives-quickref.md`
   - `references/debugging.md`
+
+## Related skills
+
+- `wp-accessibility` — ARIA for interactive components, keyboard navigation, focus management, screen reader testing

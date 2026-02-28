@@ -2,6 +2,46 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [1.6.0] - 2026-02-28
+
+### Added
+- **`wp-e2e-testing` skill** — WordPress testing strategy and tooling
+  - 7 reference files: wp-env-setup, playwright-wordpress, jest-wordpress, phpunit-wordpress, visual-regression, test-data-generation, ci-integration
+  - Detection script (`test_inspect.mjs`) — detects Playwright, Jest, PHPUnit, wp-env, CI config
+  - Covers test strategy by project kind, E2E/unit/integration testing, visual regression, CI pipelines
+
+- **`wp-security` skill** — WordPress security hardening and incident response
+  - 7 reference files: filesystem-hardening, http-headers, authentication-hardening, api-restriction, user-capabilities, wp-config-security, incident-response
+  - Detection script (`security_inspect.mjs`) — scans wp-config constants, file permissions, .htaccess, security plugins
+  - 5-phase incident response procedure: containment → investigation → remediation → recovery → post-incident
+
+- **`wp-i18n` skill** — WordPress internationalization and localization
+  - 6 reference files: php-i18n, js-i18n, translation-workflow, wpcli-i18n, rtl-support, multilingual-setup
+  - Detection script (`i18n_inspect.mjs`) — detects text domain, .pot/.po/.mo files, i18n function usage
+  - Covers PHP gettext, @wordpress/i18n for JS, .pot/.po/.mo/.json workflow, RTL support, WPML/Polylang
+
+- **`wp-accessibility` skill** — WordPress WCAG 2.2 accessibility compliance
+  - 6 reference files: block-a11y, theme-a11y, interactive-a11y, media-a11y, a11y-audit-tools, a11y-testing
+  - Covers block editor a11y, theme accessibility-ready requirements, interactive patterns (APG), media a11y, automated/manual testing
+
+- **`wp-headless` skill** — Decoupled/headless WordPress architecture
+  - 6 reference files: api-layer-choice, wpgraphql, headless-auth, cors-config, frontend-integration, webhooks
+  - Detection script (`headless_inspect.mjs`) — detects WPGraphQL, CORS config, frontend frameworks
+  - Covers REST API vs WPGraphQL decision, JWT auth, CORS, Next.js/Nuxt/Astro integration, ISR, content webhooks
+
+### Changed
+- **Router upgraded to v4** — added keyword routing for 5 new skills
+  - Development routing: wp-e2e-testing, wp-i18n, wp-accessibility, wp-headless
+  - Operations routing: wp-security (hardening and incident response)
+- **Cross-references** added to 6 existing skills:
+  - `wp-block-development` → wp-e2e-testing, wp-accessibility
+  - `wp-plugin-development` → wp-e2e-testing, wp-i18n, wp-security
+  - `wp-block-themes` → wp-accessibility
+  - `wp-interactivity-api` → wp-accessibility
+  - `wp-rest-api` → wp-headless
+  - `wp-audit` → wp-security
+- Version bumps: plugin.json + package.json → 1.6.0 (24 skills)
+
 ## [1.5.0] - 2026-02-27
 
 ### Added

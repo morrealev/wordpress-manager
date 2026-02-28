@@ -112,3 +112,9 @@ See:
 ## Escalation
 
 For canonical detail, consult the Plugin Handbook and security guidelines before inventing patterns.
+
+## Related skills
+
+- `wp-e2e-testing` — PHPUnit for plugin unit tests, Playwright for E2E, CI integration
+- `wp-i18n` — Text domain setup, translation workflow, WP-CLI i18n commands
+- `wp-security` — Filesystem hardening, wp-config constants, authentication security

@@ -116,3 +116,7 @@ Common issues:
 If upstream behavior is unclear, consult canonical docs:
 
 - Theme Handbook and Block Editor Handbook for `theme.json`, templates, patterns, and style variations.
+
+## Related skills
+
+- `wp-accessibility` — Theme accessibility-ready requirements, skip links, focus indicators, WCAG compliance

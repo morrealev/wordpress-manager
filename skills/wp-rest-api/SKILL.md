@@ -114,3 +114,7 @@ Read `references/discovery-and-params.md`.
 ## Escalation
 
 If version support or behavior is unclear, consult the REST API Handbook and core docs before inventing patterns.
+
+## Related skills
+
+- `wp-headless` — Decoupled architecture, WPGraphQL, CORS configuration, frontend framework integration, webhooks
