@@ -6,11 +6,11 @@ Unified WordPress management **and** development plugin that orchestrates multip
 
 ```
 wordpress-manager/
-├── .claude-plugin/plugin.json    # Plugin manifest (v1.5.0)
+├── .claude-plugin/plugin.json    # Plugin manifest (v1.7.0)
 ├── .mcp.json                     # MCP server definitions
-├── agents/                       # 5 specialized agents
+├── agents/                       # 8 specialized agents
 ├── commands/                     # 5 slash commands
-├── skills/                       # 19 skills (5 operational + 13 development + 1 local env)
+├── skills/                       # 24 skills (5 operational + 18 development + 1 local env)
 ├── hooks/hooks.json              # 6 safety hooks (PreToolUse)
 └── servers/wp-rest-bridge/       # Custom MCP server (TypeScript)
 ```
@@ -36,13 +36,20 @@ wordpress-manager/
 
 ## Agents
 
-| Agent | Color | Role |
-|-------|-------|------|
-| `wp-site-manager` | cyan | Central orchestrator for multi-site operations, status monitoring, diagnostics |
-| `wp-deployment-engineer` | green | Deploy workflows: file upload, plugin updates, database migrations, DNS |
-| `wp-content-strategist` | magenta | Content creation, SEO optimization, taxonomy management, editorial workflow |
-| `wp-security-auditor` | red | Security audits: plugin vulnerabilities, user accounts, SSL, hardening |
-| `wp-performance-optimizer` | yellow | Performance audits: Core Web Vitals, caching, media optimization, TTFB |
+| Agent | Color | Role | Paired Skill |
+|-------|-------|------|-------------|
+| `wp-site-manager` | cyan | Central orchestrator for multi-site operations, status monitoring, diagnostics | — |
+| `wp-deployment-engineer` | green | Deploy workflows: Hostinger MCP, SSH, local env export, post-deploy verification | `wp-deploy` |
+| `wp-content-strategist` | magenta | Content creation, SEO optimization, taxonomy management, multilingual content | `wp-content` |
+| `wp-security-auditor` | red | Security audits: plugin vulnerabilities, user accounts, SSL, DNS (read-only) | `wp-audit` |
+| `wp-security-hardener` | red | Security hardening and incident response (implements fixes from auditor) | `wp-security` |
+| `wp-performance-optimizer` | yellow | Performance audits: Core Web Vitals, caching, media optimization, TTFB | `wp-performance` |
+| `wp-test-engineer` | blue | Test execution: Playwright E2E, Jest unit, PHPUnit, debug failures, CI setup | `wp-e2e-testing` |
+| `wp-accessibility-auditor` | purple | WCAG 2.2 AA compliance audits: axe-core, pa11y, Lighthouse, code review (read-only) | `wp-accessibility` |
+
+**Agent collaboration patterns:**
+- **Audit → Fix**: `wp-security-auditor` (finds issues) → `wp-security-hardener` (implements fixes)
+- **Delegation**: `wp-site-manager` delegates to specialized agents via its Specialized Agents table
 
 ## Commands
 
@@ -72,13 +79,13 @@ wordpress-manager/
 |-------|---------|----------------|
 | `wp-local-env` | Unified local env management: Studio, LocalWP, wp-env detection, lifecycle, WP-CLI, symlinks, DB ops | studio-adapter.md, localwp-adapter.md, wpenv-adapter.md, mcp-adapter-setup.md |
 
-### Development Skills (13) — building WordPress projects
+### Development Skills (18) — building WordPress projects
 
-Integrated from [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (GPL-2.0-or-later).
+13 core skills integrated from [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (GPL-2.0-or-later), plus 5 extended skills (testing, security, i18n, accessibility, headless).
 
 | Skill | Purpose | Key References |
 |-------|---------|----------------|
-| `wordpress-router` | Unified router v3: classifies tasks (dev vs local env vs ops) and routes to correct skill/agent | decision-tree.md |
+| `wordpress-router` | Unified router v4: classifies tasks (dev vs local env vs ops) and routes to correct skill/agent | decision-tree.md |
 | `wp-project-triage` | Auto-detects project type (plugin, theme, block theme, core) | detect_wp_project.mjs, triage.schema.json |
 | `wp-block-development` | Gutenberg block creation: block.json, attributes, save, edit | 10 references, list_blocks.mjs |
 | `wp-block-themes` | Block theme development: theme.json, templates, patterns | 6 references, detect_block_themes.mjs |
@@ -91,6 +98,11 @@ Integrated from [WordPress/agent-skills](https://github.com/WordPress/agent-skil
 | `wp-performance` | Backend profiling: WP-CLI profile/doctor, query optimization | 10 references, perf_inspect.mjs |
 | `wp-playground` | WordPress Playground: disposable instances, blueprints, snapshots | 3 references |
 | `wpds` | WordPress Design System: @wordpress/components, tokens, patterns | Requires WPDS MCP server |
+| `wp-e2e-testing` | Testing strategy: Playwright E2E, Jest, PHPUnit, visual regression, CI | 7 references, test_inspect.mjs |
+| `wp-security` | Security hardening: filesystem, headers, auth, API restriction, incident response | 7 references, security_inspect.mjs |
+| `wp-i18n` | Internationalization: PHP/JS gettext, .pot/.po/.mo workflow, RTL, WPML/Polylang | 6 references, i18n_inspect.mjs |
+| `wp-accessibility` | WCAG 2.2 compliance: block a11y, theme a11y, interactive patterns, testing | 6 references |
+| `wp-headless` | Headless/decoupled: REST vs WPGraphQL, JWT auth, CORS, Next.js/Nuxt/Astro | 6 references, headless_inspect.mjs |
 
 ## Safety Hooks
 
@@ -213,6 +225,8 @@ npx tsc              # Compile TypeScript to build/
 | 1.3.0 | Phase 4 | E2E testing, utility scripts, command hooks, WordPress.com dual-mode support |
 | 1.4.0 | Phase 5 | +13 development skills from WordPress/agent-skills community repo (blocks, themes, plugins, REST API, Interactivity API, Abilities API, WP-CLI, PHPStan, Performance, Playground, WPDS, Router, Triage) |
 | 1.5.0 | Phase 6 | +1 local environment skill (`wp-local-env`): WordPress Studio, LocalWP, wp-env detection, unified management, router v3 |
+| 1.6.0 | Phase 7 | +5 development skills (testing, security, i18n, accessibility, headless), router v4, cross-references |
+| 1.7.0 | Phase 8 | +3 agents (test-engineer, security-hardener, accessibility-auditor), 5 agent upgrades, bidirectional cross-refs, audit→fix handoff chain |
 
 ## License
 
