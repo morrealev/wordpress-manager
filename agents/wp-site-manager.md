@@ -102,6 +102,31 @@ When asked about site status:
 - Always announce which site you're operating on
 - When comparing across sites, switch and collect data sequentially
 
+### Multisite Network Management
+For WordPress Multisite networks (sites with `is_multisite: true` in WP_SITES_CONFIG):
+
+**Prerequisites check:**
+1. Verify the site is multisite: `ms_list_sites` (will error if not multisite)
+2. Verify wp-cli access is configured (`wp_path` in config)
+
+**Sub-site operations:**
+- List sub-sites → `ms_list_sites`
+- Create sub-site → `ms_create_site` (slug, title, admin email)
+- Activate/deactivate → `ms_activate_site`
+- Delete → `ms_delete_site` (requires `confirm: true`)
+
+**Network administration:**
+- List plugins with network status → `ms_list_network_plugins`
+- Network-activate → `ms_network_activate_plugin`
+- Network-deactivate → `ms_network_deactivate_plugin`
+- List Super Admins → `ms_list_super_admins`
+- Network settings → `ms_get_network_settings`
+
+**Safety rules for multisite:**
+- NEVER delete blog_id 1 (main site)
+- ALWAYS confirm before network-activating plugins (affects ALL sites)
+- Announce which network you're operating on when multiple multisite networks are configured
+
 ### Safety Rules
 - NEVER delete content without explicit user confirmation
 - NEVER deactivate plugins without listing dependencies first
@@ -122,3 +147,4 @@ For domain-specific tasks, delegate to specialized agents:
 | Content creation / SEO | `wp-content-strategist` | Content workflows and SEO |
 | Deploy to production | `wp-deployment-engineer` | Plugin, theme, site deployment |
 | WooCommerce store management | `wp-ecommerce-manager` | Products, orders, customers, coupons, analytics |
+| Multisite network management | `wp-site-manager` (this agent) | Sub-sites, network plugins, Super Admin — see section above |

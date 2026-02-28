@@ -177,3 +177,7 @@ After hardening, verify the security posture:
 ## Recommended Agent
 
 For implementing hardening fixes and incident response, use the **`wp-security-hardener`** agent. For read-only security audits, use the **`wp-security-auditor`** agent.
+
+### Multisite Security
+
+For Super Admin capabilities and multisite-specific security considerations, see the `wp-multisite` skill (`references/user-roles.md`).

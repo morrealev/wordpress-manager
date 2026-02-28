@@ -1,7 +1,7 @@
 {
   "name": "claude-plugin-wordpress-manager",
-  "version": "1.8.0",
-  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (71 tools incl. 30 WooCommerce), and WordPress.com MCP with 25 skills, 9 agents, and security hooks. v1.8.0 adds WooCommerce store management: products, orders, customers, coupons, analytics, and store configuration.",
+  "version": "1.9.0",
+  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (81 tools incl. 30 WooCommerce + 10 Multisite), and WordPress.com MCP with 26 skills, 9 agents, and security hooks. v1.9.0 adds WordPress Multisite network management via WP-CLI: sub-site CRUD, network plugins, Super Admin, domain mapping.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -25,7 +25,9 @@
     "wp-env",
     "woocommerce",
     "ecommerce",
-    "shop"
+    "shop",
+    "multisite",
+    "network"
   ],
   "repository": {
     "type": "git",

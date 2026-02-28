@@ -129,3 +129,7 @@ See:
 - If you cannot confirm environment safety, do not run write operations.
 - If the repo uses containerized tooling (Docker/wp-env) but you can’t access it, ask for the intended command runner or CI job.
 - If working with a local dev environment (Studio/LocalWP/wp-env), route to the `wp-local-env` skill for environment-specific WP-CLI setup.
+
+### Multisite Operations
+
+For WordPress Multisite network management (sub-sites, network plugins, Super Admin), see the `wp-multisite` skill which provides 10 dedicated MCP tools.

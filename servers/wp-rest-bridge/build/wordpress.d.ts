@@ -1,3 +1,17 @@
+interface SiteConfig {
+    id: string;
+    url: string;
+    username: string;
+    password: string;
+    wc_consumer_key?: string;
+    wc_consumer_secret?: string;
+    wp_path?: string;
+    ssh_host?: string;
+    ssh_user?: string;
+    ssh_key?: string;
+    ssh_port?: number;
+    is_multisite?: boolean;
+}
 /**
  * Parse WP_SITES_CONFIG JSON and initialize all site clients
  */
@@ -14,6 +28,10 @@ export declare function listSites(): string[];
  * Get the active site ID
  */
 export declare function getActiveSite(): string;
+/**
+ * Get the SiteConfig for a given site (needed by wpcli module).
+ */
+export declare function getSiteConfig(siteId?: string): SiteConfig | undefined;
 /**
  * Log to stderr (safe for MCP stdio transport)
  */
@@ -55,3 +73,4 @@ export declare function makeWooCommerceRequest(method: string, endpoint: string,
  * Search the WordPress.org Plugin Repository
  */
 export declare function searchWordPressPluginRepository(searchQuery: string, page?: number, perPage?: number): Promise<any>;
+export {};

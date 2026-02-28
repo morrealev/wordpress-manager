@@ -1,6 +1,266 @@
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 export declare const allTools: Tool[];
 export declare const toolHandlers: {
+    ms_list_network_plugins: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        site_id?: string | undefined;
+    }, {
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_network_activate_plugin: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        plugin_slug: import("zod").ZodString;
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        plugin_slug: string;
+        site_id?: string | undefined;
+    }, {
+        plugin_slug: string;
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_network_deactivate_plugin: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        plugin_slug: import("zod").ZodString;
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        plugin_slug: string;
+        site_id?: string | undefined;
+    }, {
+        plugin_slug: string;
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_list_super_admins: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        site_id?: string | undefined;
+    }, {
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_get_network_settings: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        site_id?: string | undefined;
+    }, {
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_list_sites: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        site_id?: string | undefined;
+    }, {
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_get_site: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        blog_id: import("zod").ZodNumber;
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        blog_id: number;
+        site_id?: string | undefined;
+    }, {
+        blog_id: number;
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_create_site: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        slug: import("zod").ZodString;
+        title: import("zod").ZodString;
+        email: import("zod").ZodString;
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        slug: string;
+        title: string;
+        email: string;
+        site_id?: string | undefined;
+    }, {
+        slug: string;
+        title: string;
+        email: string;
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_activate_site: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        blog_id: import("zod").ZodNumber;
+        active: import("zod").ZodBoolean;
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        active: boolean;
+        blog_id: number;
+        site_id?: string | undefined;
+    }, {
+        active: boolean;
+        blog_id: number;
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    ms_delete_site: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        blog_id: import("zod").ZodNumber;
+        confirm: import("zod").ZodLiteral<true>;
+        site_id: import("zod").ZodOptional<import("zod").ZodString>;
+    }, "strict", import("zod").ZodTypeAny, {
+        blog_id: number;
+        confirm: true;
+        site_id?: string | undefined;
+    }, {
+        blog_id: number;
+        confirm: true;
+        site_id?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
     wc_list_payment_gateways: () => Promise<{
         toolResult: {
             content: {

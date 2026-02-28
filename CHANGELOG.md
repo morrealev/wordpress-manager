@@ -2,6 +2,33 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [1.9.0] - 2026-02-28
+
+### Added
+- **WordPress Multisite support** — 10 new MCP tools for network management
+- **WP-CLI execution module** (`wpcli.ts`) — local and SSH remote command execution
+- **New skill**: `wp-multisite` with 6 reference files (network setup, site management, domain mapping, network plugins, user roles, migration)
+- **Detection script**: `multisite_inspect.mjs` — detects multisite configuration
+- **SiteConfig extended**: `wp_path`, `ssh_host`, `ssh_user`, `ssh_key`, `ssh_port`, `is_multisite` fields
+
+### New MCP Tools (10)
+- `ms_list_sites` — List all sub-sites in the network
+- `ms_get_site` — Get sub-site details
+- `ms_create_site` — Create a new sub-site
+- `ms_activate_site` — Activate or deactivate a sub-site
+- `ms_delete_site` — Delete a sub-site (with safety gate)
+- `ms_list_network_plugins` — List plugins with network activation status (REST)
+- `ms_network_activate_plugin` — Network-activate a plugin (wp-cli)
+- `ms_network_deactivate_plugin` — Network-deactivate a plugin (wp-cli)
+- `ms_list_super_admins` — List Super Admin users (wp-cli)
+- `ms_get_network_settings` — Get network-wide settings (wp-cli)
+
+### Changed
+- `wp-site-manager` agent: added Multisite Network Management section
+- Router decision-tree.md upgraded to v6 with multisite keywords
+- `wp-wpcli-and-ops` and `wp-security` skills: added multisite cross-references
+- WP REST Bridge: 71 → 81 total tools
+
 ## [1.8.0] - 2026-02-28
 
 ### Added

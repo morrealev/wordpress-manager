@@ -1,4 +1,4 @@
-# Router decision tree (v4 — development + local environment + operations)
+# Router decision tree (v6 — development + local environment + operations + multisite)
 
 This routing guide covers WordPress **development**, **local environment**, and **operations** workflows.
 
@@ -14,7 +14,7 @@ Keywords that indicate **local environment**:
 local site, Studio, LocalWP, Local by Flywheel, wp-env, local WordPress, start site, stop site, create local site, local development, symlink plugin, local database, switch PHP version, localhost, local preview, detect environment, WASM, SQLite local
 
 Keywords that indicate **operations**:
-deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit, WooCommerce, prodotto, ordine, coupon, negozio, catalogo, inventario, vendite, carrello
+deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit, WooCommerce, prodotto, ordine, coupon, negozio, catalogo, inventario, vendite, carrello, multisite, network, sub-site, sub-sito, domain mapping, super admin, network activate
 
 Keywords that indicate **development**:
 create block, block.json, theme.json, register_rest_route, plugin development, hooks, PHPStan, build, test, scaffold, i18n, translation, accessibility, a11y, headless, decoupled, WPGraphQL
@@ -88,6 +88,8 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
   → `wp-site-manager` agent (Hostinger MCP tools)
 - **WooCommerce / woo / shop / products / orders / coupons / cart / store management / sales report / inventory**
   → `wp-woocommerce` skill + `wp-ecommerce-manager` agent
+- **Multisite / network / sub-sites / domain mapping / super admin / network activate**
+  → `wp-multisite` skill + `wp-site-manager` agent
 
 ## Step 2c: route by local environment intent (keywords)
 

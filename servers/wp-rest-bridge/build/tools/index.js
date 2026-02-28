@@ -12,6 +12,8 @@ import { wcCustomerTools, wcCustomerHandlers } from './wc-customers.js';
 import { wcCouponTools, wcCouponHandlers } from './wc-coupons.js';
 import { wcReportTools, wcReportHandlers } from './wc-reports.js';
 import { wcSettingTools, wcSettingHandlers } from './wc-settings.js';
+import { multisiteSiteTools, multisiteSiteHandlers } from './multisite-sites.js';
+import { multisiteNetworkTools, multisiteNetworkHandlers } from './multisite-network.js';
 // Combine all tools
 export const allTools = [
     ...unifiedContentTools, // 8 tools
@@ -28,6 +30,8 @@ export const allTools = [
     ...wcCouponTools, // 4 tools
     ...wcReportTools, // 5 tools
     ...wcSettingTools, // 4 tools
+    ...multisiteSiteTools, // 5 tools
+    ...multisiteNetworkTools, // 5 tools
 ];
 // Combine all handlers
 export const toolHandlers = {
@@ -45,4 +49,6 @@ export const toolHandlers = {
     ...wcCouponHandlers,
     ...wcReportHandlers,
     ...wcSettingHandlers,
+    ...multisiteSiteHandlers,
+    ...multisiteNetworkHandlers,
 };

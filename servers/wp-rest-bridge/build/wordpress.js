@@ -33,6 +33,7 @@ const siteClients = new Map();
 const siteLimiters = new Map();
 const wcSiteClients = new Map();
 let activeSiteId = '';
+const parsedSiteConfigs = new Map();
 const MAX_CONCURRENT_PER_SITE = 5;
 const DEFAULT_TIMEOUT_MS = parseInt(process.env.WP_REQUEST_TIMEOUT_MS || '30000', 10);
 const MAX_RETRIES = 3;
@@ -58,6 +59,7 @@ export async function initWordPress() {
         const siteId = 'default';
         await initSiteClient(siteId, url, username || '', password || '');
         activeSiteId = siteId;
+        parsedSiteConfigs.set(siteId, { id: siteId, url, username: username || '', password: password || '' });
         logToStderr(`Initialized single site: ${url}`);
         return;
     }
@@ -73,6 +75,7 @@ export async function initWordPress() {
     }
     for (const site of sites) {
         await initSiteClient(site.id, site.url, site.username, site.password);
+        parsedSiteConfigs.set(site.id, site);
         logToStderr(`Initialized site: ${site.id} (${site.url})`);
     }
     // Initialize WooCommerce clients for sites with WC credentials
@@ -193,6 +196,13 @@ export function listSites() {
  */
 export function getActiveSite() {
     return activeSiteId;
+}
+/**
+ * Get the SiteConfig for a given site (needed by wpcli module).
+ */
+export function getSiteConfig(siteId) {
+    const id = siteId || activeSiteId;
+    return parsedSiteConfigs.get(id);
 }
 // ── Logging ──────────────────────────────────────────────────────────
 /**

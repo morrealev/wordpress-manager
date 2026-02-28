@@ -240,3 +240,19 @@ export interface WCCoupon {
   minimum_amount: string;
   maximum_amount: string;
 }
+
+// ── WordPress Multisite Types ────────────────────────────────────────
+
+export interface WPNetworkSite {
+  blog_id: number;
+  url: string;
+  domain: string;
+  path: string;
+  registered: string;
+  last_updated: string;
+  public: boolean;
+  archived: boolean;
+  mature: boolean;
+  spam: boolean;
+  deleted: boolean;
+}

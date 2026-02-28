@@ -8,6 +8,13 @@ interface SiteConfig {
   password: string;
   wc_consumer_key?: string;
   wc_consumer_secret?: string;
+  // WP-CLI access (optional, for multisite and CLI operations)
+  wp_path?: string;        // Local WP installation path
+  ssh_host?: string;       // SSH hostname for remote wp-cli
+  ssh_user?: string;       // SSH username
+  ssh_key?: string;        // Path to SSH private key
+  ssh_port?: number;       // SSH port (default: 22)
+  is_multisite?: boolean;  // Flag: this site is a multisite network
 }
 
 // ── Concurrency Limiter ──────────────────────────────────────────────
@@ -43,6 +50,7 @@ const siteClients = new Map<string, AxiosInstance>();
 const siteLimiters = new Map<string, ConcurrencyLimiter>();
 const wcSiteClients = new Map<string, AxiosInstance>();
 let activeSiteId: string = '';
+const parsedSiteConfigs = new Map<string, SiteConfig>();
 
 const MAX_CONCURRENT_PER_SITE = 5;
 const DEFAULT_TIMEOUT_MS = parseInt(process.env.WP_REQUEST_TIMEOUT_MS || '30000', 10);
@@ -75,6 +83,7 @@ export async function initWordPress() {
     const siteId = 'default';
     await initSiteClient(siteId, url, username || '', password || '');
     activeSiteId = siteId;
+    parsedSiteConfigs.set(siteId, { id: siteId, url, username: username || '', password: password || '' });
     logToStderr(`Initialized single site: ${url}`);
     return;
   }
@@ -92,6 +101,7 @@ export async function initWordPress() {
 
   for (const site of sites) {
     await initSiteClient(site.id, site.url, site.username, site.password);
+    parsedSiteConfigs.set(site.id, site);
     logToStderr(`Initialized site: ${site.id} (${site.url})`);
   }
 
@@ -229,6 +239,14 @@ export function listSites(): string[] {
  */
 export function getActiveSite(): string {
   return activeSiteId;
+}
+
+/**
+ * Get the SiteConfig for a given site (needed by wpcli module).
+ */
+export function getSiteConfig(siteId?: string): SiteConfig | undefined {
+  const id = siteId || activeSiteId;
+  return parsedSiteConfigs.get(id);
 }
 
 // ── Logging ──────────────────────────────────────────────────────────
