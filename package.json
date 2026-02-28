@@ -1,6 +1,6 @@
 {
   "name": "claude-plugin-wordpress-manager",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge, and WordPress.com MCP with 24 skills, 8 agents, and security hooks. Includes local dev environment support for WordPress Studio, LocalWP, and wp-env. v1.7.0 adds 3 new agents (testing, security hardening, accessibility) and upgrades 5 existing agents.",
   "author": {
     "name": "vinmor",

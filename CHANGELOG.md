@@ -2,6 +2,11 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [1.7.2] - 2026-02-28
+
+### Changed
+- GUIDE.md aggiornata per v1.7.1: 8 agent, 24 skill, 12 scenari d'uso, router v4, 5 skill estese, cross-ref bidirezionali, 10 nuovi termini glossario (+273 righe)
+
 ## [1.7.1] - 2026-02-28
 
 ### Changed
