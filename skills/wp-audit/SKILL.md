@@ -112,6 +112,7 @@ Combine findings into a unified report with:
 - **`references/security-checklist.md`** - WordPress security audit checklist
 - **`references/performance-checklist.md`** - Performance analysis checklist
 - **`references/seo-checklist.md`** - SEO audit checklist
+- For WooCommerce store audit, see `wp-woocommerce` skill
 
 ## Related skills
 

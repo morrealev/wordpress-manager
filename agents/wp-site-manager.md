@@ -121,3 +121,4 @@ For domain-specific tasks, delegate to specialized agents:
 | Performance optimization | `wp-performance-optimizer` | Speed analysis and optimization |
 | Content creation / SEO | `wp-content-strategist` | Content workflows and SEO |
 | Deploy to production | `wp-deployment-engineer` | Plugin, theme, site deployment |
+| WooCommerce store management | `wp-ecommerce-manager` | Products, orders, customers, coupons, analytics |

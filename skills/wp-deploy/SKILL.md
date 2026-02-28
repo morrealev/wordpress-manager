@@ -62,3 +62,4 @@ For full details on local environment operations, see the `wp-local-env` skill.
 ### Reference Files
 - **`references/hostinger-deploy.md`** - Hostinger MCP deployment details
 - **`references/ssh-deploy.md`** - SSH/SFTP deployment procedures
+- For deploying WooCommerce stores, see `wp-woocommerce` skill

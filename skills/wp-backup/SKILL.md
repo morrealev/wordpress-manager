@@ -85,3 +85,4 @@ Before any risky operation (deploy, update, migration):
 ### Reference Files
 - **`references/backup-strategies.md`** - Detailed backup methods and automation
 - **`references/restore-procedures.md`** - Step-by-step restore procedures
+- For WooCommerce database backup, see `wp-woocommerce` skill
