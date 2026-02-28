@@ -1,6 +1,6 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 1.7.1
+**Versione:** 2.1.0
 **Ultimo aggiornamento:** 2026-02-28
 **Repository:** https://github.com/morrealev/wordpress-manager
 
@@ -53,6 +53,10 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **Audit accessibilita**: WCAG 2.2 AA, axe-core, pa11y, Lighthouse
 - **Internazionalizzare**: PHP/JS gettext, .pot/.po/.mo workflow, RTL, WPML/Polylang
 - **Architetture headless**: REST vs WPGraphQL, JWT auth, CORS, Next.js/Nuxt/Astro
+- **Gestire WooCommerce**: prodotti, ordini, clienti, coupon, report vendite, configurazione store
+- **Amministrare Multisite**: sub-site, network plugin, Super Admin, domain mapping
+- **Configurare CI/CD**: GitHub Actions, GitLab CI, Bitbucket Pipelines, quality gates, deploy automatico
+- **Monitorare siti**: uptime, performance baseline, security scanning, content integrity, alerting
 
 ### Requisiti
 
@@ -76,7 +80,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
                     wordpress-manager plugin
                     /         |         \
             Hostinger MCP    WP REST Bridge    WordPress.com MCP
-            (119 tool)       (40 tool)         (~15 tool)
+            (119 tool)       (81 tool)         (~15 tool)
                 |                |                    |
           Infrastruttura    Contenuti +          Siti hosted
           DNS, SSL, VPS     Plugin, Utenti       su WordPress.com
@@ -89,12 +93,12 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v1.7.1
+wordpress-manager/                          # v2.1.0
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
 +-- CHANGELOG.md                            # Cronologia versioni
-+-- agents/                                 # 8 agenti specializzati
++-- agents/                                 # 11 agenti specializzati
 |   +-- wp-site-manager.md                      # Orchestratore centrale
 |   +-- wp-deployment-engineer.md               # Specialista deploy
 |   +-- wp-content-strategist.md                # Contenuti e SEO
@@ -103,9 +107,12 @@ wordpress-manager/                          # v1.7.1
 |   +-- wp-performance-optimizer.md             # Performance e CWV
 |   +-- wp-test-engineer.md                     # Testing (E2E, unit, integration)
 |   +-- wp-accessibility-auditor.md             # WCAG 2.2 AA audit (read-only)
+|   +-- wp-ecommerce-manager.md                 # WooCommerce store management (v1.8.0)
+|   +-- wp-cicd-engineer.md                     # CI/CD pipeline specialist (v2.0.0)
+|   +-- wp-monitoring-agent.md                  # Site monitoring read-only (v2.1.0)
 +-- commands/                               # 5 slash commands
 |   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
-+-- skills/                                 # 24 skill totali
++-- skills/                                 # 28 skill totali
 |   +-- [OPERATIVE - 5 skill]
 |   +-- wp-deploy/                              # Procedure deploy
 |   +-- wp-audit/                               # Checklist audit
@@ -115,7 +122,7 @@ wordpress-manager/                          # v1.7.1
 |   +-- [AMBIENTE LOCALE - 1 skill]
 |   +-- wp-local-env/                           # Studio/LocalWP/wp-env
 |   +-- [SVILUPPO - 13 skill da WordPress/agent-skills]
-|   +-- wordpress-router/                       # Router unificato v4 (dev + local + ops)
+|   +-- wordpress-router/                       # Router unificato v8 (dev + local + ops + multisite + cicd + monitoring)
 |   +-- wp-project-triage/                      # Auto-detect tipo progetto
 |   +-- wp-block-development/                   # Blocchi Gutenberg
 |   +-- wp-block-themes/                        # Temi a blocchi
@@ -134,6 +141,11 @@ wordpress-manager/                          # v1.7.1
 |   +-- wp-i18n/                                # Internazionalizzazione
 |   +-- wp-accessibility/                       # WCAG 2.2 accessibilita
 |   +-- wp-headless/                            # Architettura headless/decoupled
+|   +-- [E-COMMERCE + INFRASTRUTTURA - 4 skill]
+|   +-- wp-woocommerce/                         # WooCommerce store management (v1.8.0)
+|   +-- wp-multisite/                           # Multisite network management (v1.9.0)
+|   +-- wp-cicd/                                # CI/CD pipeline automation (v2.0.0)
+|   +-- wp-monitoring/                          # Site monitoring e observability (v2.1.0)
 +-- hooks/                                  # 6 hook di sicurezza
 |   +-- hooks.json                              # 4 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
@@ -313,6 +325,10 @@ WordPress Manager comprende richieste in linguaggio naturale. Ecco come formular
 | Audit accessibilita | "Controlla l'accessibilita" / "WCAG audit" |
 | Internazionalizzare | "Internazionalizza il plugin" / "Traduci il tema" |
 | Setup headless | "WordPress headless con Next.js" / "Configura WPGraphQL" |
+| Gestire WooCommerce | "Mostra gli ordini" / "Crea un prodotto" / "Report vendite" |
+| Amministrare Multisite | "Crea un sub-site" / "Network activate plugin" / "Super Admin" |
+| Configurare CI/CD | "Setup GitHub Actions" / "CI per il mio plugin" / "Deploy automatico" |
+| Monitorare il sito | "Monitora il sito" / "Health report" / "Setup uptime check" |
 
 ---
 
@@ -476,7 +492,7 @@ I comandi slash sono scorciatoie dirette per operazioni specifiche. Si invocano 
 
 Gli agenti sono "personalita" specializzate di Claude che vengono attivate automaticamente in base al contesto della conversazione. Non devi invocarli manualmente - Claude sceglie l'agente giusto per il compito.
 
-Il plugin include **8 agenti** organizzati per area di competenza. Alcuni agenti lavorano in coppia (audit → fix).
+Il plugin include **11 agenti** organizzati per area di competenza. Alcuni agenti lavorano in coppia (audit → fix) o in modalita read-only (monitoraggio).
 
 ### wp-site-manager (Orchestratore)
 
@@ -697,14 +713,101 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 
 ---
 
+### wp-ecommerce-manager (WooCommerce)
+
+| Proprieta | Valore |
+|-----------|--------|
+| Colore | Orange |
+| Ruolo | Gestione completa store WooCommerce |
+| Attivazione | "Mostra gli ordini", "crea un prodotto", "report vendite", "coupon", "WooCommerce" |
+
+**Capacita** (30 tool MCP via WP REST Bridge, namespace `wc/v3`):
+
+| Area | Tool | Operazioni |
+|------|------|-----------|
+| Products | 7 | CRUD prodotti, categorie, variazioni |
+| Orders | 6 | Lista ordini, aggiorna stato, note, rimborsi |
+| Customers | 4 | Gestione clienti, profili, cronologia |
+| Coupons | 4 | Creazione coupon, marketing promozioni |
+| Reports | 5 | Vendite, top seller, totali ordini/prodotti/clienti |
+| Settings | 4 | Gateway pagamento, zone spedizione, tasse, system status |
+
+**Prerequisiti**: WooCommerce attivo + Consumer Key/Secret configurati in `WP_SITES_CONFIG` (generare da WooCommerce > Settings > Advanced > REST API).
+
+**Skill correlata**: `wp-woocommerce`
+
+---
+
+### wp-cicd-engineer (CI/CD)
+
+| Proprieta | Valore |
+|-----------|--------|
+| Colore | Cyan |
+| Ruolo | Setup, configurazione e debug pipeline CI/CD |
+| Attivazione | "Setup GitHub Actions", "CI per il plugin", "pipeline fallisce", "deploy automatico" |
+
+**3 piattaforme supportate**:
+
+| Piattaforma | Config | Best for |
+|-------------|--------|----------|
+| GitHub Actions | `.github/workflows/*.yml` | Plugin open-source, GitHub repos |
+| GitLab CI | `.gitlab-ci.yml` | Enterprise, self-hosted GitLab |
+| Bitbucket Pipelines | `bitbucket-pipelines.yml` | Team Atlassian |
+
+**Pipeline WordPress tipica**:
+1. **Lint**: PHP syntax, PHPCS code style
+2. **Static Analysis**: PHPStan livello 6+
+3. **Unit Test**: PHPUnit con WordPress test suite
+4. **E2E Test**: Playwright con wp-env in Docker
+5. **Deploy**: SSH/rsync o Hostinger MCP con rollback automatico
+
+**Detection**: `cicd_inspect.mjs` rileva piattaforma CI, quality tool, wp-env, e genera raccomandazioni.
+
+**Skill correlata**: `wp-cicd`
+
+---
+
+### wp-monitoring-agent (Monitoring)
+
+| Proprieta | Valore |
+|-----------|--------|
+| Colore | Teal |
+| Ruolo | Monitoring continuo del sito (read-only, non modifica nulla) |
+| Attivazione | "Monitora il sito", "health report", "uptime check", "performance trend", "security scan periodico" |
+
+**5 aree di monitoraggio**:
+
+| Area | Cosa monitora |
+|------|--------------|
+| Uptime | HTTP status, response time, SSL expiry, WP-Cron |
+| Performance | Core Web Vitals trend, TTFB, Lighthouse score |
+| Security | Plugin vulnerabilita, file integrity, utenti anomali, malware patterns |
+| Content | Modifiche non autorizzate, broken links, spam comments, media integrity |
+| Alerting | Threshold P0-P3, notifiche email/Slack/webhook, escalation |
+
+**Report disponibili**: Daily Health Summary, Weekly Performance, Monthly Security, Quarterly Trend, Executive Dashboard.
+
+**Delegazione**: Quando rileva problemi, delega a agent specializzati:
+- Sicurezza → `wp-security-auditor` + `wp-security-hardener`
+- Performance → `wp-performance-optimizer`
+- Contenuti → `wp-content-strategist`
+- Deploy fix → `wp-deployment-engineer`
+
+**Detection**: `monitoring_inspect.mjs` rileva setup monitoring esistente (uptime tools, Lighthouse CI, security plugins, logging config).
+
+**Skill correlata**: `wp-monitoring`
+
+---
+
 ### Pattern di Collaborazione tra Agent
 
 | Pattern | Flusso | Descrizione |
 |---------|--------|-------------|
 | **Audit → Fix** | `wp-security-auditor` → `wp-security-hardener` | L'auditor trova problemi, l'hardener implementa le correzioni |
+| **Monitor → Delegate** | `wp-monitoring-agent` → agent specializzati | Il monitoring rileva anomalie e delega agli agent competenti |
 | **Delegazione** | `wp-site-manager` → tutti gli altri | Il site manager delega a agent specializzati in base al task |
 
-Il `wp-site-manager` puo delegare a tutti gli 8 agent specializzati:
+Il `wp-site-manager` puo delegare a tutti gli 11 agent specializzati:
 
 | Task | Agent delegato |
 |------|---------------|
@@ -715,6 +818,9 @@ Il `wp-site-manager` puo delegare a tutti gli 8 agent specializzati:
 | Performance, CWV | `wp-performance-optimizer` |
 | Testing | `wp-test-engineer` |
 | Accessibilita | `wp-accessibility-auditor` |
+| WooCommerce, e-commerce | `wp-ecommerce-manager` |
+| CI/CD pipeline | `wp-cicd-engineer` |
+| Site monitoring e health reports | `wp-monitoring-agent` |
 
 ---
 
@@ -752,10 +858,11 @@ Le skill di sviluppo provengono da due fonti:
 
 - **13 skill community** integrate dal repository [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (licenza GPL-2.0-or-later). Coprono blocchi, temi, plugin, endpoint REST, analisi statica, profiling e altro.
 - **5 skill estese** (MIT) aggiunte in v1.6.0: testing, security, internazionalizzazione, accessibilita, headless.
+- **4 skill e-commerce + infrastruttura** (MIT) aggiunte in v1.8.0-v2.1.0: WooCommerce, Multisite, CI/CD, Monitoring.
 
 ### Il Router Unificato
 
-La skill `wordpress-router` (v4) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **tre categorie**: sviluppo, ambiente locale, operativo.
+La skill `wordpress-router` (v8) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **sei categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring.
 
 ```
 Utente: "Crea un blocco custom per la gallery"
@@ -791,6 +898,30 @@ wordpress-router: TASK = sviluppo (testing)
 wp-e2e-testing skill + wp-test-engineer agent
 ```
 
+```
+Utente: "Mostrami gli ordini WooCommerce di questa settimana"
+  |
+wordpress-router: TASK = operativo (e-commerce)
+  |
+wp-woocommerce skill + wp-ecommerce-manager agent
+```
+
+```
+Utente: "Setup GitHub Actions per il mio plugin WordPress"
+  |
+wordpress-router: TASK = sviluppo (CI/CD)
+  |
+wp-cicd skill + wp-cicd-engineer agent
+```
+
+```
+Utente: "Configura il monitoring del sito con alerting"
+  |
+wordpress-router: TASK = operativo (monitoring)
+  |
+wp-monitoring skill + wp-monitoring-agent agent
+```
+
 ### Panoramica Skills di Sviluppo — Community (13)
 
 | Skill | Si attiva quando... | Risorse |
@@ -823,9 +954,20 @@ Aggiunte in v1.6.0, queste skill coprono aree avanzate dello sviluppo WordPress.
 
 **Cross-reference bidirezionali**: Le skill con agent dedicato contengono una sezione "Recommended Agent", e gli agent contengono "Related Skills". Questo garantisce che Claude attivi sia la conoscenza (skill) che l'esecutore (agent) appropriati.
 
+### Panoramica Skills E-Commerce + Infrastruttura (4)
+
+Aggiunte in v1.8.0-v2.1.0, queste skill coprono e-commerce, multisite, CI/CD e monitoring.
+
+| Skill | Si attiva quando... | Risorse | Agent dedicato |
+|-------|---------------------|---------|----------------|
+| `wp-woocommerce` | "prodotti", "ordini", "WooCommerce", "coupon", "report vendite" | 6 reference files, woocommerce_inspect.mjs | `wp-ecommerce-manager` |
+| `wp-multisite` | "multisite", "sub-site", "network admin", "domain mapping" | 6 reference files, multisite_inspect.mjs | — |
+| `wp-cicd` | "CI/CD", "GitHub Actions", "pipeline", "deploy automatico" | 6 reference files, cicd_inspect.mjs | `wp-cicd-engineer` |
+| `wp-monitoring` | "monitora", "uptime", "health report", "alerting", "trend" | 6 reference files, monitoring_inspect.mjs | `wp-monitoring-agent` |
+
 ### Script di Rilevamento Automatico
 
-Le skill includono 12 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
+Le skill includono 16 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
 
 | Script | Cosa rileva |
 |--------|-------------|
@@ -841,6 +983,10 @@ Le skill includono 12 script Node.js (`.mjs`) che eseguono analisi automatica de
 | `security_inspect.mjs` | wp-config constants, permessi file, .htaccess, plugin sicurezza (v1.6.0) |
 | `i18n_inspect.mjs` | Text domain, file .pot/.po/.mo, funzioni i18n PHP/JS (v1.6.0) |
 | `headless_inspect.mjs` | WPGraphQL, CORS config, framework frontend (v1.6.0) |
+| `woocommerce_inspect.mjs` | WooCommerce attivo, API keys, prodotti, ordini, gateway (v1.8.0) |
+| `multisite_inspect.mjs` | Multisite abilitato, sub-sites, network plugins, Super Admin (v1.9.0) |
+| `cicd_inspect.mjs` | Piattaforme CI, quality tools, wp-env, deploy config (v2.0.0) |
+| `monitoring_inspect.mjs` | Uptime tools, Lighthouse CI, security plugins, logging config (v2.1.0) |
 
 ### WordPress Playground — Ambienti Disposable
 
@@ -875,7 +1021,7 @@ Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components`
 ```
 1. cd mio-progetto-wordpress/
 2. Claude esegue wp-project-triage → rileva "wp-block-plugin"
-3. wordpress-router v4 → instrada a wp-block-development
+3. wordpress-router v8 → instrada a wp-block-development
 4. Claude guida la creazione con block.json, edit.js, save.js
 5. wp-e2e-testing + wp-test-engineer → esegue test E2E con Playwright
 6. wp-accessibility + wp-accessibility-auditor → verifica WCAG 2.2
@@ -1009,9 +1155,9 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Sorgente | Custom TypeScript server in `servers/wp-rest-bridge/` |
 | Trasporto | stdio (JSON-RPC via stdin/stdout) |
 | Autenticazione | `WP_SITES_CONFIG` JSON env var |
-| Tool disponibili | 40 |
+| Tool disponibili | 81 (40 WordPress + 30 WooCommerce + 11 Multisite) |
 
-**Categorie tool**:
+**Categorie tool WordPress** (`wp/v2`):
 
 | Categoria | Tool | Esempio |
 |-----------|------|---------|
@@ -1023,6 +1169,26 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Comments | 5 | `list_comments`, `create_comment`, `delete_comment` |
 | Media | 4 | `list_media`, `create_media`, `delete_media` |
 | WP.org | 2 | `search_plugin_repository`, `get_plugin_details` |
+
+**Categorie tool WooCommerce** (`wc/v3`, richiede Consumer Key/Secret):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Products | 7 | `wc_list_products`, `wc_create_product`, `wc_list_product_variations` |
+| Orders | 6 | `wc_list_orders`, `wc_update_order_status`, `wc_create_refund` |
+| Customers | 4 | `wc_list_customers`, `wc_get_customer`, `wc_update_customer` |
+| Coupons | 4 | `wc_list_coupons`, `wc_create_coupon`, `wc_delete_coupon` |
+| Reports | 5 | `wc_get_sales_report`, `wc_get_top_sellers`, `wc_get_orders_totals` |
+| Settings | 4 | `wc_list_payment_gateways`, `wc_list_shipping_zones`, `wc_get_system_status` |
+
+**Categorie tool Multisite** (`ms_` prefix, richiede `is_multisite: true` + SSH/WP-CLI):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Sub-sites | 4 | `ms_list_sites`, `ms_create_site`, `ms_activate_site`, `ms_deactivate_site` |
+| Network Plugins | 3 | `ms_network_activate`, `ms_network_deactivate`, `ms_network_plugins` |
+| Admin | 2 | `ms_list_super_admins`, `ms_network_settings` |
+| DNS | 2 | `ms_domain_mapping`, `ms_site_url` |
 
 **Architettura multi-sito**: Il server mantiene una `Map<siteId, AxiosInstance>` dove ogni sito ha la propria istanza HTTP autenticata. Il cambio sito e istantaneo.
 
@@ -1245,7 +1411,49 @@ Claude (attiva skill wp-i18n):
 6. Verifica supporto RTL se necessario
 ```
 
-### Scenario 12: Architettura Headless con Next.js
+### Scenario 12: Gestione Store WooCommerce
+
+```
+Tu: "Mostrami gli ordini di questa settimana e crea un coupon sconto 20%"
+
+Claude (attiva wp-ecommerce-manager + skill wp-woocommerce):
+1. Lista ordini con wc_list_orders (filtro ultimi 7 giorni)
+2. Mostra riepilogo: totale ordini, revenue, status breakdown
+3. Crea coupon con wc_create_coupon (20% sconto, tipo percentuale)
+4. Conferma codice coupon e condizioni d'uso
+-> Report: ordini settimanali + coupon creato
+```
+
+### Scenario 13: Setup CI/CD per Plugin WordPress
+
+```
+Tu: "Configura GitHub Actions per il mio plugin con PHPStan e Playwright"
+
+Claude (attiva wp-cicd-engineer + skill wp-cicd):
+1. Detection con cicd_inspect.mjs (rileva PHPStan, Playwright, wp-env)
+2. Genera workflow YAML con 4 stage: lint, phpstan, phpunit, playwright
+3. Configura wp-env per E2E testing in Docker
+4. Imposta quality gates (coverage > 80%, PHPStan level 6)
+5. Aggiunge deploy stage condizionale (push to main)
+-> File: .github/workflows/ci.yml creato e spiegato
+```
+
+### Scenario 14: Monitoring Continuo del Sito
+
+```
+Tu: "Configura il monitoring completo per opencactus.com"
+
+Claude (attiva wp-monitoring-agent + skill wp-monitoring):
+1. Detection con monitoring_inspect.mjs (rileva setup esistente)
+2. Baseline: cattura CWV attuali, TTFB, plugin count, DB size
+3. Uptime check: configura cron per HTTP probe ogni 5 minuti
+4. Security: schedule settimanale per plugin audit e file integrity
+5. Alerting: configura threshold P0-P3 con notifiche email/Slack
+6. Report template: configura Daily Health Summary + Weekly Performance
+-> Report: baseline stabilito, monitoring schedule configurato
+```
+
+### Scenario 15: Architettura Headless con Next.js
 
 ```
 Tu: "Voglio usare WordPress come CMS headless con Next.js"
@@ -1257,6 +1465,20 @@ Claude (attiva skill wp-headless):
 4. Setup CORS per il dominio frontend
 5. Integra Next.js con ISR (Incremental Static Regeneration)
 6. Configura webhook per invalidazione cache
+```
+
+### Scenario 16: WordPress Multisite Network
+
+```
+Tu: "Crea un network multisite con 3 sub-site per i nostri brand"
+
+Claude (attiva skill wp-multisite):
+1. Detection con multisite_inspect.mjs (multisite gia abilitato?)
+2. Se necessario, guida conversione single → multisite (wp-config.php + .htaccess)
+3. Crea 3 sub-site con ms_create_site
+4. Network-activate plugin comuni
+5. Configura domain mapping per ogni sub-site
+-> Report: network configurato con 3 sub-site attivi
 ```
 
 ---
@@ -1509,8 +1731,20 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **RTL** | Right-to-Left — supporto per lingue scritte da destra a sinistra (arabo, ebraico) |
 | **WCAG** | Web Content Accessibility Guidelines — standard W3C per accessibilita web (target: 2.2 AA) |
 | **WPGraphQL** | Plugin WordPress che espone un'API GraphQL come alternativa alla REST API |
+| **WooCommerce** | Plugin e-commerce per WordPress; il WP REST Bridge espone 30 tool via namespace `wc/v3` |
+| **Consumer Key/Secret** | Credenziali API WooCommerce per accesso REST (`wc/v3`), generate da WooCommerce > Settings > REST API |
+| **Multisite** | Funzionalita WordPress per gestire una rete di siti da una singola installazione (Network Admin) |
+| **Super Admin** | Ruolo utente WordPress con accesso a tutte le operazioni del network multisite |
+| **Domain Mapping** | Associazione di un dominio custom a un sub-site del network multisite |
+| **CI/CD** | Continuous Integration / Continuous Deployment — pipeline automatizzate per build, test e deploy |
+| **GitHub Actions** | Piattaforma CI/CD integrata in GitHub, configurata via file YAML in `.github/workflows/` |
+| **Quality Gate** | Soglia di qualita in una pipeline CI (es. PHPStan level 6, coverage > 80%) che blocca il deploy se non superata |
+| **Monitoring** | Osservabilita continua del sito: uptime, performance trend, security scan, content integrity |
+| **Baseline** | Snapshot iniziale delle metriche (CWV, TTFB, plugin count) usato come riferimento per trend analysis |
+| **P0-P3** | Livelli di severity per alerting: P0 critico (sito down), P1 alto, P2 medio, P3 informativo |
+| **TTFB** | Time To First Byte — tempo tra la richiesta HTTP e il primo byte di risposta dal server |
 
 ---
 
-*Guida v1.7.1 - WordPress Manager Plugin per Claude Code*
+*Guida v2.1.0 - WordPress Manager Plugin per Claude Code*
 *Ultimo aggiornamento: 2026-02-28*
