@@ -2,6 +2,11 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.1.1] - 2026-02-28
+
+### Changed
+- **GUIDE.md**: aggiornamento completo da v1.7.1 a v2.1.0 — documenta WooCommerce, Multisite, CI/CD, Monitoring (11 agent, 28 skill, 81 tool, 16 script, router v8, 16 scenari, +13 termini glossario)
+
 ## [2.1.0] - 2026-02-28
 
 ### Added
