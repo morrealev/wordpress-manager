@@ -1,7 +1,7 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 1.5.0
-**Ultimo aggiornamento:** 2026-02-27
+**Versione:** 1.7.1
+**Ultimo aggiornamento:** 2026-02-28
 **Repository:** https://github.com/morrealev/wordpress-manager
 
 ---
@@ -48,6 +48,11 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **Analizzare codice**: static analysis con PHPStan, profiling con WP-CLI
 - **Testare in sandbox**: WordPress Playground per ambienti disposable
 - **Progettare UI WordPress**: componenti WPDS, design token, pattern
+- **Testare progetti**: Playwright E2E, Jest unit, PHPUnit integration, CI/CD
+- **Hardening sicurezza**: filesystem, HTTP headers, autenticazione, incident response
+- **Audit accessibilita**: WCAG 2.2 AA, axe-core, pa11y, Lighthouse
+- **Internazionalizzare**: PHP/JS gettext, .pot/.po/.mo workflow, RTL, WPML/Polylang
+- **Architetture headless**: REST vs WPGraphQL, JWT auth, CORS, Next.js/Nuxt/Astro
 
 ### Requisiti
 
@@ -84,28 +89,33 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v1.4.0
+wordpress-manager/                          # v1.7.1
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
 +-- CHANGELOG.md                            # Cronologia versioni
-+-- agents/                                 # 5 agenti specializzati
++-- agents/                                 # 8 agenti specializzati
 |   +-- wp-site-manager.md                      # Orchestratore centrale
 |   +-- wp-deployment-engineer.md               # Specialista deploy
 |   +-- wp-content-strategist.md                # Contenuti e SEO
-|   +-- wp-security-auditor.md                  # Audit sicurezza
+|   +-- wp-security-auditor.md                  # Audit sicurezza (read-only)
+|   +-- wp-security-hardener.md                 # Hardening e incident response
 |   +-- wp-performance-optimizer.md             # Performance e CWV
+|   +-- wp-test-engineer.md                     # Testing (E2E, unit, integration)
+|   +-- wp-accessibility-auditor.md             # WCAG 2.2 AA audit (read-only)
 +-- commands/                               # 5 slash commands
 |   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
-+-- skills/                                 # 18 skill totali
++-- skills/                                 # 24 skill totali
 |   +-- [OPERATIVE - 5 skill]
 |   +-- wp-deploy/                              # Procedure deploy
 |   +-- wp-audit/                               # Checklist audit
 |   +-- wp-content/                             # Template contenuti
 |   +-- wp-migrate/                             # Procedure migrazione
 |   +-- wp-backup/                              # Strategie backup
+|   +-- [AMBIENTE LOCALE - 1 skill]
+|   +-- wp-local-env/                           # Studio/LocalWP/wp-env
 |   +-- [SVILUPPO - 13 skill da WordPress/agent-skills]
-|   +-- wordpress-router/                       # Router unificato (dev + ops)
+|   +-- wordpress-router/                       # Router unificato v4 (dev + local + ops)
 |   +-- wp-project-triage/                      # Auto-detect tipo progetto
 |   +-- wp-block-development/                   # Blocchi Gutenberg
 |   +-- wp-block-themes/                        # Temi a blocchi
@@ -118,6 +128,12 @@ wordpress-manager/                          # v1.4.0
 |   +-- wp-performance/                         # Profiling backend
 |   +-- wp-playground/                          # Sandbox disposable
 |   +-- wpds/                                   # WordPress Design System
+|   +-- [SVILUPPO ESTESO - 5 skill]
+|   +-- wp-e2e-testing/                         # Testing strategy e framework
+|   +-- wp-security/                            # Security hardening e incident response
+|   +-- wp-i18n/                                # Internazionalizzazione
+|   +-- wp-accessibility/                       # WCAG 2.2 accessibilita
+|   +-- wp-headless/                            # Architettura headless/decoupled
 +-- hooks/                                  # 6 hook di sicurezza
 |   +-- hooks.json                              # 4 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
@@ -292,6 +308,11 @@ WordPress Manager comprende richieste in linguaggio naturale. Ecco come formular
 | Migrare un sito | "Migra il sito su Hostinger" / "Trasferisci il sito" |
 | Aggiungere un nuovo sito | "Configura un nuovo sito WordPress" |
 | Cambiare sito attivo | "Passa al sito bioinagro" / "Switch a opencactus" |
+| Eseguire test | "Esegui i test" / "Lancia Playwright" / "Testa il plugin" |
+| Hardening sicurezza | "Metti in sicurezza il sito" / "Hardening" |
+| Audit accessibilita | "Controlla l'accessibilita" / "WCAG audit" |
+| Internazionalizzare | "Internazionalizza il plugin" / "Traduci il tema" |
+| Setup headless | "WordPress headless con Next.js" / "Configura WPGraphQL" |
 
 ---
 
@@ -455,6 +476,8 @@ I comandi slash sono scorciatoie dirette per operazioni specifiche. Si invocano 
 
 Gli agenti sono "personalita" specializzate di Claude che vengono attivate automaticamente in base al contesto della conversazione. Non devi invocarli manualmente - Claude sceglie l'agente giusto per il compito.
 
+Il plugin include **8 agenti** organizzati per area di competenza. Alcuni agenti lavorano in coppia (audit → fix).
+
 ### wp-site-manager (Orchestratore)
 
 | Proprieta | Valore |
@@ -484,13 +507,18 @@ Gli agenti sono "personalita" specializzate di Claude che vengono attivate autom
 **Workflow di deploy**:
 1. Pre-flight: verifica file, syntax check PHP, scan credenziali
 2. Backup: assicura rollback path
-3. Deploy: Hostinger MCP o SSH
-4. Post-deploy: verifica, test, report
+3. Deploy: Hostinger MCP, SSH, o export da ambiente locale
+4. Post-deploy: verifica con WP REST Bridge (list_plugins, list_content), report
 
-**3 metodi supportati**:
+**4 metodi supportati**:
 - **Hostinger MCP**: `hosting_deployWordpressPlugin`, `hosting_deployWordpressTheme`
 - **SSH/SCP**: Upload e estrazione via comandi SSH
 - **Full import**: `hosting_importWordpressWebsite` per migrazioni complete
+- **Da ambiente locale**: Export da WordPress Studio, LocalWP o wp-env, poi deploy (vedi skill `wp-local-env`)
+
+**Verifica post-deploy**: Usa i tool WP REST Bridge (`list_plugins`, `activate_plugin`, `list_content`) per verificare che il deploy sia andato a buon fine.
+
+**Skill correlata**: `wp-deploy`, `wp-local-env`
 
 ---
 
@@ -499,7 +527,7 @@ Gli agenti sono "personalita" specializzate di Claude che vengono attivate autom
 | Proprieta | Valore |
 |-----------|--------|
 | Colore | Magenta |
-| Ruolo | Creazione contenuti, SEO, gestione editoriale |
+| Ruolo | Creazione contenuti, SEO, gestione editoriale, contenuti multilingue |
 | Attivazione | Creazione post, ottimizzazione SEO, gestione tassonomie |
 
 **Ciclo di vita contenuti**:
@@ -514,17 +542,23 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 - Dati strutturati (Article, Product, FAQ)
 - Analisi keyword density
 
+**Contenuti multilingue**: Per contenuto tradotto o multilingue, si coordina con la skill `wp-i18n`. Per temi/plugin che generano contenuto traducibile, usa correttamente text domain e funzioni `__()`, `_e()`, `esc_html__()`.
+
 **6 template disponibili**: Blog standard, Listicle, How-To Guide, Landing Page, About Page, Product Page
+
+**Skill correlata**: `wp-content`, `wp-i18n`
 
 ---
 
-### wp-security-auditor (Sicurezza)
+### wp-security-auditor (Sicurezza — Audit)
 
 | Proprieta | Valore |
 |-----------|--------|
 | Colore | Red |
-| Ruolo | Audit sicurezza e hardening |
-| Attivazione | "Controlla la sicurezza", "audit sicurezza", "hardening" |
+| Ruolo | Audit sicurezza (read-only, non modifica nulla) |
+| Attivazione | "Controlla la sicurezza", "audit sicurezza", "scansiona vulnerabilita" |
+
+**Pre-scan rapido**: Esegue `security_inspect.mjs` per una panoramica veloce (wp-config constants, permessi file, .htaccess, plugin di sicurezza).
 
 **5 fasi di audit**:
 
@@ -542,6 +576,39 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 - **MEDIUM**: Problemi da risolvere nella prossima manutenzione
 - **LOW**: Miglioramenti raccomandati
 - **INFO**: Best practice e suggerimenti
+
+**Handoff a remediation**: Questo agent fa solo audit. Per **implementare le correzioni**, delegare al `wp-security-hardener` agent. Per procedure di hardening dettagliate, consultare la skill `wp-security`.
+
+**Skill correlata**: `wp-audit`, `wp-security`
+
+---
+
+### wp-security-hardener (Sicurezza — Hardening)
+
+| Proprieta | Valore |
+|-----------|--------|
+| Colore | Red |
+| Ruolo | Hardening sicurezza e incident response (implementa le correzioni) |
+| Attivazione | "Metti in sicurezza il sito", "hardening", "incidente sicurezza", "sito compromesso" |
+
+Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **li risolve**.
+
+**6 aree di intervento**:
+
+| Area | Azioni |
+|------|--------|
+| Filesystem Hardening | Permessi file, disabilita editor PHP, protegge wp-config.php |
+| HTTP Security Headers | CSP, X-Frame-Options, HSTS, X-Content-Type-Options via .htaccess |
+| Authentication Hardening | Limita tentativi login, disabilita XML-RPC, forza password forti |
+| REST API Restriction | Disabilita REST per utenti non autenticati, namespace filtering |
+| User Management | Rimozione utenti inattivi, downgrade ruoli eccessivi |
+| Incident Response | 5 fasi: contenimento → investigazione → remediation → recovery → post-incident |
+
+**Protocollo di handoff**: Riceve i findings dal `wp-security-auditor` e produce un report di remediation con ogni azione documentata.
+
+**Regole di sicurezza**: SEMPRE backup prima di modifiche. Conferma ogni modifica con l'utente. Non tocca plugin attivi senza permesso. Documenta ogni cambiamento.
+
+**Skill correlata**: `wp-security`
 
 ---
 
@@ -561,11 +628,93 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 | INP (Interaction to Next Paint) | < 200ms | Reattivita alle interazioni utente |
 | CLS (Cumulative Layout Shift) | < 0.1 | Stabilita visiva durante caricamento |
 
+**Separazione MCP tool**: L'agent usa **WP REST Bridge** per dati a livello WordPress (plugin, contenuti, impostazioni) e **Hostinger MCP** per metriche a livello infrastruttura (risorse server, PHP memory, caching server-side).
+
 **Plugin pesanti noti** (dall'audit):
 - Elementor Pro, WPBakery, Divi (page builder)
 - Wordfence, Sucuri (security con scanning pesante)
 - WooCommerce (con molte estensioni)
 - Jetpack (quando attivato completamente)
+
+**Skill correlata**: `wp-performance` (profiling backend con WP-CLI doctor/profile), `wp-audit`
+
+---
+
+### wp-test-engineer (Testing)
+
+| Proprieta | Valore |
+|-----------|--------|
+| Colore | Blue |
+| Ruolo | Esecuzione test, setup infrastruttura test, debug failure |
+| Attivazione | "Esegui i test", "Playwright", "Jest", "PHPUnit", "CI pipeline" |
+
+**Framework supportati**:
+
+| Framework | Tipo | Comando |
+|-----------|------|---------|
+| Playwright | E2E browser test | `npx playwright test` |
+| Jest | Unit test JavaScript | `npx jest` |
+| PHPUnit | Unit/integration test PHP | `./vendor/bin/phpunit` |
+
+**Procedure**:
+1. **Setup ambiente**: rileva framework via `test_inspect.mjs`, configura wp-env se necessario
+2. **Esecuzione test**: lancia suite appropriata, cattura output
+3. **Debug failure**: analizza output, screenshot Playwright, trace file
+4. **Coverage**: genera report coverage, identifica gap
+5. **CI Integration**: verifica/crea GitHub Actions workflow
+
+**Report**: Risultati per suite, analisi failure, coverage gap, suggerimenti.
+
+**Regole**: Non esegue test su produzione. Conferma prima di installare dipendenze. Non modifica test senza approvazione.
+
+**Skill correlata**: `wp-e2e-testing`
+
+---
+
+### wp-accessibility-auditor (Accessibilita)
+
+| Proprieta | Valore |
+|-----------|--------|
+| Colore | Purple |
+| Ruolo | Audit WCAG 2.2 AA (read-only, non modifica codice) |
+| Attivazione | "Audit accessibilita", "WCAG", "a11y check", "screen reader" |
+
+**5 fasi di audit**:
+
+| Fase | Cosa verifica |
+|------|---------------|
+| Automated Scan | axe-core/pa11y su URL target, Lighthouse a11y score |
+| Code Review | ARIA usage, gerarchia heading, alt text, form labels, landmarks |
+| Keyboard Navigation | Focus order, skip links, tab traps |
+| Theme Compliance | Requisiti accessibility-ready di WordPress |
+| Block Editor A11y | Output semantico dei blocchi Gutenberg |
+
+**Report**: Matrice conformita WCAG, violazioni per severity, step di remediation per ogni issue.
+
+**Regole**: Non modifica codice (solo audit). Produce raccomandazioni actionable con riferimenti WCAG specifici.
+
+**Skill correlata**: `wp-accessibility`
+
+---
+
+### Pattern di Collaborazione tra Agent
+
+| Pattern | Flusso | Descrizione |
+|---------|--------|-------------|
+| **Audit → Fix** | `wp-security-auditor` → `wp-security-hardener` | L'auditor trova problemi, l'hardener implementa le correzioni |
+| **Delegazione** | `wp-site-manager` → tutti gli altri | Il site manager delega a agent specializzati in base al task |
+
+Il `wp-site-manager` puo delegare a tutti gli 8 agent specializzati:
+
+| Task | Agent delegato |
+|------|---------------|
+| Deploy, migrazione | `wp-deployment-engineer` |
+| Contenuti, SEO | `wp-content-strategist` |
+| Audit sicurezza | `wp-security-auditor` |
+| Hardening, incident response | `wp-security-hardener` |
+| Performance, CWV | `wp-performance-optimizer` |
+| Testing | `wp-test-engineer` |
+| Accessibilita | `wp-accessibility-auditor` |
 
 ---
 
@@ -599,11 +748,14 @@ Le skill NON sostituiscono i comandi slash. I comandi sono entry point espliciti
 
 ### Origine
 
-Le 13 skill di sviluppo sono integrate dal repository community [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (licenza GPL-2.0-or-later). Forniscono conoscenza specializzata per **sviluppare** codice WordPress — blocchi, temi, plugin, endpoint REST, analisi statica e testing.
+Le skill di sviluppo provengono da due fonti:
+
+- **13 skill community** integrate dal repository [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (licenza GPL-2.0-or-later). Coprono blocchi, temi, plugin, endpoint REST, analisi statica, profiling e altro.
+- **5 skill estese** (MIT) aggiunte in v1.6.0: testing, security, internazionalizzazione, accessibilita, headless.
 
 ### Il Router Unificato
 
-La skill `wordpress-router` e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task:
+La skill `wordpress-router` (v4) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **tre categorie**: sviluppo, ambiente locale, operativo.
 
 ```
 Utente: "Crea un blocco custom per la gallery"
@@ -623,7 +775,23 @@ wordpress-router: TASK = operativo
 wp-deploy + wp-deployment-engineer: esegue deploy
 ```
 
-### Panoramica Skills di Sviluppo (13)
+```
+Utente: "Configura il mio sito locale con WordPress Studio"
+  |
+wordpress-router: TASK = ambiente locale
+  |
+wp-local-env: guida setup e gestione
+```
+
+```
+Utente: "Esegui i test E2E del mio plugin"
+  |
+wordpress-router: TASK = sviluppo (testing)
+  |
+wp-e2e-testing skill + wp-test-engineer agent
+```
+
+### Panoramica Skills di Sviluppo — Community (13)
 
 | Skill | Si attiva quando... | Risorse |
 |-------|---------------------|---------|
@@ -641,9 +809,23 @@ wp-deploy + wp-deployment-engineer: esegue deploy
 | `wp-playground` | "Playground", "sandbox", "blueprint", "test disposable" | 3 reference files |
 | `wpds` | "Design System", "@wordpress/components", "design token" | wpds-mcp-setup.md (richiede WPDS MCP server) |
 
+### Panoramica Skills di Sviluppo — Estese (5)
+
+Aggiunte in v1.6.0, queste skill coprono aree avanzate dello sviluppo WordPress. Ogni skill ha un **agent dedicato** per l'esecuzione (indicato in tabella).
+
+| Skill | Si attiva quando... | Risorse | Agent dedicato |
+|-------|---------------------|---------|----------------|
+| `wp-e2e-testing` | "testa il plugin", "Playwright", "Jest", "PHPUnit", "CI" | 7 reference files, test_inspect.mjs | `wp-test-engineer` |
+| `wp-security` | "hardening", "metti in sicurezza", "incidente", "CSP" | 7 reference files, security_inspect.mjs | `wp-security-hardener` |
+| `wp-i18n` | "traduci", "internazionalizza", "text domain", "RTL", "WPML" | 6 reference files, i18n_inspect.mjs | — |
+| `wp-accessibility` | "accessibilita", "WCAG", "screen reader", "a11y" | 6 reference files | `wp-accessibility-auditor` |
+| `wp-headless` | "headless", "decoupled", "WPGraphQL", "Next.js", "CORS" | 6 reference files, headless_inspect.mjs | — |
+
+**Cross-reference bidirezionali**: Le skill con agent dedicato contengono una sezione "Recommended Agent", e gli agent contengono "Related Skills". Questo garantisce che Claude attivi sia la conoscenza (skill) che l'esecutore (agent) appropriati.
+
 ### Script di Rilevamento Automatico
 
-Le skill di sviluppo includono 7 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
+Le skill includono 12 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
 
 | Script | Cosa rileva |
 |--------|-------------|
@@ -654,6 +836,11 @@ Le skill di sviluppo includono 7 script Node.js (`.mjs`) che eseguono analisi au
 | `perf_inspect.mjs` | WP-CLI availability, autoloaded options, object cache |
 | `wpcli_inspect.mjs` | WP-CLI versione, comandi disponibili, configurazione |
 | `phpstan_inspect.mjs` | Configurazione PHPStan, livello analisi, baseline |
+| `detect_local_env.mjs` | Ambienti locali: Studio, LocalWP, wp-env (v1.5.0) |
+| `test_inspect.mjs` | Framework test: Playwright, Jest, PHPUnit, wp-env, CI config (v1.6.0) |
+| `security_inspect.mjs` | wp-config constants, permessi file, .htaccess, plugin sicurezza (v1.6.0) |
+| `i18n_inspect.mjs` | Text domain, file .pot/.po/.mo, funzioni i18n PHP/JS (v1.6.0) |
+| `headless_inspect.mjs` | WPGraphQL, CORS config, framework frontend (v1.6.0) |
 
 ### WordPress Playground — Ambienti Disposable
 
@@ -688,11 +875,14 @@ Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components`
 ```
 1. cd mio-progetto-wordpress/
 2. Claude esegue wp-project-triage → rileva "wp-block-plugin"
-3. wordpress-router → instrada a wp-block-development
+3. wordpress-router v4 → instrada a wp-block-development
 4. Claude guida la creazione con block.json, edit.js, save.js
-5. wp-playground → test in sandbox disposable
-6. wp-phpstan → analisi statica del codice
-7. wp-deploy → deploy in produzione quando pronto
+5. wp-e2e-testing + wp-test-engineer → esegue test E2E con Playwright
+6. wp-accessibility + wp-accessibility-auditor → verifica WCAG 2.2
+7. wp-phpstan → analisi statica del codice
+8. wp-i18n → internazionalizzazione se necessaria
+9. wp-security + wp-security-hardener → hardening sicurezza
+10. wp-deploy → deploy in produzione quando pronto
 ```
 
 ---
@@ -981,12 +1171,58 @@ Claude (attiva wordpress-router → wp-block-development):
 7. Deploy quando pronto
 ```
 
-### Scenario 7: Analisi Statica e Profiling
+### Scenario 7: Test E2E e CI Pipeline
+
+```
+Tu: "Esegui i test E2E del mio plugin e configura la CI"
+
+Claude (attiva wp-test-engineer + skill wp-e2e-testing):
+1. Rileva framework con test_inspect.mjs (Playwright trovato)
+2. Setup wp-env se necessario (npx wp-env start)
+3. Esegue Playwright test suite (npx playwright test)
+4. Analizza failure: screenshot, trace file, output
+5. Genera report coverage
+6. Verifica/crea GitHub Actions workflow per CI
+-> Report: risultati test, failure analysis, coverage gap
+```
+
+### Scenario 8: Audit Sicurezza e Hardening
+
+```
+Tu: "Controlla la sicurezza del sito e correggi i problemi trovati"
+
+Claude (attiva wp-security-auditor → wp-security-hardener):
+1. Fase audit (wp-security-auditor):
+   - Pre-scan con security_inspect.mjs
+   - 5 fasi: plugin, utenti, contenuti, DNS/SSL, server config
+   - Genera report con severity classification
+2. Handoff a hardener (wp-security-hardener):
+   - Riceve findings dall'auditor
+   - Implementa fix: permessi file, headers HTTP, auth hardening
+   - Documenta ogni modifica
+-> Report: findings + remediation completata
+```
+
+### Scenario 9: Audit Accessibilita WCAG
+
+```
+Tu: "Verifica l'accessibilita del mio tema WordPress"
+
+Claude (attiva wp-accessibility-auditor + skill wp-accessibility):
+1. Scan automatico: axe-core, pa11y, Lighthouse a11y score
+2. Code review: ARIA patterns, heading hierarchy, form labels
+3. Keyboard navigation: focus order, skip links, tab traps
+4. Theme compliance: check requisiti accessibility-ready
+5. Block editor: verifica output semantico blocchi
+-> Report: matrice conformita WCAG 2.2, violazioni, remediation steps
+```
+
+### Scenario 10: Analisi Statica e Profiling
 
 ```
 Tu: "Analizza il codice del mio plugin con PHPStan e controlla le performance"
 
-Claude (attiva wp-phpstan + wp-performance):
+Claude (attiva wp-phpstan + wp-performance + wp-performance-optimizer):
 1. Rileva configurazione PHPStan (phpstan.neon o crea baseline)
 2. Esegue analisi statica a livello 6
 3. Segnala errori tipizzazione, chiamate deprecate, pattern non sicuri
@@ -995,11 +1231,39 @@ Claude (attiva wp-phpstan + wp-performance):
 6. Report con fix prioritizzati
 ```
 
+### Scenario 11: Internazionalizzazione Plugin
+
+```
+Tu: "Internazionalizza il mio plugin per supporto multilingue"
+
+Claude (attiva skill wp-i18n):
+1. Rileva text domain con i18n_inspect.mjs
+2. Wrappa stringhe PHP con __(), _e(), esc_html__()
+3. Wrappa stringhe JS con @wordpress/i18n
+4. Genera .pot con wp i18n make-pot
+5. Guida workflow .po/.mo per le traduzioni
+6. Verifica supporto RTL se necessario
+```
+
+### Scenario 12: Architettura Headless con Next.js
+
+```
+Tu: "Voglio usare WordPress come CMS headless con Next.js"
+
+Claude (attiva skill wp-headless):
+1. Analizza con headless_inspect.mjs (WPGraphQL? CORS config?)
+2. Guida scelta: REST API vs WPGraphQL
+3. Configura JWT authentication
+4. Setup CORS per il dominio frontend
+5. Integra Next.js con ISR (Incremental Static Regeneration)
+6. Configura webhook per invalidazione cache
+```
+
 ---
 
 ## 14. Amministrazione Avanzata
 
-### 13.1 Personalizzare gli Hook
+### 14.1 Personalizzare gli Hook
 
 Puoi modificare `hooks/hooks.json` per aggiungere o rimuovere hook. Struttura di un hook:
 
@@ -1024,7 +1288,7 @@ Puoi modificare `hooks/hooks.json` per aggiungere o rimuovere hook. Struttura di
 - `prompt`: Claude valuta semanticamente se l'operazione e legittima
 - `command`: Uno script bash esegue validazione tecnica (exit 0 = allow, exit 2 = block)
 
-### 13.2 Aggiungere un Nuovo Sito Manualmente
+### 14.2 Aggiungere un Nuovo Sito Manualmente
 
 Se preferisci non usare `/wordpress-manager:wp-setup`:
 
@@ -1039,7 +1303,7 @@ Se preferisci non usare `/wordpress-manager:wp-setup`:
 3. Riavvia la sessione Claude Code (per ricaricare le variabili d'ambiente)
 4. Verifica: `"Elenca i siti configurati"`
 
-### 13.3 Script di Health Check Automatizzato
+### 14.3 Script di Health Check Automatizzato
 
 Puoi schedulare il health check con cron per monitoraggio proattivo:
 
@@ -1049,7 +1313,7 @@ Puoi schedulare il health check con cron per monitoraggio proattivo:
 0 */6 * * * source ~/.claude/mcp-secrets.env && bash ~/.claude/plugins/local/wordpress-manager/scripts/health-check.sh >> /var/log/wp-health.log 2>&1
 ```
 
-### 13.4 Aggiornare il Plugin
+### 14.4 Aggiornare il Plugin
 
 ```bash
 cd ~/.claude/plugins/local/wordpress-manager
@@ -1061,7 +1325,7 @@ npm install
 npx tsc
 ```
 
-### 13.5 Disabilitare Temporaneamente il Plugin
+### 14.5 Disabilitare Temporaneamente il Plugin
 
 In `~/.claude/settings.json`:
 
@@ -1075,7 +1339,7 @@ In `~/.claude/settings.json`:
 
 I server MCP non si avvieranno e i comandi non saranno disponibili fino alla riattivazione.
 
-### 13.6 Sicurezza delle Credenziali
+### 14.6 Sicurezza delle Credenziali
 
 **Dove sono le credenziali**:
 - `~/.claude/mcp-secrets.env` - File locale, NON nel repository
@@ -1087,7 +1351,7 @@ I server MCP non si avvieranno e i comandi non saranno disponibili fino alla ria
 - Usa una Application Password dedicata per Claude (non la password dell'account)
 - Se un token viene compromesso, revocalo immediatamente dal pannello WordPress/Hostinger
 
-### 13.7 Struttura dei Permessi File WordPress
+### 14.7 Struttura dei Permessi File WordPress
 
 Per riferimento, i permessi standard su Hostinger:
 
@@ -1236,8 +1500,17 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **WordPress Playground** | Ambiente WordPress disposable che gira in WebAssembly con SQLite |
 | **WPDS** | WordPress Design System — componenti UI, token di design e pattern per l'ecosistema WP |
 | **WP-CLI** | Command-line interface per WordPress: gestione plugin, utenti, database da terminale |
+| **axe-core** | Engine open-source per test automatici accessibilita web (usato da wp-accessibility-auditor) |
+| **CORS** | Cross-Origin Resource Sharing — configurazione necessaria per architetture headless |
+| **Handoff** | Passaggio strutturato di findings da un agent (auditor) a un altro (hardener) |
+| **Incident Response** | Procedura in 5 fasi per gestire compromissioni di sicurezza WordPress |
+| **ISR** | Incremental Static Regeneration — rigenerazione pagine statiche con dati freschi da WordPress |
+| **pa11y** | Tool CLI per test automatici accessibilita web (alternativa ad axe-core) |
+| **RTL** | Right-to-Left — supporto per lingue scritte da destra a sinistra (arabo, ebraico) |
+| **WCAG** | Web Content Accessibility Guidelines — standard W3C per accessibilita web (target: 2.2 AA) |
+| **WPGraphQL** | Plugin WordPress che espone un'API GraphQL come alternativa alla REST API |
 
 ---
 
-*Guida v1.4.0 - WordPress Manager Plugin per Claude Code*
-*Ultimo aggiornamento: 2026-02-27*
+*Guida v1.7.1 - WordPress Manager Plugin per Claude Code*
+*Ultimo aggiornamento: 2026-02-28*
