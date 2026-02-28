@@ -1,6 +1,6 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 2.1.0
+**Versione:** 2.2.0
 **Ultimo aggiornamento:** 2026-02-28
 **Repository:** https://github.com/morrealev/wordpress-manager
 
@@ -57,6 +57,9 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **Amministrare Multisite**: sub-site, network plugin, Super Admin, domain mapping
 - **Configurare CI/CD**: GitHub Actions, GitLab CI, Bitbucket Pipelines, quality gates, deploy automatico
 - **Monitorare siti**: uptime, performance baseline, security scanning, content integrity, alerting
+- **Fleet monitoring**: monitorare tutti i siti configurati con report comparativi cross-site
+- **Riproporre contenuti**: trasformare post WordPress in social media, email, newsletter multi-canale
+- **Gestire webhook**: configurare notifiche outbound WordPress verso servizi esterni (Zapier, Slack, CDN)
 
 ### Requisiti
 
@@ -80,7 +83,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
                     wordpress-manager plugin
                     /         |         \
             Hostinger MCP    WP REST Bridge    WordPress.com MCP
-            (119 tool)       (81 tool)         (~15 tool)
+            (119 tool)       (85 tool)         (~15 tool)
                 |                |                    |
           Infrastruttura    Contenuti +          Siti hosted
           DNS, SSL, VPS     Plugin, Utenti       su WordPress.com
@@ -93,7 +96,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v2.1.0
+wordpress-manager/                          # v2.2.0
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
@@ -112,7 +115,7 @@ wordpress-manager/                          # v2.1.0
 |   +-- wp-monitoring-agent.md                  # Site monitoring read-only (v2.1.0)
 +-- commands/                               # 5 slash commands
 |   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
-+-- skills/                                 # 28 skill totali
++-- skills/                                 # 30 skill totali
 |   +-- [OPERATIVE - 5 skill]
 |   +-- wp-deploy/                              # Procedure deploy
 |   +-- wp-audit/                               # Checklist audit
@@ -122,7 +125,7 @@ wordpress-manager/                          # v2.1.0
 |   +-- [AMBIENTE LOCALE - 1 skill]
 |   +-- wp-local-env/                           # Studio/LocalWP/wp-env
 |   +-- [SVILUPPO - 13 skill da WordPress/agent-skills]
-|   +-- wordpress-router/                       # Router unificato v8 (dev + local + ops + multisite + cicd + monitoring)
+|   +-- wordpress-router/                       # Router unificato v9 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing)
 |   +-- wp-project-triage/                      # Auto-detect tipo progetto
 |   +-- wp-block-development/                   # Blocchi Gutenberg
 |   +-- wp-block-themes/                        # Temi a blocchi
@@ -141,13 +144,15 @@ wordpress-manager/                          # v2.1.0
 |   +-- wp-i18n/                                # Internazionalizzazione
 |   +-- wp-accessibility/                       # WCAG 2.2 accessibilita
 |   +-- wp-headless/                            # Architettura headless/decoupled
-|   +-- [E-COMMERCE + INFRASTRUTTURA - 4 skill]
+|   +-- [E-COMMERCE + INFRASTRUTTURA - 6 skill]
 |   +-- wp-woocommerce/                         # WooCommerce store management (v1.8.0)
 |   +-- wp-multisite/                           # Multisite network management (v1.9.0)
 |   +-- wp-cicd/                                # CI/CD pipeline automation (v2.0.0)
-|   +-- wp-monitoring/                          # Site monitoring e observability (v2.1.0)
-+-- hooks/                                  # 6 hook di sicurezza
-|   +-- hooks.json                              # 4 prompt + 2 command
+|   +-- wp-monitoring/                          # Site monitoring, fleet monitoring e observability (v2.1.0-v2.2.0)
+|   +-- wp-content-repurposing/                 # Content repurposing multi-canale (v2.2.0)
+|   +-- wp-webhooks/                            # Webhook propagation e integrazioni (v2.2.0)
++-- hooks/                                  # 7 hook di sicurezza
+|   +-- hooks.json                              # 5 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
 +-- scripts/                                # Utility
 +-- servers/wp-rest-bridge/                 # MCP Server custom (TypeScript)
@@ -329,6 +334,9 @@ WordPress Manager comprende richieste in linguaggio naturale. Ecco come formular
 | Amministrare Multisite | "Crea un sub-site" / "Network activate plugin" / "Super Admin" |
 | Configurare CI/CD | "Setup GitHub Actions" / "CI per il mio plugin" / "Deploy automatico" |
 | Monitorare il sito | "Monitora il sito" / "Health report" / "Setup uptime check" |
+| Fleet monitoring | "Monitora tutti i siti" / "Fleet health" / "Cross-site comparison" |
+| Riproporre contenuti | "Riproponi il post per social" / "Newsletter dal blog" / "Atomizza contenuto" |
+| Gestire webhook | "Configura webhook" / "Notifica Zapier" / "WooCommerce webhook" |
 
 ---
 
@@ -562,7 +570,9 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 
 **6 template disponibili**: Blog standard, Listicle, How-To Guide, Landing Page, About Page, Product Page
 
-**Skill correlata**: `wp-content`, `wp-i18n`
+**Content repurposing** (v2.2.0): Trasforma contenuti WordPress in output multi-canale — social media post (Twitter/LinkedIn/Instagram/Facebook), email newsletter, drip sequence. Usa la skill `wp-content-repurposing` per template e regole per piattaforma.
+
+**Skill correlata**: `wp-content`, `wp-i18n`, `wp-content-repurposing`
 
 ---
 
@@ -721,7 +731,7 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 | Ruolo | Gestione completa store WooCommerce |
 | Attivazione | "Mostra gli ordini", "crea un prodotto", "report vendite", "coupon", "WooCommerce" |
 
-**Capacita** (30 tool MCP via WP REST Bridge, namespace `wc/v3`):
+**Capacita** (34 tool MCP via WP REST Bridge, namespace `wc/v3`):
 
 | Area | Tool | Operazioni |
 |------|------|-----------|
@@ -731,10 +741,11 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 | Coupons | 4 | Creazione coupon, marketing promozioni |
 | Reports | 5 | Vendite, top seller, totali ordini/prodotti/clienti |
 | Settings | 4 | Gateway pagamento, zone spedizione, tasse, system status |
+| Webhooks | 4 | Lista, crea, aggiorna, elimina webhook WooCommerce (v2.2.0) |
 
 **Prerequisiti**: WooCommerce attivo + Consumer Key/Secret configurati in `WP_SITES_CONFIG` (generare da WooCommerce > Settings > Advanced > REST API).
 
-**Skill correlata**: `wp-woocommerce`
+**Skill correlata**: `wp-woocommerce`, `wp-webhooks`
 
 ---
 
@@ -773,9 +784,9 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 |-----------|--------|
 | Colore | Teal |
 | Ruolo | Monitoring continuo del sito (read-only, non modifica nulla) |
-| Attivazione | "Monitora il sito", "health report", "uptime check", "performance trend", "security scan periodico" |
+| Attivazione | "Monitora il sito", "health report", "uptime check", "performance trend", "security scan periodico", "fleet health", "monitora tutti i siti" |
 
-**5 aree di monitoraggio**:
+**5 aree di monitoraggio + fleet**:
 
 | Area | Cosa monitora |
 |------|--------------|
@@ -784,8 +795,11 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 | Security | Plugin vulnerabilita, file integrity, utenti anomali, malware patterns |
 | Content | Modifiche non autorizzate, broken links, spam comments, media integrity |
 | Alerting | Threshold P0-P3, notifiche email/Slack/webhook, escalation |
+| Fleet (v2.2.0) | Cross-site health comparison, fleet-wide patterns, per-site breakdown |
 
-**Report disponibili**: Daily Health Summary, Weekly Performance, Monthly Security, Quarterly Trend, Executive Dashboard.
+**Report disponibili**: Daily Health Summary, Weekly Performance, Monthly Security, Quarterly Trend, Executive Dashboard, Fleet Health Report (v2.2.0).
+
+**Fleet monitoring** (v2.2.0): Itera su tutti i siti configurati (`list_sites` + `switch_site`), esegue le procedure di monitoring per ciascuno, aggrega i risultati in un report comparativo fleet con pattern cross-site (stessa vulnerabilita su piu siti, performance regression fleet-wide).
 
 **Delegazione**: Quando rileva problemi, delega a agent specializzati:
 - Sicurezza → `wp-security-auditor` + `wp-security-hardener`
@@ -858,11 +872,11 @@ Le skill di sviluppo provengono da due fonti:
 
 - **13 skill community** integrate dal repository [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (licenza GPL-2.0-or-later). Coprono blocchi, temi, plugin, endpoint REST, analisi statica, profiling e altro.
 - **5 skill estese** (MIT) aggiunte in v1.6.0: testing, security, internazionalizzazione, accessibilita, headless.
-- **4 skill e-commerce + infrastruttura** (MIT) aggiunte in v1.8.0-v2.1.0: WooCommerce, Multisite, CI/CD, Monitoring.
+- **6 skill e-commerce + infrastruttura** (MIT) aggiunte in v1.8.0-v2.2.0: WooCommerce, Multisite, CI/CD, Monitoring, Content Repurposing, Webhooks.
 
 ### Il Router Unificato
 
-La skill `wordpress-router` (v8) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **sei categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring.
+La skill `wordpress-router` (v9) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **otto categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook.
 
 ```
 Utente: "Crea un blocco custom per la gallery"
@@ -922,6 +936,22 @@ wordpress-router: TASK = operativo (monitoring)
 wp-monitoring skill + wp-monitoring-agent agent
 ```
 
+```
+Utente: "Riproponi l'ultimo post del blog per i social media"
+  |
+wordpress-router: TASK = operativo (content repurposing)
+  |
+wp-content-repurposing skill + wp-content-strategist agent
+```
+
+```
+Utente: "Configura un webhook WooCommerce per Zapier"
+  |
+wordpress-router: TASK = operativo (webhook)
+  |
+wp-webhooks skill + wp-site-manager agent
+```
+
 ### Panoramica Skills di Sviluppo — Community (13)
 
 | Skill | Si attiva quando... | Risorse |
@@ -954,20 +984,22 @@ Aggiunte in v1.6.0, queste skill coprono aree avanzate dello sviluppo WordPress.
 
 **Cross-reference bidirezionali**: Le skill con agent dedicato contengono una sezione "Recommended Agent", e gli agent contengono "Related Skills". Questo garantisce che Claude attivi sia la conoscenza (skill) che l'esecutore (agent) appropriati.
 
-### Panoramica Skills E-Commerce + Infrastruttura (4)
+### Panoramica Skills E-Commerce + Infrastruttura (6)
 
-Aggiunte in v1.8.0-v2.1.0, queste skill coprono e-commerce, multisite, CI/CD e monitoring.
+Aggiunte in v1.8.0-v2.2.0, queste skill coprono e-commerce, multisite, CI/CD, monitoring, content repurposing e webhook.
 
 | Skill | Si attiva quando... | Risorse | Agent dedicato |
 |-------|---------------------|---------|----------------|
-| `wp-woocommerce` | "prodotti", "ordini", "WooCommerce", "coupon", "report vendite" | 6 reference files, woocommerce_inspect.mjs | `wp-ecommerce-manager` |
+| `wp-woocommerce` | "prodotti", "ordini", "WooCommerce", "coupon", "report vendite" | 8 reference files, woocommerce_inspect.mjs | `wp-ecommerce-manager` |
 | `wp-multisite` | "multisite", "sub-site", "network admin", "domain mapping" | 6 reference files, multisite_inspect.mjs | — |
-| `wp-cicd` | "CI/CD", "GitHub Actions", "pipeline", "deploy automatico" | 6 reference files, cicd_inspect.mjs | `wp-cicd-engineer` |
-| `wp-monitoring` | "monitora", "uptime", "health report", "alerting", "trend" | 6 reference files, monitoring_inspect.mjs | `wp-monitoring-agent` |
+| `wp-cicd` | "CI/CD", "GitHub Actions", "pipeline", "deploy automatico" | 7 reference files, cicd_inspect.mjs | `wp-cicd-engineer` |
+| `wp-monitoring` | "monitora", "uptime", "health report", "alerting", "fleet health" | 7 reference files, monitoring_inspect.mjs | `wp-monitoring-agent` |
+| `wp-content-repurposing` | "riproponi contenuto", "social dal blog", "newsletter dai post", "atomizza" | 4 reference files, repurposing_inspect.mjs | `wp-content-strategist` |
+| `wp-webhooks` | "webhook", "notifica esterna", "Zapier", "WooCommerce webhook" | 5 reference files, webhook_inspect.mjs | `wp-site-manager` |
 
 ### Script di Rilevamento Automatico
 
-Le skill includono 16 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
+Le skill includono 18 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
 
 | Script | Cosa rileva |
 |--------|-------------|
@@ -986,7 +1018,9 @@ Le skill includono 16 script Node.js (`.mjs`) che eseguono analisi automatica de
 | `woocommerce_inspect.mjs` | WooCommerce attivo, API keys, prodotti, ordini, gateway (v1.8.0) |
 | `multisite_inspect.mjs` | Multisite abilitato, sub-sites, network plugins, Super Admin (v1.9.0) |
 | `cicd_inspect.mjs` | Piattaforme CI, quality tools, wp-env, deploy config (v2.0.0) |
-| `monitoring_inspect.mjs` | Uptime tools, Lighthouse CI, security plugins, logging config (v2.1.0) |
+| `monitoring_inspect.mjs` | Uptime tools, Lighthouse CI, security plugins, logging config, fleet config (v2.1.0-v2.2.0) |
+| `repurposing_inspect.mjs` | Social plugins, email plugins, content volume, repurposing readiness (v2.2.0) |
+| `webhook_inspect.mjs` | WC webhooks, mu-plugin webhooks, webhook plugins, wp-config constants (v2.2.0) |
 
 ### WordPress Playground — Ambienti Disposable
 
@@ -1021,7 +1055,7 @@ Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components`
 ```
 1. cd mio-progetto-wordpress/
 2. Claude esegue wp-project-triage → rileva "wp-block-plugin"
-3. wordpress-router v8 → instrada a wp-block-development
+3. wordpress-router v9 → instrada a wp-block-development
 4. Claude guida la creazione con block.json, edit.js, save.js
 5. wp-e2e-testing + wp-test-engineer → esegue test E2E con Playwright
 6. wp-accessibility + wp-accessibility-auditor → verifica WCAG 2.2
@@ -1099,6 +1133,7 @@ Questi hook chiedono a Claude di valutare se l'operazione e stata esplicitamente
 | 2 | Disattivazione plugin | `deactivate_plugin` | Conferma prima di disattivare (potrebbe rompere dipendenze) |
 | 3 | Import WordPress | `hosting_importWordpressWebsite` | Conferma prima di SOVRASCRIVERE l'installazione esistente |
 | 4 | Modifica DNS | `DNS_updateDNSRecordsV1`, `DNS_resetDNSRecordsV1` | Conferma prima di modificare i record DNS |
+| 5 | Eliminazione webhook WC | `wc_delete_webhook` | Conferma prima di eliminare un webhook (le integrazioni esterne smetteranno di ricevere eventi) |
 
 ### Hook Command-Based (Validazione Script)
 
@@ -1155,7 +1190,7 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Sorgente | Custom TypeScript server in `servers/wp-rest-bridge/` |
 | Trasporto | stdio (JSON-RPC via stdin/stdout) |
 | Autenticazione | `WP_SITES_CONFIG` JSON env var |
-| Tool disponibili | 81 (40 WordPress + 30 WooCommerce + 11 Multisite) |
+| Tool disponibili | 85 (41 WordPress + 34 WooCommerce + 10 Multisite) |
 
 **Categorie tool WordPress** (`wp/v2`):
 
@@ -1180,6 +1215,7 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Coupons | 4 | `wc_list_coupons`, `wc_create_coupon`, `wc_delete_coupon` |
 | Reports | 5 | `wc_get_sales_report`, `wc_get_top_sellers`, `wc_get_orders_totals` |
 | Settings | 4 | `wc_list_payment_gateways`, `wc_list_shipping_zones`, `wc_get_system_status` |
+| Webhooks | 4 | `wc_list_webhooks`, `wc_create_webhook`, `wc_update_webhook`, `wc_delete_webhook` |
 
 **Categorie tool Multisite** (`ms_` prefix, richiede `is_multisite: true` + SSH/WP-CLI):
 
@@ -1467,7 +1503,53 @@ Claude (attiva skill wp-headless):
 6. Configura webhook per invalidazione cache
 ```
 
-### Scenario 16: WordPress Multisite Network
+### Scenario 16: Fleet Monitoring Cross-Site
+
+```
+Tu: "Controlla la salute di tutti i miei siti WordPress"
+
+Claude (attiva wp-monitoring-agent + skill wp-monitoring, Procedura 7):
+1. list_sites per enumerare tutti i siti configurati
+2. Per ogni sito: switch_site, poi uptime + performance + security + content check
+3. Aggrega i risultati in tabella comparativa fleet
+4. Identifica pattern cross-site (stessa vulnerabilita su piu siti, regressione simultanea)
+5. Genera Fleet Health Report con breakdown per sito + summary fleet
+-> Report: fleet health, anomalie, raccomandazioni prioritizzate
+```
+
+### Scenario 17: Content Repurposing Multi-Canale
+
+```
+Tu: "Trasforma l'ultimo post del blog in contenuti per social media e newsletter"
+
+Claude (attiva wp-content-strategist + skill wp-content-repurposing):
+1. Seleziona post piu recente via list_content
+2. Estrae elementi chiave: headline, punti principali, quote, statistiche, CTA
+3. Genera Twitter/X thread (280 char per tweet, hook + 3-5 punti + CTA)
+4. Genera LinkedIn summary (angolo professionale, 1000 char)
+5. Genera Instagram carousel (5-7 slide con takeaway visivi)
+6. Genera newsletter digest (excerpt + CTA, subject line ottimizzata)
+7. Presenta tutte le varianti per revisione
+-> Output: 4+ formati pronti per distribuzione
+```
+
+### Scenario 18: Webhook WooCommerce per Zapier
+
+```
+Tu: "Configura un webhook WooCommerce per notificare Zapier quando arriva un nuovo ordine"
+
+Claude (attiva skill wp-webhooks):
+1. Verifica WooCommerce attivo con webhook_inspect.mjs
+2. Crea webhook con wc_create_webhook:
+   - topic: "order.created"
+   - delivery_url: URL webhook Zapier dell'utente
+   - secret: genera shared secret per HMAC-SHA256
+3. Verifica webhook attivo con wc_list_webhooks
+4. Spiega come verificare la signature nel receiver
+-> Report: webhook configurato, URL delivery, istruzioni test
+```
+
+### Scenario 19: WordPress Multisite Network
 
 ```
 Tu: "Crea un network multisite con 3 sub-site per i nostri brand"
@@ -1743,8 +1825,14 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **Baseline** | Snapshot iniziale delle metriche (CWV, TTFB, plugin count) usato come riferimento per trend analysis |
 | **P0-P3** | Livelli di severity per alerting: P0 critico (sito down), P1 alto, P2 medio, P3 informativo |
 | **TTFB** | Time To First Byte — tempo tra la richiesta HTTP e il primo byte di risposta dal server |
+| **Fleet Monitoring** | Monitoraggio simultaneo di tutti i siti WordPress configurati con report comparativo cross-site |
+| **Content Repurposing** | Trasformazione sistematica di contenuti WordPress in formati multi-canale (social, email, newsletter) |
+| **Content Atomization** | Scomposizione di contenuti pillar in unita atomiche autonome (quote, statistiche, tip) per distribuzione |
+| **Webhook** | Notifica HTTP outbound inviata automaticamente da WordPress quando si verifica un evento (es. ordine creato) |
+| **HMAC-SHA256** | Algoritmo di firma usato per autenticare webhook — il receiver verifica l'integrita del payload |
+| **mu-plugin** | Must-Use Plugin WordPress — plugin caricato automaticamente senza attivazione, usato per webhook core |
 
 ---
 
-*Guida v2.1.0 - WordPress Manager Plugin per Claude Code*
+*Guida v2.2.0 - WordPress Manager Plugin per Claude Code*
 *Ultimo aggiornamento: 2026-02-28*
