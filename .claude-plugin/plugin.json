@@ -1,7 +1,7 @@
 {
   "name": "wordpress-manager",
-  "version": "1.7.2",
-  "description": "Unified WordPress management plugin for Claude Code. Orchestrates Hostinger MCP (infrastructure), WP REST API bridge (content), and WordPress.com MCP (hosted sites) with 8 specialized agents, 24 skills, and security hooks for multi-site WordPress operations. Includes local dev environment support for WordPress Studio, LocalWP, and wp-env. Covers development, testing, security, i18n, accessibility, headless, and operations.",
+  "version": "1.8.0",
+  "description": "Unified WordPress management plugin for Claude Code. Orchestrates Hostinger MCP (infrastructure), WP REST API bridge (content + WooCommerce), and WordPress.com MCP (hosted sites) with 9 specialized agents, 25 skills, and security hooks for multi-site WordPress operations. Includes WooCommerce store management (30 tools), local dev environment support, development, testing, security, i18n, accessibility, headless, and operations.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -17,7 +17,9 @@
     "local-development",
     "wordpress-studio",
     "localwp",
-    "wp-env"
+    "wp-env",
+    "woocommerce",
+    "ecommerce"
   ],
   "mcpServers": "./.mcp.json"
 }

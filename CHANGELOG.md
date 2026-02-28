@@ -2,6 +2,34 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [1.8.0] - 2026-02-28
+
+### Added
+- **WooCommerce support** — 30 new MCP tools via WP REST Bridge (`wc/v3` namespace)
+  - `wc-products.ts` (7 tools): CRUD products, categories, variations
+  - `wc-orders.ts` (6 tools): List, get, update status, notes, refunds
+  - `wc-customers.ts` (4 tools): List, get, create, update customers
+  - `wc-coupons.ts` (4 tools): CRUD coupons with discount rules
+  - `wc-reports.ts` (5 tools): Sales, top sellers, order/product/customer totals
+  - `wc-settings.ts` (4 tools): Payment gateways, shipping zones, tax classes, system status
+- **`wp-woocommerce` skill** — WooCommerce operations with decision tree and 8 reference files
+  - Reference files: product-management, order-workflow, analytics-reports, coupon-marketing, shipping-setup, payment-gateways, tax-configuration, wc-extensions
+- **`wp-ecommerce-manager` agent** — WooCommerce store management (color: orange)
+  - 5 procedures: product catalog, order processing, sales analytics, coupon campaigns, store health
+  - Report template with KPIs and recommendations
+- **`woocommerce_inspect.mjs`** detection script — scans for WC plugin, hooks, composer deps, API config
+- WooCommerce authentication: Consumer Key/Secret via separate AxiosInstance in WP REST Bridge
+  - `SiteConfig` extended with optional `wc_consumer_key`/`wc_consumer_secret`
+  - `makeWooCommerceRequest()` reusing existing retry and concurrency logic
+- WC types: `WCProduct`, `WCOrder`, `WCCustomer`, `WCCoupon` in types.ts
+
+### Changed
+- Router upgraded to v5 — WooCommerce keywords in Step 0 + Step 2b routing entry
+- `wp-site-manager` agent — added `wp-ecommerce-manager` to delegation table
+- Cross-references added to `wp-audit`, `wp-deploy`, `wp-backup` skills
+- WP REST Bridge: 41 → 71 total tools
+- Version bumps: plugin.json + package.json → 1.8.0 (25 skills, 9 agents)
+
 ## [1.7.2] - 2026-02-28
 
 ### Changed
