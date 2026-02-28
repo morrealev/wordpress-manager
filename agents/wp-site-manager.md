@@ -24,6 +24,13 @@ description: |
   assistant: "I'll use the wp-site-manager agent to handle multi-site operations."
   <commentary>Multi-site coordination is a core capability of this agent.</commentary>
   </example>
+
+  <example>
+  Context: User wants to set up a multilingual multisite network.
+  user: "Set up Italian and Spanish versions of our site"
+  assistant: "I'll use the wp-site-manager agent to create language-specific sub-sites and configure the multi-language network."
+  <commentary>Multi-language network setup requires creating sub-sites, configuring hreflang, and establishing content sync — all multisite operations.</commentary>
+  </example>
 model: inherit
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
@@ -127,6 +134,20 @@ For WordPress Multisite networks (sites with `is_multisite: true` in WP_SITES_CO
 - ALWAYS confirm before network-activating plugins (affects ALL sites)
 - Announce which network you're operating on when multiple multisite networks are configured
 
+### Multi-Language Network Management
+
+When setting up or managing a multi-language WordPress Multisite network:
+
+1. **Assess current network**: Use `ms_list_sites` to list existing sub-sites. Run `multilang_inspect.mjs` for readiness assessment (multisite status, multilingual plugin, language patterns, hreflang).
+2. **Create language sub-sites**: Use `ms_create_site` for each target language. Use ISO 639-1 codes as slugs (e.g., `/it/`, `/de/`, `/fr/`). Title format: `{Brand} - {Language Name}`.
+3. **Configure multilingual plugin**: Network-activate the chosen plugin (WPML, Polylang, or MultilingualPress) via `ms_network_activate_plugin`. Assign language to each sub-site in plugin settings.
+4. **Set up hreflang**: If using MultilingualPress or WPML, hreflang is auto-generated. Otherwise, install the hreflang mu-plugin from `wp-multilang-network` skill → `references/hreflang-config.md`.
+5. **Establish content sync workflow**: Define whether content is manually replicated, semi-auto (plugin-assisted), or fully synced. See `wp-multilang-network` skill → `references/content-sync.md`.
+6. **Configure language routing**: Set up language switcher widget and optional browser detection redirect. See `references/language-routing.md`.
+7. **Verify international SEO**: Check hreflang reciprocal links, per-language sitemaps, GSC properties per language. See `references/seo-international.md`.
+
+See the `wp-multilang-network` skill for detailed reference files on network architecture, hreflang, content sync, language routing, and international SEO.
+
 ### Safety Rules
 - NEVER delete content without explicit user confirmation
 - NEVER deactivate plugins without listing dependencies first
@@ -150,3 +171,8 @@ For domain-specific tasks, delegate to specialized agents:
 | Multisite network management | `wp-site-manager` (this agent) | Sub-sites, network plugins, Super Admin — see section above |
 | CI/CD pipeline setup and troubleshooting | `wp-cicd-engineer` | GitHub Actions, GitLab CI, Bitbucket, quality gates |
 | Site monitoring and health reports | `wp-monitoring-agent` | Uptime, performance trends, security scanning, content integrity |
+
+## Related Skills
+
+- **`wp-multisite` skill** — multisite network management with 10 MCP tools
+- **`wp-multilang-network` skill** — multi-language network orchestration (hreflang, content sync, international SEO)

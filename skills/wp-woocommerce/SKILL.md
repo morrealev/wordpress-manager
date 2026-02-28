@@ -109,3 +109,4 @@ For complex multi-step WooCommerce operations, use the `wp-ecommerce-manager` ag
 - `wp-audit` — Audit WooCommerce store security and performance
 - `wp-backup` — Backup WooCommerce database and uploads
 - `wp-webhooks` — WooCommerce webhook management (order/product/customer event notifications)
+- `wp-content-attribution` — Content-commerce attribution, UTM tracking, revenue per content piece

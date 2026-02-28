@@ -26,6 +26,13 @@ description: |
   <commentary>Sales analytics combining multiple report endpoints requires the WooCommerce agent.</commentary>
   </example>
 
+  <example>
+  Context: User wants to know which blog posts are driving sales.
+  user: "Which blog posts are driving the most sales?"
+  assistant: "I'll use the wp-ecommerce-manager agent to analyze order attribution data and identify top converting content."
+  <commentary>Content-commerce attribution requires correlating WooCommerce order UTM meta with content data.</commentary>
+  </example>
+
 model: inherit
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
@@ -93,6 +100,21 @@ For cross-referencing with WordPress content:
 3. Shipping: `wc_list_shipping_zones` (verify zone coverage)
 4. Tax: `wc_get_tax_classes` (verify tax configuration)
 
+### Content Attribution Workflow
+
+When analyzing which content drives WooCommerce sales:
+
+1. **Verify setup**: Run `attribution_inspect.mjs` to check WooCommerce + content + UTM tracking readiness
+2. **Check UTM tracking**: Is the UTM capture mu-plugin installed? If not, guide setup from `wp-content-attribution` skill → `references/utm-tracking-setup.md`
+3. **Pull sales data**: `wc_get_sales_report` for the reporting period (default: last 30 days)
+4. **Pull order details**: `wc_list_orders` with `status=completed` — check `_last_utm_campaign` and `_first_utm_campaign` meta on each order
+5. **Pull content data**: `list_content` for the same period to map campaign slugs back to post titles
+6. **Correlate**: Match order UTM campaign values with content piece slugs; aggregate revenue per content piece
+7. **Apply attribution model**: Default to last-touch (`_last_utm_campaign`); reference `wp-content-attribution` skill for other models
+8. **Generate attribution report**: Top converting content pieces, revenue by content category, CAC by source, recommendations
+
+See the `wp-content-attribution` skill for reference files on UTM setup, attribution models, ROI calculation, and reporting dashboards.
+
 ## Report Format
 
 ```
@@ -134,3 +156,4 @@ For cross-referencing with WordPress content:
 - `wp-deploy` — Deploy store changes to production
 - `wp-backup` — Backup store database before bulk operations
 - `wp-audit` — Security and performance audit for WC stores
+- `wp-content-attribution` — Content-commerce attribution, UTM tracking, ROI calculation

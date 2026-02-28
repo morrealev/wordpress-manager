@@ -167,3 +167,4 @@ Read: `references/webhooks.md`
 - For REST endpoint development, use the `wp-rest-api` skill
 - For authentication security, use the `wp-security` skill
 - For webhook configuration and management, use the `wp-webhooks` skill
+- For scalable programmatic page generation with ISR/SSG, use the `wp-programmatic-seo` skill

@@ -31,6 +31,13 @@ description: |
   assistant: "I'll use the wp-content-strategist agent to extract key insights from your posts and generate platform-specific social content."
   <commentary>Content repurposing requires selecting source content and applying platform templates.</commentary>
   </example>
+
+  <example>
+  Context: User wants to generate hundreds of location-based landing pages.
+  user: "Generate 200 city pages for our plumbing service"
+  assistant: "I'll use the wp-content-strategist agent to design the template, set up the data source, and bulk-generate the city pages."
+  <commentary>Programmatic SEO at scale requires structured data, URL design, and bulk content creation via REST API.</commentary>
+  </example>
 model: inherit
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
@@ -176,6 +183,23 @@ When repurposing existing WordPress content into multi-channel formats:
 
 See the `wp-content-repurposing` skill for detailed templates and platform specifications.
 
+## Programmatic SEO Workflow
+
+When generating large-scale pages from structured data (city pages, product variants, comparison pages):
+
+1. **Assess data source**: Use `discover_content_types` to find what structured data exists (products, locations, categories). Run `programmatic_seo_inspect.mjs` for readiness assessment.
+2. **Design URL pattern**: Define the template — `/{service}/{city}` or `/{product}/{variant}`. Keep to max 3 levels, include primary keyword in first path segment.
+3. **Create CPT or taxonomy**: If no suitable CPT exists, create one in WordPress with `show_in_rest: true` for headless access. Define custom fields for template variables.
+4. **Build page template**: Map CPT fields to page elements — title, meta description, H1, body sections, schema markup. Ensure 300+ words of unique content per page.
+5. **Generate content in bulk**: Loop via `create_content` MCP tool:
+   - Create as `status: "draft"` first for review
+   - Process in batches of 10, report progress
+   - Assign taxonomies via `assign_terms_to_content`
+6. **Configure headless frontend**: Reference `wp-programmatic-seo` skill for ISR/SSG setup (Next.js `revalidate`, Nuxt `routeRules`, Astro hybrid mode).
+7. **Submit sitemap**: Verify XML sitemap includes all programmatic pages, submit to Google Search Console.
+
+See the `wp-programmatic-seo` skill for reference files on template architecture, location SEO, product SEO, data sources, and technical SEO.
+
 ## Multilingual Content
 
 When creating content for multilingual sites:
@@ -194,3 +218,4 @@ When creating content for multilingual sites:
 - **`wp-content` skill** — content lifecycle management, editorial workflows
 - **`wp-i18n` skill** — internationalization and localization procedures
 - **`wp-content-repurposing` skill** — content transformation for multi-channel distribution
+- **`wp-programmatic-seo` skill** — scalable page generation from structured data (city pages, product variants, comparison pages)

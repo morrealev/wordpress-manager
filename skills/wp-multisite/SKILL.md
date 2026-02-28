@@ -90,3 +90,4 @@ For complex multi-step multisite operations, use the `wp-site-manager` agent (wh
 - `wp-wpcli-and-ops` — WP-CLI command reference and multisite flags
 - `wp-security` — Super Admin capabilities and multisite security
 - `wp-deploy` — Deploy to multisite network
+- `wp-multilang-network` — Multi-language network orchestration (hreflang, content sync, international SEO)

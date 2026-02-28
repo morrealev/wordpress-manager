@@ -2,6 +2,27 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.3.0] - 2026-02-28
+
+### Added
+- **Programmatic SEO skill** (`wp-programmatic-seo`) — template-based scalable page generation via headless WordPress + multisite
+  - 5 reference files: `template-architecture.md`, `location-seo.md`, `product-seo.md`, `data-sources.md`, `technical-seo.md`
+  - Detection script: `programmatic_seo_inspect.mjs` (headless frontend, SEO plugins, CPTs, WPGraphQL)
+  - Agent updated: Programmatic SEO Workflow + example in `wp-content-strategist`
+- **Content-Commerce Attribution skill** (`wp-content-attribution`) — link WooCommerce sales data to content that drives conversions
+  - 5 reference files: `utm-tracking-setup.md`, `conversion-funnels.md`, `attribution-models.md`, `roi-calculation.md`, `reporting-dashboards.md`
+  - Detection script: `attribution_inspect.mjs` (WooCommerce, analytics plugins, UTM tracking, order meta)
+  - Agent updated: Content Attribution Workflow + example in `wp-ecommerce-manager`
+- **Multi-Language Network skill** (`wp-multilang-network`) — multisite multi-language orchestration with hreflang and content sync
+  - 5 reference files: `network-architecture.md`, `hreflang-config.md`, `content-sync.md`, `language-routing.md`, `seo-international.md`
+  - Detection script: `multilang_inspect.mjs` (multisite status, multilingual plugins, language patterns, hreflang)
+  - Agent updated: Multi-Language Network Management + example in `wp-site-manager`
+
+### Changed
+- Router decision-tree.md upgraded to v10 with programmatic SEO, content attribution, and multi-language network keywords and routing
+- Cross-references added: `wp-headless` → wp-programmatic-seo, `wp-woocommerce` → wp-content-attribution, `wp-content` → wp-content-attribution, `wp-multisite` → wp-multilang-network, `wp-i18n` → wp-multilang-network
+- Plugin now has 33 skills, 11 agents, and 85 MCP tools
+
 ## [2.2.1] - 2026-02-28
 
 ### Changed

@@ -168,3 +168,4 @@ Re-run: `node skills/wp-i18n/scripts/i18n_inspect.mjs --cwd=/path`
 - WordPress i18n Handbook: https://developer.wordpress.org/plugins/internationalization/
 - CLDR Plural Rules: https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html
 - Translator Handbook: https://make.wordpress.org/polyglots/handbook/
+- For multisite multi-language network orchestration (hreflang, content sync, international SEO), use the `wp-multilang-network` skill

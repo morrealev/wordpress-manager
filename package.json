@@ -1,7 +1,7 @@
 {
   "name": "claude-plugin-wordpress-manager",
-  "version": "2.2.1",
-  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (85 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks), and WordPress.com MCP with 30 skills, 11 agents, and security hooks. v2.2.0 adds fleet monitoring, content repurposing skill, and webhook propagation (WooCommerce webhook MCP tools + mu-plugin patterns).",
+  "version": "2.3.0",
+  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (85 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks), and WordPress.com MCP with 33 skills, 11 agents, and security hooks. v2.3.0 adds programmatic SEO, content-commerce attribution, and multi-language network skills.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -36,7 +36,12 @@
     "health-check",
     "webhook",
     "content-repurposing",
-    "fleet-monitoring"
+    "fleet-monitoring",
+    "programmatic-seo",
+    "attribution",
+    "multilingual",
+    "hreflang",
+    "international-seo"
   ],
   "repository": {
     "type": "git",
