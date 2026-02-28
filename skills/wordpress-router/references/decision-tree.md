@@ -58,11 +58,11 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
 - **Playground / disposable WP / blueprint / sandbox / test environment / version switching**
   → `wp-playground`
 - **Test / E2E / Playwright / Jest / PHPUnit / wp-env testing / coverage / visual regression**
-  → `wp-e2e-testing`
+  → `wp-e2e-testing` skill + `wp-test-engineer` agent
 - **i18n / translation / .pot / gettext / text domain / RTL / Polylang / WPML / multilingual**
   → `wp-i18n`
 - **Accessibility / a11y / WCAG / ARIA / screen reader / keyboard navigation / focus management**
-  → `wp-accessibility`
+  → `wp-accessibility` skill + `wp-accessibility-auditor` agent
 - **Headless / decoupled / WPGraphQL / Next.js / Nuxt / Astro / Gatsby / CORS / ISR / SSG / frontend integration**
   → `wp-headless`
 
@@ -73,7 +73,7 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
 - **Audit / security check / vulnerability / hacked / health check**
   → `wp-audit` skill + `wp-security-auditor` agent
 - **Harden / permissions / headers / WAF / malware / compromised / incident response / security hardening**
-  → `wp-security` skill
+  → `wp-security` skill + `wp-security-hardener` agent
 - **Backup / snapshot / disaster recovery / restore**
   → `wp-backup` skill
 - **Migrate / move / transfer / clone site / change hosting**

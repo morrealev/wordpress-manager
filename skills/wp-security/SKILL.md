@@ -173,3 +173,7 @@ After hardening, verify the security posture:
 - For persistent malware: engage a professional WordPress security service (Sucuri, Wordfence)
 - For complex hosting configurations: consult the server administrator
 - For initial security assessment, use the `wp-audit` skill which provides checklists and scoring
+
+## Recommended Agent
+
+For implementing hardening fixes and incident response, use the **`wp-security-hardener`** agent. For read-only security audits, use the **`wp-security-auditor`** agent.

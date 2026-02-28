@@ -159,3 +159,23 @@ Present findings as a structured report:
 - ALWAYS recommend backup before any remediation steps
 - ALWAYS verify findings before reporting (avoid false positives)
 - If active compromise is detected, IMMEDIATELY alert the user before continuing
+
+## Handoff to Remediation
+
+This agent performs **read-only audits**. To implement fixes:
+
+- **Delegate to `wp-security-hardener` agent** — implements hardening measures, fixes vulnerabilities, handles incident response
+- **Consult `wp-security` skill** — detailed hardening procedures and reference files for each security domain
+
+### Quick Pre-Scan
+
+For a rapid automated assessment before a full audit, run the detection script:
+```bash
+node skills/wp-security/scripts/security_inspect.mjs
+```
+This checks wp-config constants, file permissions, .htaccess rules, and active security plugins.
+
+## Related Skills
+
+- **`wp-security` skill** — comprehensive hardening references (filesystem, headers, auth, API, incident response)
+- **`wp-audit` skill** — security/performance/SEO audit checklists and scoring

@@ -107,3 +107,17 @@ When asked about site status:
 - NEVER deactivate plugins without listing dependencies first
 - NEVER modify published content status without confirmation
 - Always show a summary of changes before executing bulk operations
+
+## Specialized Agents
+
+For domain-specific tasks, delegate to specialized agents:
+
+| Task | Agent | What it does |
+|------|-------|-------------|
+| Run tests / debug test failures | `wp-test-engineer` | E2E, unit, integration test execution |
+| Implement security fixes / harden site | `wp-security-hardener` | Filesystem, headers, auth hardening |
+| Accessibility compliance audit | `wp-accessibility-auditor` | WCAG 2.2 AA scan and recommendations |
+| Security vulnerability audit | `wp-security-auditor` | Read-only security assessment |
+| Performance optimization | `wp-performance-optimizer` | Speed analysis and optimization |
+| Content creation / SEO | `wp-content-strategist` | Content workflows and SEO |
+| Deploy to production | `wp-deployment-engineer` | Plugin, theme, site deployment |

@@ -164,3 +164,7 @@ npx lighthouse http://localhost:8888 --only-categories=accessibility --output=js
 - WCAG 2.2: https://www.w3.org/TR/WCAG22/
 - ARIA Authoring Practices Guide: https://www.w3.org/WAI/ARIA/apg/
 - WordPress Accessibility Coding Standards: https://developer.wordpress.org/coding-standards/wordpress-coding-standards/accessibility/
+
+## Recommended Agent
+
+For automated accessibility scanning and WCAG compliance reports, use the **`wp-accessibility-auditor`** agent.

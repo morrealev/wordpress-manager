@@ -146,3 +146,21 @@ Excerpt: [Meta description with keyword, under 160 chars]
 - NEVER overwrite existing content without showing the diff
 - ALWAYS preserve existing SEO-optimized slugs when updating content
 - ALWAYS check for duplicate slugs before creating new content
+
+## Multilingual Content
+
+When creating content for multilingual sites:
+
+- **Coordinate with `wp-i18n` skill** for internationalization best practices
+- For themes/plugins generating translatable content, ensure proper text domain usage:
+  - PHP: `__('text', 'text-domain')`, `_e('text', 'text-domain')`
+  - JS: `__('text', 'text-domain')` via `@wordpress/i18n`
+- For multilingual plugin setups (WPML, Polylang):
+  - Create content in the primary language first
+  - Use the plugin's API for translation linking
+  - Maintain consistent taxonomy structure across languages
+
+## Related Skills
+
+- **`wp-content` skill** — content lifecycle management, editorial workflows
+- **`wp-i18n` skill** — internationalization and localization procedures

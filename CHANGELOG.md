@@ -2,6 +2,58 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [1.7.0] - 2026-02-28
+
+### Added
+- **`wp-test-engineer` agent** — WordPress testing specialist
+  - Executes Playwright E2E, Jest unit, PHPUnit integration tests
+  - Test environment setup (wp-env, dependency installation)
+  - Failure debugging with trace/screenshot analysis
+  - Coverage report generation and CI integration
+  - Pairs with `wp-e2e-testing` skill
+
+- **`wp-security-hardener` agent** — Security hardening and incident response
+  - Implements filesystem hardening, HTTP security headers, authentication hardening
+  - REST API restriction with namespace whitelisting
+  - 5-phase incident response: containment → investigation → remediation → recovery → post-incident
+  - Handoff protocol: receives findings from `wp-security-auditor`, returns remediation report
+  - Pairs with `wp-security` skill
+
+- **`wp-accessibility-auditor` agent** — WCAG 2.2 AA compliance auditor
+  - Automated scanning via axe-core, pa11y, Lighthouse
+  - Code review for ARIA patterns, heading hierarchy, form labels, landmarks
+  - Keyboard navigation assessment and theme compliance check
+  - Block editor accessibility verification
+  - Read-only (audit only, no code modifications)
+  - Pairs with `wp-accessibility` skill
+
+### Changed
+- **`wp-deployment-engineer`** upgraded (★★★ → ★★★★)
+  - Added WP REST Bridge tools for post-deploy verification
+  - Added Method 4: Deploy from Local Environment (Studio/LocalWP/wp-env export)
+  - Added cross-references to `wp-local-env` and `wp-deploy` skills
+  - Added WebSearch to tools list
+
+- **`wp-security-auditor`** upgraded
+  - Added "Handoff to Remediation" section linking to `wp-security-hardener`
+  - Added `security_inspect.mjs` quick pre-scan instructions
+  - Added cross-references to `wp-security` and `wp-audit` skills
+
+- **`wp-performance-optimizer`** upgraded
+  - Added MCP tool separation clarification (WP REST Bridge vs Hostinger MCP)
+  - Added cross-references to `wp-performance` and `wp-audit` skills
+
+- **`wp-content-strategist`** upgraded
+  - Added Multilingual Content section with `wp-i18n` cross-reference
+  - Added text domain usage guidance for translatable content
+
+- **`wp-site-manager`** upgraded
+  - Added Specialized Agents delegation table (all 8 agents referenced)
+
+- **Router decision-tree.md** — added agent references for testing, security hardening, and accessibility routes
+- **Skill cross-references** — added "Recommended Agent" to `wp-e2e-testing`, `wp-security`, `wp-accessibility` SKILL.md files
+- Version bumps: plugin.json + package.json → 1.7.0 (24 skills, 8 agents)
+
 ## [1.6.0] - 2026-02-28
 
 ### Added

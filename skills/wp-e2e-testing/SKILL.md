@@ -180,3 +180,7 @@ After completing the setup, verify:
 - For wp-env: https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/
 - For Playwright WP utilities: https://developer.wordpress.org/block-editor/reference-guides/packages/packages-e2e-test-utils-playwright/
 - For PHPUnit with WordPress: https://make.wordpress.org/core/handbook/testing/automated-testing/phpunit/
+
+## Recommended Agent
+
+For hands-on test execution, debugging, and CI setup, use the **`wp-test-engineer`** agent.
