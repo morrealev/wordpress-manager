@@ -172,3 +172,71 @@ export interface WPTerm {
   meta: Record<string, any>[];
   _links: Record<string, any>;
 }
+
+// ── WooCommerce Types ──────────────────────────────────────────────
+
+export interface WCProduct {
+  id: number;
+  name: string;
+  slug: string;
+  type: string;
+  status: string;
+  description: string;
+  short_description: string;
+  sku: string;
+  price: string;
+  regular_price: string;
+  sale_price: string;
+  stock_quantity: number | null;
+  stock_status: string;
+  categories: { id: number; name: string; slug: string }[];
+  tags: { id: number; name: string; slug: string }[];
+  images: { id: number; src: string; name: string; alt: string }[];
+  attributes: { id: number; name: string; options: string[] }[];
+  variations: number[];
+  date_created: string;
+  date_modified: string;
+}
+
+export interface WCOrder {
+  id: number;
+  status: string;
+  currency: string;
+  total: string;
+  customer_id: number;
+  billing: Record<string, string>;
+  shipping: Record<string, string>;
+  line_items: { id: number; name: string; product_id: number; quantity: number; total: string }[];
+  date_created: string;
+  date_modified: string;
+  payment_method: string;
+  payment_method_title: string;
+}
+
+export interface WCCustomer {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  username: string;
+  billing: Record<string, string>;
+  shipping: Record<string, string>;
+  orders_count: number;
+  total_spent: string;
+  date_created: string;
+}
+
+export interface WCCoupon {
+  id: number;
+  code: string;
+  discount_type: string;
+  amount: string;
+  date_created: string;
+  date_expires: string | null;
+  usage_count: number;
+  usage_limit: number | null;
+  individual_use: boolean;
+  product_ids: number[];
+  minimum_amount: string;
+  maximum_amount: string;
+}

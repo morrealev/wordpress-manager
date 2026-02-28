@@ -6,6 +6,8 @@ interface SiteConfig {
   url: string;
   username: string;
   password: string;
+  wc_consumer_key?: string;
+  wc_consumer_secret?: string;
 }
 
 // ── Concurrency Limiter ──────────────────────────────────────────────
@@ -39,6 +41,7 @@ class ConcurrencyLimiter {
 // ── Module State ─────────────────────────────────────────────────────
 const siteClients = new Map<string, AxiosInstance>();
 const siteLimiters = new Map<string, ConcurrencyLimiter>();
+const wcSiteClients = new Map<string, AxiosInstance>();
 let activeSiteId: string = '';
 
 const MAX_CONCURRENT_PER_SITE = 5;
@@ -92,6 +95,14 @@ export async function initWordPress() {
     logToStderr(`Initialized site: ${site.id} (${site.url})`);
   }
 
+  // Initialize WooCommerce clients for sites with WC credentials
+  for (const site of sites) {
+    if (site.wc_consumer_key && site.wc_consumer_secret) {
+      await initWcClient(site.id, site.url, site.wc_consumer_key, site.wc_consumer_secret);
+      logToStderr(`Initialized WooCommerce for site: ${site.id}`);
+    }
+  }
+
   activeSiteId = defaultSite || sites[0].id;
   logToStderr(`Active site: ${activeSiteId}`);
 }
@@ -136,6 +147,37 @@ async function initSiteClient(id: string, url: string, username: string, passwor
 
   siteClients.set(id, client);
   siteLimiters.set(id, new ConcurrencyLimiter(MAX_CONCURRENT_PER_SITE));
+}
+
+/**
+ * Initialize a WooCommerce client for a site (Consumer Key/Secret auth).
+ */
+async function initWcClient(id: string, url: string, consumerKey: string, consumerSecret: string) {
+  let baseURL = url.endsWith('/') ? url : `${url}/`;
+  const wpJsonIdx = baseURL.indexOf('/wp-json');
+  if (wpJsonIdx !== -1) {
+    baseURL = baseURL.substring(0, wpJsonIdx + 1);
+  }
+  baseURL = baseURL + 'wp-json/';
+
+  const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
+  const client = axios.create({
+    baseURL,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${auth}`,
+    },
+    timeout: DEFAULT_TIMEOUT_MS,
+  });
+
+  // Verify WooCommerce connection
+  try {
+    await client.get('wc/v3');
+  } catch (error: any) {
+    logToStderr(`Warning: Could not verify WooCommerce connection for ${id}: ${error.message}`);
+  }
+
+  wcSiteClients.set(id, client);
 }
 
 // ── Site Management ──────────────────────────────────────────────────
@@ -354,6 +396,57 @@ async function executeWithRetry(
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// ── WooCommerce Request Interface ────────────────────────────────
+
+/**
+ * Check if a site has WooCommerce credentials configured.
+ */
+export function hasWooCommerce(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  return wcSiteClients.has(id);
+}
+
+/**
+ * Get the WooCommerce client for a site.
+ */
+function getWcClient(siteId?: string): AxiosInstance {
+  const id = siteId || activeSiteId;
+  const client = wcSiteClients.get(id);
+  if (!client) {
+    throw new Error(
+      `WooCommerce not configured for site "${id}". ` +
+      `Add wc_consumer_key and wc_consumer_secret to WP_SITES_CONFIG.`
+    );
+  }
+  return client;
+}
+
+/**
+ * Make a request to the WooCommerce REST API.
+ * Uses Consumer Key/Secret auth and wc/v3 namespace by default.
+ */
+export async function makeWooCommerceRequest(
+  method: string,
+  endpoint: string,
+  data?: any,
+  options?: WordPressRequestOptions
+): Promise<any> {
+  const siteId = options?.siteId || activeSiteId;
+  const client = getWcClient(siteId);
+  const limiter = getLimiter(siteId);
+  const namespace = options?.namespace || 'wc/v3';
+
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+  const path = `${namespace}/${cleanEndpoint}`;
+
+  await limiter.acquire();
+  try {
+    return await executeWithRetry(client, method, path, data, siteId, options);
+  } finally {
+    limiter.release();
+  }
 }
 
 // ── Plugin Repository (External API) ────────────────────────────────
