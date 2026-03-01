@@ -1,7 +1,7 @@
 {
   "name": "claude-plugin-wordpress-manager",
-  "version": "2.6.0",
-  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (111 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks + 7 Mailchimp + 5 Buffer + 6 SendGrid + 8 GSC), and WordPress.com MCP with 36 skills, 12 agents, and security hooks. v2.6.0 adds AI content optimization (headline scoring, readability, SEO scoring, content triage). Tier 3 WCOP complete.",
+  "version": "2.7.0",
+  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (125 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks + 7 Mailchimp + 5 Buffer + 6 SendGrid + 8 GSC + 6 GA4 + 4 Plausible + 4 CWV), and WordPress.com MCP with 37 skills, 12 agents, and security hooks. v2.7.0 adds analytics observability (GA4, Plausible, Core Web Vitals). WCOP Tier 4a.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"

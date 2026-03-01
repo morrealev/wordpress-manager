@@ -2,6 +2,23 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.7.0] - 2026-03-01
+
+### Added — Analytics (WCOP Tier 4a)
+- **wp-analytics skill** — unified analytics: GA4, Plausible, Core Web Vitals
+- **14 new MCP tools**: 6 GA4 (`ga4_run_report`, `ga4_get_realtime`, `ga4_top_pages`, `ga4_traffic_sources`, `ga4_user_demographics`, `ga4_conversion_events`), 4 Plausible (`pl_get_stats`, `pl_get_timeseries`, `pl_get_breakdown`, `pl_get_realtime`), 4 CWV (`cwv_analyze_url`, `cwv_batch_analyze`, `cwv_get_field_data`, `cwv_compare_pages`)
+- **5 reference files**: ga4-integration, plausible-setup, cwv-monitoring, analytics-dashboards, traffic-attribution
+- **Detection script**: `analytics_inspect.mjs` — detects GA4, Plausible, Google API key config
+- **SiteConfig extension**: `ga4_property_id`, `ga4_service_account_key`, `plausible_api_key`, `plausible_base_url`, `google_api_key`
+
+### Changed
+- **wp-monitoring-agent**: added Procedure 8 (Analytics Monitoring) and Procedure 9 (CWV Trend Check) with 14 analytics MCP tools
+- **Router v14**: added GA4, Plausible, CWV keywords and route
+- **Cross-references**: wp-search-console, wp-content-attribution, wp-content-optimization → wp-analytics
+
+### Metrics
+- Skills: 37 (+1) | MCP tools: 125 (+14) | Reference files: 183 (+5) | Detection scripts: 25 (+1)
+
 ## [2.6.0] - 2026-03-01
 
 ### Added
