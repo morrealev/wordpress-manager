@@ -12,10 +12,10 @@ declare const listUsersSchema: z.ZodObject<{
     _fields: z.ZodOptional<z.ZodString>;
     include_pagination: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
-    orderby?: "url" | "slug" | "id" | "name" | "include" | "registered_date" | "email" | undefined;
+    orderby?: "url" | "id" | "email" | "slug" | "name" | "include" | "registered_date" | undefined;
     order?: "asc" | "desc" | undefined;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
@@ -23,10 +23,10 @@ declare const listUsersSchema: z.ZodObject<{
     context?: "view" | "embed" | "edit" | undefined;
     roles?: string[] | undefined;
 }, {
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
-    orderby?: "url" | "slug" | "id" | "name" | "include" | "registered_date" | "email" | undefined;
+    orderby?: "url" | "id" | "email" | "slug" | "name" | "include" | "registered_date" | undefined;
     order?: "asc" | "desc" | undefined;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
@@ -117,10 +117,10 @@ declare const updateUserSchema: z.ZodObject<{
 }, "strict", z.ZodTypeAny, {
     id: number;
     url?: string | undefined;
+    email?: string | undefined;
     slug?: string | undefined;
     description?: string | undefined;
     name?: string | undefined;
-    email?: string | undefined;
     roles?: string[] | undefined;
     username?: string | undefined;
     first_name?: string | undefined;
@@ -131,10 +131,10 @@ declare const updateUserSchema: z.ZodObject<{
 }, {
     id: number;
     url?: string | undefined;
+    email?: string | undefined;
     slug?: string | undefined;
     description?: string | undefined;
     name?: string | undefined;
-    email?: string | undefined;
     roles?: string[] | undefined;
     username?: string | undefined;
     first_name?: string | undefined;

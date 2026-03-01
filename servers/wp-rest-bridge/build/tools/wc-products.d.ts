@@ -17,17 +17,17 @@ declare const wcListProductsSchema: z.ZodObject<{
     order: "asc" | "desc";
     search?: string | undefined;
     status?: "draft" | "pending" | "private" | "publish" | "any" | undefined;
-    orderby?: "slug" | "date" | "id" | "title" | "price" | "popularity" | "rating" | undefined;
+    orderby?: "id" | "slug" | "date" | "title" | "price" | "popularity" | "rating" | undefined;
     category?: number | undefined;
     tag?: number | undefined;
     sku?: string | undefined;
     stock_status?: "instock" | "outofstock" | "onbackorder" | undefined;
 }, {
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     status?: "draft" | "pending" | "private" | "publish" | "any" | undefined;
-    orderby?: "slug" | "date" | "id" | "title" | "price" | "popularity" | "rating" | undefined;
+    orderby?: "id" | "slug" | "date" | "title" | "price" | "popularity" | "rating" | undefined;
     order?: "asc" | "desc" | undefined;
     category?: number | undefined;
     tag?: number | undefined;
@@ -74,8 +74,8 @@ declare const wcCreateProductSchema: z.ZodObject<{
         src: string;
     }>, "many">>;
 }, "strict", z.ZodTypeAny, {
-    status: "draft" | "pending" | "private" | "publish";
     type: "simple" | "grouped" | "external" | "variable";
+    status: "draft" | "pending" | "private" | "publish";
     name: string;
     categories?: {
         id: number;
@@ -95,8 +95,8 @@ declare const wcCreateProductSchema: z.ZodObject<{
     }[] | undefined;
 }, {
     name: string;
-    status?: "draft" | "pending" | "private" | "publish" | undefined;
     type?: "simple" | "grouped" | "external" | "variable" | undefined;
+    status?: "draft" | "pending" | "private" | "publish" | undefined;
     categories?: {
         id: number;
     }[] | undefined;
@@ -174,13 +174,13 @@ declare const wcListProductCategoriesSchema: z.ZodObject<{
     order: "asc" | "desc";
     search?: string | undefined;
     parent?: number | undefined;
-    orderby?: "slug" | "id" | "name" | "count" | undefined;
+    orderby?: "id" | "slug" | "name" | "count" | undefined;
 }, {
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     parent?: number | undefined;
-    orderby?: "slug" | "id" | "name" | "count" | undefined;
+    orderby?: "id" | "slug" | "name" | "count" | undefined;
     order?: "asc" | "desc" | undefined;
 }>;
 declare const wcListProductVariationsSchema: z.ZodObject<{

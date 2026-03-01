@@ -14,7 +14,7 @@ declare const wcListOrdersSchema: z.ZodObject<{
     per_page: number;
     order: "asc" | "desc";
     status?: "trash" | "pending" | "any" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed" | undefined;
-    orderby?: "slug" | "date" | "id" | "title" | undefined;
+    orderby?: "id" | "slug" | "date" | "title" | undefined;
     after?: string | undefined;
     before?: string | undefined;
     customer?: number | undefined;
@@ -22,7 +22,7 @@ declare const wcListOrdersSchema: z.ZodObject<{
     page?: number | undefined;
     per_page?: number | undefined;
     status?: "trash" | "pending" | "any" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed" | undefined;
-    orderby?: "slug" | "date" | "id" | "title" | undefined;
+    orderby?: "id" | "slug" | "date" | "title" | undefined;
     order?: "asc" | "desc" | undefined;
     after?: string | undefined;
     before?: string | undefined;
@@ -39,11 +39,11 @@ declare const wcUpdateOrderStatusSchema: z.ZodObject<{
     id: z.ZodNumber;
     status: z.ZodEnum<["pending", "processing", "on-hold", "completed", "cancelled", "refunded", "failed"]>;
 }, "strict", z.ZodTypeAny, {
-    status: "pending" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed";
     id: number;
+    status: "pending" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed";
 }, {
-    status: "pending" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed";
     id: number;
+    status: "pending" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed";
 }>;
 declare const wcListOrderNotesSchema: z.ZodObject<{
     order_id: z.ZodNumber;

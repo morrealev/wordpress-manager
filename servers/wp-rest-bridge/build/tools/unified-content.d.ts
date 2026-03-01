@@ -20,9 +20,9 @@ declare const listContentSchema: z.ZodObject<{
     include_pagination: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     content_type: string;
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     slug?: string | undefined;
     status?: string | undefined;
     author?: number | number[] | undefined;
@@ -38,9 +38,9 @@ declare const listContentSchema: z.ZodObject<{
     include_pagination?: boolean | undefined;
 }, {
     content_type: string;
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     slug?: string | undefined;
     status?: string | undefined;
     author?: number | number[] | undefined;
@@ -61,13 +61,13 @@ declare const getContentSchema: z.ZodObject<{
     _embed: z.ZodOptional<z.ZodBoolean>;
     _fields: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    content_type: string;
     id: number;
+    content_type: string;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
 }, {
-    content_type: string;
     id: number;
+    content_type: string;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
 }>;
@@ -138,8 +138,8 @@ declare const updateContentSchema: z.ZodObject<{
     meta: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
     custom_fields: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
 }, "strip", z.ZodTypeAny, {
-    content_type: string;
     id: number;
+    content_type: string;
     slug?: string | undefined;
     status?: string | undefined;
     author?: number | undefined;
@@ -155,8 +155,8 @@ declare const updateContentSchema: z.ZodObject<{
     meta?: Record<string, any> | undefined;
     custom_fields?: Record<string, any> | undefined;
 }, {
-    content_type: string;
     id: number;
+    content_type: string;
     slug?: string | undefined;
     status?: string | undefined;
     author?: number | undefined;
@@ -177,12 +177,12 @@ declare const deleteContentSchema: z.ZodObject<{
     id: z.ZodNumber;
     force: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    content_type: string;
     id: number;
+    content_type: string;
     force?: boolean | undefined;
 }, {
-    content_type: string;
     id: number;
+    content_type: string;
     force?: boolean | undefined;
 }>;
 declare const discoverContentTypesSchema: z.ZodObject<{

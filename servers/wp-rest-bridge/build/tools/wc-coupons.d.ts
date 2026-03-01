@@ -9,9 +9,9 @@ declare const wcListCouponsSchema: z.ZodObject<{
     per_page: number;
     search?: string | undefined;
 }, {
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
 }>;
 declare const wcGetCouponSchema: z.ZodObject<{
     id: z.ZodNumber;

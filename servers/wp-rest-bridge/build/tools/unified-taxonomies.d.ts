@@ -25,12 +25,12 @@ declare const listTermsSchema: z.ZodObject<{
     include_pagination: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     taxonomy: string;
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     slug?: string | undefined;
     parent?: number | undefined;
-    orderby?: "slug" | "id" | "description" | "name" | "include" | "term_group" | "count" | undefined;
+    orderby?: "id" | "slug" | "description" | "name" | "include" | "term_group" | "count" | undefined;
     order?: "asc" | "desc" | undefined;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
@@ -38,12 +38,12 @@ declare const listTermsSchema: z.ZodObject<{
     hide_empty?: boolean | undefined;
 }, {
     taxonomy: string;
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     slug?: string | undefined;
     parent?: number | undefined;
-    orderby?: "slug" | "id" | "description" | "name" | "include" | "term_group" | "count" | undefined;
+    orderby?: "id" | "slug" | "description" | "name" | "include" | "term_group" | "count" | undefined;
     order?: "asc" | "desc" | undefined;
     _embed?: boolean | undefined;
     _fields?: string | undefined;

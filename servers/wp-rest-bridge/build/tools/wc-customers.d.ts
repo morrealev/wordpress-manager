@@ -14,15 +14,15 @@ declare const wcListCustomersSchema: z.ZodObject<{
     order: "asc" | "desc";
     role: "author" | "customer" | "all" | "administrator" | "editor" | "contributor" | "subscriber";
     search?: string | undefined;
-    orderby?: "id" | "name" | "registered_date" | undefined;
     email?: string | undefined;
+    orderby?: "id" | "name" | "registered_date" | undefined;
 }, {
+    search?: string | undefined;
+    email?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     orderby?: "id" | "name" | "registered_date" | undefined;
     order?: "asc" | "desc" | undefined;
-    email?: string | undefined;
     role?: "author" | "customer" | "all" | "administrator" | "editor" | "contributor" | "subscriber" | undefined;
 }>;
 declare const wcGetCustomerSchema: z.ZodObject<{

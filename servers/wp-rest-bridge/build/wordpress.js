@@ -1,5 +1,7 @@
 // src/wordpress.ts - Multi-site WordPress REST API client
 import axios from 'axios';
+import { google } from 'googleapis';
+import { readFileSync } from 'fs';
 // ── Concurrency Limiter ──────────────────────────────────────────────
 // Simple FIFO semaphore to cap concurrent requests per site
 class ConcurrencyLimiter {
@@ -468,6 +470,43 @@ export async function makeSendGridRequest(method, endpoint, data, siteId) {
     finally {
         limiter.release();
     }
+}
+// ── Google Search Console Interface ─────────────────────────────
+const gscAuthClients = new Map();
+export function hasGSC(siteId) {
+    const id = siteId || activeSiteId;
+    const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+    const site = sites.find((s) => s.id === id);
+    return !!(site?.gsc_service_account_key && site?.gsc_site_url);
+}
+export function getGSCSiteUrl(siteId) {
+    const id = siteId || activeSiteId;
+    const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+    const site = sites.find((s) => s.id === id);
+    if (!site?.gsc_site_url) {
+        throw new Error(`GSC site URL not configured for site "${id}". Add gsc_site_url to WP_SITES_CONFIG.`);
+    }
+    return site.gsc_site_url;
+}
+export async function getGSCAuth(siteId) {
+    const id = siteId || activeSiteId;
+    // Return cached client if available
+    if (gscAuthClients.has(id)) {
+        return gscAuthClients.get(id);
+    }
+    const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+    const site = sites.find((s) => s.id === id);
+    if (!site?.gsc_service_account_key) {
+        throw new Error(`GSC not configured for site "${id}". Add gsc_service_account_key (path to JSON key file) to WP_SITES_CONFIG.`);
+    }
+    const keyContent = JSON.parse(readFileSync(site.gsc_service_account_key, 'utf-8'));
+    const auth = new google.auth.GoogleAuth({
+        credentials: keyContent,
+        scopes: ['https://www.googleapis.com/auth/webmasters'],
+    });
+    const authClient = await auth.getClient();
+    gscAuthClients.set(id, authClient);
+    return authClient;
 }
 // ── Plugin Repository (External API) ────────────────────────────────
 /**

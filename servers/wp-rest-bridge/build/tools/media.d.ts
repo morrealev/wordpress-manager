@@ -8,16 +8,16 @@ declare const listMediaSchema: z.ZodObject<{
     _fields: z.ZodOptional<z.ZodString>;
     include_pagination: z.ZodOptional<z.ZodBoolean>;
 }, "strict", z.ZodTypeAny, {
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
     include_pagination?: boolean | undefined;
 }, {
+    search?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
     include_pagination?: boolean | undefined;

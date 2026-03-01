@@ -17,14 +17,14 @@ declare const wcCreateWebhookSchema: z.ZodObject<{
     name: string;
     topic: string;
     delivery_url: string;
-    status?: "active" | "paused" | "disabled" | undefined;
     secret?: string | undefined;
+    status?: "active" | "paused" | "disabled" | undefined;
 }, {
     name: string;
     topic: string;
     delivery_url: string;
-    status?: "active" | "paused" | "disabled" | undefined;
     secret?: string | undefined;
+    status?: "active" | "paused" | "disabled" | undefined;
 }>;
 declare const wcUpdateWebhookSchema: z.ZodObject<{
     id: z.ZodNumber;
@@ -35,18 +35,18 @@ declare const wcUpdateWebhookSchema: z.ZodObject<{
     status: z.ZodOptional<z.ZodEnum<["active", "paused", "disabled"]>>;
 }, "strict", z.ZodTypeAny, {
     id: number;
+    secret?: string | undefined;
     status?: "active" | "paused" | "disabled" | undefined;
     name?: string | undefined;
     topic?: string | undefined;
     delivery_url?: string | undefined;
-    secret?: string | undefined;
 }, {
     id: number;
+    secret?: string | undefined;
     status?: "active" | "paused" | "disabled" | undefined;
     name?: string | undefined;
     topic?: string | undefined;
     delivery_url?: string | undefined;
-    secret?: string | undefined;
 }>;
 declare const wcDeleteWebhookSchema: z.ZodObject<{
     id: z.ZodNumber;

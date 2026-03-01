@@ -18,6 +18,7 @@ import { wcWebhookTools, wcWebhookHandlers } from './wc-webhooks.js';
 import { mailchimpTools, mailchimpHandlers } from './mailchimp.js';
 import { bufferTools, bufferHandlers } from './buffer.js';
 import { sendgridTools, sendgridHandlers } from './sendgrid.js';
+import { gscTools, gscHandlers } from './gsc.js';
 // Combine all tools
 export const allTools = [
     ...unifiedContentTools, // 8 tools
@@ -40,6 +41,7 @@ export const allTools = [
     ...mailchimpTools, // 7 tools
     ...bufferTools, // 5 tools
     ...sendgridTools, // 6 tools
+    ...gscTools, // 8 tools
 ];
 // Combine all handlers
 export const toolHandlers = {
@@ -63,4 +65,5 @@ export const toolHandlers = {
     ...mailchimpHandlers,
     ...bufferHandlers,
     ...sendgridHandlers,
+    ...gscHandlers,
 };

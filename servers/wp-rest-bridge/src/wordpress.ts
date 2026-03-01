@@ -659,7 +659,7 @@ export async function getGSCAuth(siteId?: string) {
   const keyContent = JSON.parse(readFileSync(site.gsc_service_account_key, 'utf-8'));
   const auth = new google.auth.GoogleAuth({
     credentials: keyContent,
-    scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
+    scopes: ['https://www.googleapis.com/auth/webmasters'],
   });
 
   const authClient = await auth.getClient();

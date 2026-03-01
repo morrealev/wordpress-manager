@@ -34,14 +34,14 @@ export declare const toolHandlers: {
         name: string;
         topic: string;
         delivery_url: string;
-        status?: "active" | "paused" | "disabled" | undefined;
         secret?: string | undefined;
+        status?: "active" | "paused" | "disabled" | undefined;
     }, {
         name: string;
         topic: string;
         delivery_url: string;
-        status?: "active" | "paused" | "disabled" | undefined;
         secret?: string | undefined;
+        status?: "active" | "paused" | "disabled" | undefined;
     }>>) => Promise<{
         toolResult: {
             content: {
@@ -68,18 +68,18 @@ export declare const toolHandlers: {
         status: import("zod").ZodOptional<import("zod").ZodEnum<["active", "paused", "disabled"]>>;
     }, "strict", import("zod").ZodTypeAny, {
         id: number;
+        secret?: string | undefined;
         status?: "active" | "paused" | "disabled" | undefined;
         name?: string | undefined;
         topic?: string | undefined;
         delivery_url?: string | undefined;
-        secret?: string | undefined;
     }, {
         id: number;
+        secret?: string | undefined;
         status?: "active" | "paused" | "disabled" | undefined;
         name?: string | undefined;
         topic?: string | undefined;
         delivery_url?: string | undefined;
-        secret?: string | undefined;
     }>>) => Promise<{
         toolResult: {
             content: {
@@ -296,14 +296,14 @@ export declare const toolHandlers: {
         email: import("zod").ZodString;
         site_id: import("zod").ZodOptional<import("zod").ZodString>;
     }, "strict", import("zod").ZodTypeAny, {
+        email: string;
         slug: string;
         title: string;
-        email: string;
         site_id?: string | undefined;
     }, {
+        email: string;
         slug: string;
         title: string;
-        email: string;
         site_id?: string | undefined;
     }>>) => Promise<{
         toolResult: {
@@ -566,9 +566,9 @@ export declare const toolHandlers: {
         per_page: number;
         search?: string | undefined;
     }, {
+        search?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
     }>>) => Promise<{
         toolResult: {
             content: {
@@ -705,15 +705,15 @@ export declare const toolHandlers: {
         order: "asc" | "desc";
         role: "author" | "customer" | "all" | "administrator" | "editor" | "contributor" | "subscriber";
         search?: string | undefined;
-        orderby?: "id" | "name" | "registered_date" | undefined;
         email?: string | undefined;
+        orderby?: "id" | "name" | "registered_date" | undefined;
     }, {
+        search?: string | undefined;
+        email?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
         orderby?: "id" | "name" | "registered_date" | undefined;
         order?: "asc" | "desc" | undefined;
-        email?: string | undefined;
         role?: "author" | "customer" | "all" | "administrator" | "editor" | "contributor" | "subscriber" | undefined;
     }>>) => Promise<{
         toolResult: {
@@ -836,7 +836,7 @@ export declare const toolHandlers: {
         per_page: number;
         order: "asc" | "desc";
         status?: "trash" | "pending" | "any" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed" | undefined;
-        orderby?: "slug" | "date" | "id" | "title" | undefined;
+        orderby?: "id" | "slug" | "date" | "title" | undefined;
         after?: string | undefined;
         before?: string | undefined;
         customer?: number | undefined;
@@ -844,7 +844,7 @@ export declare const toolHandlers: {
         page?: number | undefined;
         per_page?: number | undefined;
         status?: "trash" | "pending" | "any" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed" | undefined;
-        orderby?: "slug" | "date" | "id" | "title" | undefined;
+        orderby?: "id" | "slug" | "date" | "title" | undefined;
         order?: "asc" | "desc" | undefined;
         after?: string | undefined;
         before?: string | undefined;
@@ -893,11 +893,11 @@ export declare const toolHandlers: {
         id: import("zod").ZodNumber;
         status: import("zod").ZodEnum<["pending", "processing", "on-hold", "completed", "cancelled", "refunded", "failed"]>;
     }, "strict", import("zod").ZodTypeAny, {
-        status: "pending" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed";
         id: number;
+        status: "pending" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed";
     }, {
-        status: "pending" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed";
         id: number;
+        status: "pending" | "processing" | "on-hold" | "completed" | "cancelled" | "refunded" | "failed";
     }>>) => Promise<{
         toolResult: {
             content: {
@@ -1013,17 +1013,17 @@ export declare const toolHandlers: {
         order: "asc" | "desc";
         search?: string | undefined;
         status?: "draft" | "pending" | "private" | "publish" | "any" | undefined;
-        orderby?: "slug" | "date" | "id" | "title" | "price" | "popularity" | "rating" | undefined;
+        orderby?: "id" | "slug" | "date" | "title" | "price" | "popularity" | "rating" | undefined;
         category?: number | undefined;
         tag?: number | undefined;
         sku?: string | undefined;
         stock_status?: "instock" | "outofstock" | "onbackorder" | undefined;
     }, {
+        search?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
         status?: "draft" | "pending" | "private" | "publish" | "any" | undefined;
-        orderby?: "slug" | "date" | "id" | "title" | "price" | "popularity" | "rating" | undefined;
+        orderby?: "id" | "slug" | "date" | "title" | "price" | "popularity" | "rating" | undefined;
         order?: "asc" | "desc" | undefined;
         category?: number | undefined;
         tag?: number | undefined;
@@ -1102,8 +1102,8 @@ export declare const toolHandlers: {
             src: string;
         }>, "many">>;
     }, "strict", import("zod").ZodTypeAny, {
-        status: "draft" | "pending" | "private" | "publish";
         type: "simple" | "grouped" | "external" | "variable";
+        status: "draft" | "pending" | "private" | "publish";
         name: string;
         categories?: {
             id: number;
@@ -1123,8 +1123,8 @@ export declare const toolHandlers: {
         }[] | undefined;
     }, {
         name: string;
-        status?: "draft" | "pending" | "private" | "publish" | undefined;
         type?: "simple" | "grouped" | "external" | "variable" | undefined;
+        status?: "draft" | "pending" | "private" | "publish" | undefined;
         categories?: {
             id: number;
         }[] | undefined;
@@ -1250,13 +1250,13 @@ export declare const toolHandlers: {
         order: "asc" | "desc";
         search?: string | undefined;
         parent?: number | undefined;
-        orderby?: "slug" | "id" | "name" | "count" | undefined;
+        orderby?: "id" | "slug" | "name" | "count" | undefined;
     }, {
+        search?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
         parent?: number | undefined;
-        orderby?: "slug" | "id" | "name" | "count" | undefined;
+        orderby?: "id" | "slug" | "name" | "count" | undefined;
         order?: "asc" | "desc" | undefined;
     }>>) => Promise<{
         toolResult: {
@@ -1309,9 +1309,9 @@ export declare const toolHandlers: {
     }>;
     wp_search: (params: {
         search: string;
+        type?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        type?: string | undefined;
         _embed?: boolean | undefined;
         _fields?: string | undefined;
         include_pagination?: boolean | undefined;
@@ -1327,13 +1327,13 @@ export declare const toolHandlers: {
     }>;
     list_comments: (params: {
         post?: number | undefined;
+        search?: string | undefined;
+        type?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
         status?: "approve" | "hold" | "spam" | "trash" | undefined;
-        type?: string | undefined;
         author?: number | number[] | undefined;
-        orderby?: "post" | "type" | "date" | "parent" | "id" | "include" | "date_gmt" | undefined;
+        orderby?: "post" | "id" | "type" | "date" | "parent" | "include" | "date_gmt" | undefined;
         order?: "asc" | "desc" | undefined;
         after?: string | undefined;
         _embed?: boolean | undefined;
@@ -1453,9 +1453,9 @@ export declare const toolHandlers: {
         };
     }>;
     search_plugin_repository: (params: {
+        search: string;
         page: number;
         per_page: number;
-        search: string;
     }) => Promise<{
         toolResult: {
             content: {
@@ -1493,10 +1493,10 @@ export declare const toolHandlers: {
         };
     }>;
     list_users: (params: {
+        search?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
-        orderby?: "url" | "slug" | "id" | "name" | "include" | "registered_date" | "email" | undefined;
+        orderby?: "url" | "id" | "email" | "slug" | "name" | "include" | "registered_date" | undefined;
         order?: "asc" | "desc" | undefined;
         _embed?: boolean | undefined;
         _fields?: string | undefined;
@@ -1601,10 +1601,10 @@ export declare const toolHandlers: {
     update_user: (params: {
         id: number;
         url?: string | undefined;
+        email?: string | undefined;
         slug?: string | undefined;
         description?: string | undefined;
         name?: string | undefined;
-        email?: string | undefined;
         roles?: string[] | undefined;
         username?: string | undefined;
         first_name?: string | undefined;
@@ -1658,16 +1658,16 @@ export declare const toolHandlers: {
         _fields: import("zod").ZodOptional<import("zod").ZodString>;
         include_pagination: import("zod").ZodOptional<import("zod").ZodBoolean>;
     }, "strict", import("zod").ZodTypeAny, {
+        search?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
         _embed?: boolean | undefined;
         _fields?: string | undefined;
         include_pagination?: boolean | undefined;
     }, {
+        search?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
         _embed?: boolean | undefined;
         _fields?: string | undefined;
         include_pagination?: boolean | undefined;
@@ -1968,12 +1968,12 @@ export declare const toolHandlers: {
     }>;
     list_terms: (params: {
         taxonomy: string;
+        search?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
         slug?: string | undefined;
         parent?: number | undefined;
-        orderby?: "slug" | "id" | "description" | "name" | "include" | "term_group" | "count" | undefined;
+        orderby?: "id" | "slug" | "description" | "name" | "include" | "term_group" | "count" | undefined;
         order?: "asc" | "desc" | undefined;
         _embed?: boolean | undefined;
         _fields?: string | undefined;
@@ -2078,9 +2078,9 @@ export declare const toolHandlers: {
     }>;
     list_content: (params: {
         content_type: string;
+        search?: string | undefined;
         page?: number | undefined;
         per_page?: number | undefined;
-        search?: string | undefined;
         slug?: string | undefined;
         status?: string | undefined;
         author?: number | number[] | undefined;
@@ -2104,8 +2104,8 @@ export declare const toolHandlers: {
         };
     }>;
     get_content: (params: {
-        content_type: string;
         id: number;
+        content_type: string;
         _embed?: boolean | undefined;
         _fields?: string | undefined;
     }) => Promise<{
@@ -2143,8 +2143,8 @@ export declare const toolHandlers: {
         };
     }>;
     update_content: (params: {
-        content_type: string;
         id: number;
+        content_type: string;
         slug?: string | undefined;
         status?: string | undefined;
         author?: number | undefined;
@@ -2169,8 +2169,8 @@ export declare const toolHandlers: {
         };
     }>;
     delete_content: (params: {
-        content_type: string;
         id: number;
+        content_type: string;
         force?: boolean | undefined;
     }) => Promise<{
         toolResult: {

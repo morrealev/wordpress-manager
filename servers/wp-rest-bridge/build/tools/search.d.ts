@@ -11,18 +11,18 @@ declare const wpSearchSchema: z.ZodObject<{
     include_pagination: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     search: string;
+    type?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    type?: string | undefined;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
     include_pagination?: boolean | undefined;
     subtype?: string | undefined;
 }, {
     search: string;
+    type?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    type?: string | undefined;
     _embed?: boolean | undefined;
     _fields?: string | undefined;
     include_pagination?: boolean | undefined;

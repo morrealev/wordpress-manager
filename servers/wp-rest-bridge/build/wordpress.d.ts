@@ -14,6 +14,8 @@ interface SiteConfig {
     mailchimp_api_key?: string;
     buffer_access_token?: string;
     sendgrid_api_key?: string;
+    gsc_service_account_key?: string;
+    gsc_site_url?: string;
 }
 /**
  * Parse WP_SITES_CONFIG JSON and initialize all site clients
@@ -78,6 +80,9 @@ export declare function hasBuffer(siteId?: string): boolean;
 export declare function makeBufferRequest(method: string, endpoint: string, data?: any, siteId?: string): Promise<any>;
 export declare function hasSendGrid(siteId?: string): boolean;
 export declare function makeSendGridRequest(method: string, endpoint: string, data?: any, siteId?: string): Promise<any>;
+export declare function hasGSC(siteId?: string): boolean;
+export declare function getGSCSiteUrl(siteId?: string): string;
+export declare function getGSCAuth(siteId?: string): Promise<any>;
 /**
  * Search the WordPress.org Plugin Repository
  */

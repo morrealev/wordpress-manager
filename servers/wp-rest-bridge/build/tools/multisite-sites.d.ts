@@ -23,14 +23,14 @@ declare const msCreateSiteSchema: z.ZodObject<{
     email: z.ZodString;
     site_id: z.ZodOptional<z.ZodString>;
 }, "strict", z.ZodTypeAny, {
+    email: string;
     slug: string;
     title: string;
-    email: string;
     site_id?: string | undefined;
 }, {
+    email: string;
     slug: string;
     title: string;
-    email: string;
     site_id?: string | undefined;
 }>;
 declare const msActivateSiteSchema: z.ZodObject<{

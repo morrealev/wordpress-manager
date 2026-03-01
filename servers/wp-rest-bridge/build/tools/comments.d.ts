@@ -18,13 +18,13 @@ declare const listCommentsSchema: z.ZodObject<{
     include_pagination: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     post?: number | undefined;
+    search?: string | undefined;
+    type?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     status?: "approve" | "hold" | "spam" | "trash" | undefined;
-    type?: string | undefined;
     author?: number | number[] | undefined;
-    orderby?: "post" | "type" | "date" | "parent" | "id" | "include" | "date_gmt" | undefined;
+    orderby?: "post" | "id" | "type" | "date" | "parent" | "include" | "date_gmt" | undefined;
     order?: "asc" | "desc" | undefined;
     after?: string | undefined;
     _embed?: boolean | undefined;
@@ -34,13 +34,13 @@ declare const listCommentsSchema: z.ZodObject<{
     author_exclude?: number[] | undefined;
 }, {
     post?: number | undefined;
+    search?: string | undefined;
+    type?: string | undefined;
     page?: number | undefined;
     per_page?: number | undefined;
-    search?: string | undefined;
     status?: "approve" | "hold" | "spam" | "trash" | undefined;
-    type?: string | undefined;
     author?: number | number[] | undefined;
-    orderby?: "post" | "type" | "date" | "parent" | "id" | "include" | "date_gmt" | undefined;
+    orderby?: "post" | "id" | "type" | "date" | "parent" | "include" | "date_gmt" | undefined;
     order?: "asc" | "desc" | undefined;
     after?: string | undefined;
     _embed?: boolean | undefined;

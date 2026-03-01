@@ -5,9 +5,9 @@ declare const searchPluginRepositorySchema: z.ZodObject<{
     page: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
     per_page: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
 }, "strict", z.ZodTypeAny, {
+    search: string;
     page: number;
     per_page: number;
-    search: string;
 }, {
     search: string;
     page?: number | undefined;
