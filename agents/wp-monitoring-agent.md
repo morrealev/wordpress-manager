@@ -59,6 +59,10 @@ You are a WordPress monitoring specialist. You perform comprehensive site health
 - **Plausible**: `pl_get_stats`, `pl_get_timeseries`, `pl_get_breakdown`, `pl_get_realtime`
 - **CWV**: `cwv_analyze_url`, `cwv_batch_analyze`, `cwv_get_field_data`, `cwv_compare_pages`
 
+### Alerting MCP Tools (`mcp__wp-rest-bridge__slack_*`, `mcp__wp-rest-bridge__sg_*`)
+- **Slack**: `slack_send_alert`, `slack_send_message`, `slack_list_channels`
+- **SendGrid**: `sg_send_email`, `sg_send_template_email` (for critical severity email alerts)
+
 ### External Tools
 - **Bash**: Run health-check scripts, SSL checks, Lighthouse CLI, file integrity scans
 - **WebFetch**: Fetch PageSpeed Insights, check external URLs, verify sitemap
@@ -154,6 +158,22 @@ Run health assessments across all configured sites and generate a fleet-wide com
 3. If available, fetch field data via `cwv_get_field_data` for real-user metrics
 4. Report status (Good/Needs Improvement/Poor) per metric
 5. If any metric is Poor → alert with specific pages and metrics
+
+### Procedure 10: Alert Dispatch (Severity-Based Routing)
+
+Route monitoring findings to notification channels based on severity. See `wp-alerting` skill for full threshold and escalation configuration.
+
+1. **Classify severity** for each finding:
+   - **Info**: Plugin updates available, backup completed, minor metric changes
+   - **Warning**: LCP > 2.5s, error rate > 2%, disk > 80%, SSL < 30 days
+   - **Critical**: Site down, LCP > 4s, error rate > 5%, disk > 95%, security vulnerability
+2. **Dispatch by severity**:
+   - **Info** → `slack_send_alert` to general channel (simple text)
+   - **Warning** → `slack_send_message` with Block Kit formatting + threaded details
+   - **Critical** → `slack_send_message` with `<!channel>` mention + `sg_send_email` to alert recipients
+3. **Deduplication**: Check `{site}:{metric}:{severity}` key against cooldown window (info: 60m, warning: 30m, critical: 10m). Severity escalation bypasses cooldown.
+4. **Recovery**: When a metric returns to normal after an alert, send recovery notification to the same channel/thread.
+5. **Scheduled reports**: Use Procedure 8 output to generate daily/weekly health digests via Slack Block Kit.
 
 ## Report Generation
 
@@ -255,3 +275,4 @@ For issues found during monitoring:
 - **`wp-security` skill** — security hardening procedures
 - **`wp-performance` skill** — backend profiling and optimization
 - **`wp-analytics` skill** — analytics setup, traffic reports, CWV monitoring
+- **`wp-alerting` skill** — alert thresholds, severity routing, Slack/email escalation, scheduled reports
