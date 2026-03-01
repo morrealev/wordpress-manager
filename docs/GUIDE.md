@@ -2159,6 +2159,130 @@ File:           644 (rw-r--r--)
 wp-config.php:  440 (r--r-----)
 ```
 
+### 14.8 Validation Runner — Test Automatizzati dei Tool MCP
+
+Il **Validation Runner** (`scripts/run-validation.mjs`) verifica il corretto funzionamento di tutti i 148 tool MCP registrati. Supporta due modalita di utilizzo: **interattiva** (menu guidato) e **batch** (flag CLI per automazione/CI).
+
+#### Modalita Interattiva
+
+Lanciando lo script senza flag si attiva un menu guidato con `@clack/prompts`:
+
+```bash
+node scripts/run-validation.mjs
+```
+
+Il menu guida attraverso 4 step:
+
+1. **Selezione sito target** — lista automatica dai siti in `WP_SITES_CONFIG`
+2. **Tipo di validazione** — read tool, write tool per tier, o validazione completa
+3. **Filtro modulo** (opzionale) — per testare un singolo modulo (es. `unified-content`)
+4. **Conferma** — riepilogo e conferma prima dell'esecuzione
+
+```
+┌  WP REST Bridge — Validation Runner v1.2.0
+│
+◆  Seleziona il sito target
+│  ● opencactus (https://opencactus.com)
+│  ○ bioinagro (https://www.bioinagro.it)
+└
+◆  Cosa vuoi validare?
+│  ○ Solo read tool
+│  ○ Solo write tool (Tier 1 — CRUD base)
+│  ○ Solo write tool (Tier 2 — con dipendenze)
+│  ○ Solo write tool (tutti i tier)
+│  ○ Tutto (read + write)
+└
+```
+
+#### Modalita Batch (CLI)
+
+Per automazione, CI, o uso da Claude Code si usano i flag:
+
+```bash
+# Selezionare sito specifico
+node scripts/run-validation.mjs --site=opencactus
+
+# Test solo read tool
+node scripts/run-validation.mjs --site=opencactus --module=unified-content
+
+# Test write CRUD sequences
+node scripts/run-validation.mjs --site=opencactus --test-writes
+
+# Solo Tier 1 (content, term, comment, user)
+node scripts/run-validation.mjs --test-writes --tier=1
+
+# Solo Tier 2 (media, plugin, assign_terms)
+node scripts/run-validation.mjs --test-writes --tier=2
+
+# Regolare il delay tra le chiamate
+node scripts/run-validation.mjs --delay=200
+```
+
+**Flag disponibili**:
+
+| Flag | Descrizione |
+|------|-------------|
+| `--site=ID` | Seleziona il sito target (switch automatico via MCP) |
+| `--module=NOME` | Filtra per modulo (es. `unified-content`, `gsc`, `wc-products`) |
+| `--test-writes` | Esegue sequenze CRUD: create > verify > update > verify > delete |
+| `--tier=N` | Filtra le write sequences per tier (1, 2, o 3) |
+| `--include-writes` | Include write tool nel test read (senza sequenze CRUD) |
+| `--delay=MS` | Millisecondi di attesa tra le chiamate (default: 100) |
+| `--timeout=MS` | Timeout per singola chiamata (default: 10000) |
+
+**Regola duale**: senza flag → interattivo. Con almeno un flag → batch mode.
+
+#### Write Test Tiers
+
+| Tier | Sequenze | Descrizione |
+|------|----------|-------------|
+| **1** | content, term, comment, user | CRUD base, entita standalone |
+| **2** | media, plugin, assign_terms | CRUD con dipendenze tra entita |
+| **3** | switch_site | Operazioni speciali (cambio sito e ritorno) |
+
+Ogni sequenza esegue il ciclo completo **create → verify → update → verify → delete** con cleanup automatico in caso di errore.
+
+#### Output: Tre Livelli di Dettaglio
+
+I risultati vengono generati in tre formati complementari:
+
+1. **Console (stderr)** — log in tempo reale durante l'esecuzione, ideale per monitorare il progresso:
+   ```
+   [validation] Write sequences to run: content(T1), term(T1), user(T1)
+   [validation]   ── Sequence: content (Tier 1) ──
+   [validation]     → extracted id=2451
+   [validation]     [+] create:create_content (488ms)
+   [validation]     [+] verify:get_content (341ms)
+   ```
+
+2. **Markdown** (`docs/VALIDATION.md`) — report tabellare per consultazione rapida, con status per ogni tool, servizio e modulo.
+
+3. **Dashboard HTML** (`docs/validation/dashboard.html`) — interfaccia grafica interattiva con:
+   - Grafici riassuntivi (passed/failed/skipped)
+   - Dettaglio per modulo e servizio
+   - Tempo di risposta per ogni tool
+   - Filtri e ricerca
+
+   > **Importante**: La dashboard carica `results.json` via `fetch()`, quindi richiede un server HTTP. Non funziona con il protocollo `file://`.
+
+   ```bash
+   # Avviare un server locale per la dashboard
+   cd docs/validation && python3 -m http.server 8111
+
+   # Poi aprire nel browser
+   # http://localhost:8111/dashboard.html
+   ```
+
+#### File Generati
+
+| File | Formato | Descrizione |
+|------|---------|-------------|
+| `docs/validation/results.json` | JSON | Dati strutturati, merge incrementale tra run |
+| `docs/VALIDATION.md` | Markdown | Report leggibile, rigenerato ad ogni run |
+| `docs/validation/dashboard.html` | HTML | Dashboard interattiva (richiede HTTP server) |
+
+I risultati sono **incrementali**: un run su un singolo modulo (`--module=X`) aggiorna solo quel modulo in `results.json`, preservando i risultati precedenti degli altri.
+
 ---
 
 ## 15. Troubleshooting
