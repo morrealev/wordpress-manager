@@ -21,6 +21,9 @@ import { mailchimpTools, mailchimpHandlers } from './mailchimp.js';
 import { bufferTools, bufferHandlers } from './buffer.js';
 import { sendgridTools, sendgridHandlers } from './sendgrid.js';
 import { gscTools, gscHandlers } from './gsc.js';
+import { ga4Tools, ga4Handlers } from './ga4.js';
+import { plausibleTools, plausibleHandlers } from './plausible.js';
+import { cwvTools, cwvHandlers } from './cwv.js';
 
 // Combine all tools
 export const allTools: Tool[] = [
@@ -45,6 +48,9 @@ export const allTools: Tool[] = [
   ...bufferTools,                // 5 tools
   ...sendgridTools,              // 6 tools
   ...gscTools,                   // 8 tools
+  ...ga4Tools,                   // 6 tools
+  ...plausibleTools,             // 4 tools
+  ...cwvTools,                   // 4 tools
 ];
 
 // Combine all handlers
@@ -70,4 +76,7 @@ export const toolHandlers = {
   ...bufferHandlers,
   ...sendgridHandlers,
   ...gscHandlers,
+  ...ga4Handlers,
+  ...plausibleHandlers,
+  ...cwvHandlers,
 };
