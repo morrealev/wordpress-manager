@@ -26,6 +26,7 @@ import { slackTools, slackHandlers } from './slack.js';
 import { wcWorkflowTools, wcWorkflowHandlers } from './wc-workflows.js';
 import { linkedinTools, linkedinHandlers } from './linkedin.js';
 import { twitterTools, twitterHandlers } from './twitter.js';
+import { schemaTools, schemaHandlers } from './schema.js';
 // Combine all tools
 export const allTools = [
     ...unifiedContentTools, // 8 tools
@@ -56,6 +57,7 @@ export const allTools = [
     ...wcWorkflowTools, // 4 tools
     ...linkedinTools, // 5 tools
     ...twitterTools, // 5 tools
+    ...schemaTools, // 3 tools
 ];
 // Combine all handlers
 export const toolHandlers = {
@@ -87,4 +89,5 @@ export const toolHandlers = {
     ...wcWorkflowHandlers,
     ...linkedinHandlers,
     ...twitterHandlers,
+    ...schemaHandlers,
 };
