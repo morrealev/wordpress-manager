@@ -23,6 +23,7 @@ import { ga4Tools, ga4Handlers } from './ga4.js';
 import { plausibleTools, plausibleHandlers } from './plausible.js';
 import { cwvTools, cwvHandlers } from './cwv.js';
 import { slackTools, slackHandlers } from './slack.js';
+import { wcWorkflowTools, wcWorkflowHandlers } from './wc-workflows.js';
 // Combine all tools
 export const allTools = [
     ...unifiedContentTools, // 8 tools
@@ -50,6 +51,7 @@ export const allTools = [
     ...plausibleTools, // 4 tools
     ...cwvTools, // 4 tools
     ...slackTools, // 3 tools
+    ...wcWorkflowTools, // 4 tools
 ];
 // Combine all handlers
 export const toolHandlers = {
@@ -78,4 +80,5 @@ export const toolHandlers = {
     ...plausibleHandlers,
     ...cwvHandlers,
     ...slackHandlers,
+    ...wcWorkflowHandlers,
 };
