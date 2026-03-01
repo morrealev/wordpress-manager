@@ -2,6 +2,23 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.5.0] - 2026-03-01
+
+### Added
+- **Google Search Console skill** (`wp-search-console`) — keyword tracking, indexing management, SEO feedback loops
+  - 5 reference files: `gsc-setup.md`, `keyword-tracking.md`, `indexing-management.md`, `content-seo-feedback.md`, `competitor-gap-analysis.md`
+  - Detection script: `search_console_inspect.mjs` (GSC config, sitemaps, robots.txt, SEO plugins)
+- **8 new GSC MCP tools** via WP REST Bridge:
+  - `gsc_list_sites`, `gsc_search_analytics`, `gsc_inspect_url`, `gsc_list_sitemaps`, `gsc_submit_sitemap`, `gsc_delete_sitemap`, `gsc_top_queries`, `gsc_page_performance`
+- **SEO Feedback Loop** procedure in `wp-content-strategist` agent — GSC-driven content optimization (6-step workflow)
+- SiteConfig extended with `gsc_service_account_key`, `gsc_site_url`
+- `googleapis` npm dependency for Google Search Console API access
+
+### Changed
+- Router decision-tree.md upgraded to v12 with GSC keywords and routing
+- Cross-references added: `wp-programmatic-seo` → wp-search-console, `wp-content-attribution` → wp-search-console, `wp-monitoring` → wp-search-console
+- Plugin now has 35 skills, 12 agents, and 111 MCP tools (103 → 111)
+
 ## [2.4.0] - 2026-03-01
 
 ### Added

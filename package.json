@@ -1,7 +1,7 @@
 {
   "name": "claude-plugin-wordpress-manager",
-  "version": "2.4.0",
-  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (103 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks + 7 Mailchimp + 5 Buffer + 6 SendGrid), and WordPress.com MCP with 34 skills, 12 agents, and security hooks. v2.4.0 adds social/email distribution connectors (Mailchimp, Buffer, SendGrid).",
+  "version": "2.5.0",
+  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (111 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks + 7 Mailchimp + 5 Buffer + 6 SendGrid + 8 GSC), and WordPress.com MCP with 35 skills, 12 agents, and security hooks. v2.5.0 adds Google Search Console integration (keyword tracking, indexing, SEO feedback).",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -47,7 +47,12 @@
     "sendgrid",
     "social-media",
     "email-marketing",
-    "content-distribution"
+    "content-distribution",
+    "google-search-console",
+    "gsc",
+    "keyword-tracking",
+    "seo-feedback",
+    "search-analytics"
   ],
   "repository": {
     "type": "git",

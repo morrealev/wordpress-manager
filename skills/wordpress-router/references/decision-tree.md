@@ -1,4 +1,4 @@
-# Router decision tree (v11 — development + local environment + operations + multisite + CI/CD + monitoring + webhooks + content repurposing + programmatic SEO + content attribution + multi-language network + social/email distribution)
+# Router decision tree (v12 — development + local environment + operations + multisite + CI/CD + monitoring + webhooks + content repurposing + programmatic SEO + content attribution + multi-language network + social/email distribution + search console)
 
 This routing guide covers WordPress **development**, **local environment**, and **operations** workflows.
 
@@ -14,7 +14,7 @@ Keywords that indicate **local environment**:
 local site, Studio, LocalWP, Local by Flywheel, wp-env, local WordPress, start site, stop site, create local site, local development, symlink plugin, local database, switch PHP version, localhost, local preview, detect environment, WASM, SQLite local
 
 Keywords that indicate **operations**:
-deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit, WooCommerce, prodotto, ordine, coupon, negozio, catalogo, inventario, vendite, carrello, multisite, network, sub-site, sub-sito, domain mapping, super admin, network activate, monitor, uptime, health report, trend, scansione periodica, alerting, performance baseline, fleet, all sites, network health, cross-site, webhook, outbound notification, event propagation, Zapier, content sync, repurpose content, social posts from blog, content atomization, newsletter from posts, content distribution, programmatic SEO, template pages, city pages, location pages, bulk page generation, scalable landing pages, content ROI, attribution, which content drives sales, conversion tracking, UTM tracking, revenue per post, multilingual, multi-language, hreflang, international SEO, translate site, language sites, localize content, social publish, schedule post, Buffer, email campaign, Mailchimp, SendGrid, transactional email, content distribution, newsletter send
+deploy, push to production, audit, security check, backup, restore, migrate, move site, create post, manage content, site status, check plugins, performance check, SEO audit, WooCommerce, prodotto, ordine, coupon, negozio, catalogo, inventario, vendite, carrello, multisite, network, sub-site, sub-sito, domain mapping, super admin, network activate, monitor, uptime, health report, trend, scansione periodica, alerting, performance baseline, fleet, all sites, network health, cross-site, webhook, outbound notification, event propagation, Zapier, content sync, repurpose content, social posts from blog, content atomization, newsletter from posts, content distribution, programmatic SEO, template pages, city pages, location pages, bulk page generation, scalable landing pages, content ROI, attribution, which content drives sales, conversion tracking, UTM tracking, revenue per post, multilingual, multi-language, hreflang, international SEO, translate site, language sites, localize content, social publish, schedule post, Buffer, email campaign, Mailchimp, SendGrid, transactional email, content distribution, newsletter send, Google Search Console, GSC, keyword tracking, keyword rankings, search analytics, indexing status, URL inspection, sitemap submit, search performance, SERP data
 
 Keywords that indicate **development**:
 create block, block.json, theme.json, register_rest_route, plugin development, hooks, PHPStan, build, test, scaffold, i18n, translation, accessibility, a11y, headless, decoupled, WPGraphQL, CI, CD, pipeline, GitHub Actions, GitLab CI, deploy automatico, workflow, quality gate
@@ -106,6 +106,8 @@ Priority: `gutenberg` > `wp-core` > `wp-site` > `wp-block-theme` > `wp-block-plu
   → `wp-multilang-network` skill + `wp-site-manager` agent
 - **Social/email distribution / publish to social / schedule post / email campaign / Mailchimp / Buffer / SendGrid / newsletter / transactional email / content distribution**
   → `wp-social-email` skill + `wp-distribution-manager` agent
+- **Google Search Console / keyword tracking / indexing status / sitemap submit / search performance / GSC / SERP data**
+  → `wp-search-console` skill + `wp-content-strategist` agent
 
 ## Step 2c: route by local environment intent (keywords)
 
