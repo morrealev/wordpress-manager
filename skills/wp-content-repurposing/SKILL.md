@@ -94,3 +94,4 @@ See `references/platform-specs.md`
 - **`wp-content`** — content creation and lifecycle management (source content)
 - **`wp-headless`** — headless content delivery for multi-channel architectures
 - **`wp-woocommerce`** — product content for e-commerce repurposing
+- **wp-social-email** — publish repurposed content to social and email channels

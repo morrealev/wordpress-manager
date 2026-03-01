@@ -105,3 +105,4 @@ See `references/payload-formats.md`
 - **`wp-headless`** — headless revalidation webhooks and ISR triggers
 - **`wp-woocommerce`** — WooCommerce store operations (webhook source events)
 - **`wp-cicd`** — CI/CD webhooks for deployment triggers
+- **wp-social-email** — direct publishing to social/email (alternative to webhook-based distribution)
