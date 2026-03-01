@@ -110,11 +110,7 @@ export const cwvHandlers: Record<string, Function> = {
       const { url, strategy, categories } = params;
       const apiKey = getGoogleApiKey();
       const queryParams: Record<string, any> = { url, key: apiKey, strategy: strategy || 'mobile' };
-      if (categories) {
-        categories.forEach(c => { queryParams[`category`] = c; });
-      } else {
-        queryParams.category = 'performance';
-      }
+      queryParams.category = categories && categories.length > 0 ? categories : ['performance'];
       const response = await axios.get(PSI_BASE, { params: queryParams, timeout: 60000 });
       const cwv = extractCWV(response.data.lighthouseResult);
       const result = { url, strategy: strategy || 'mobile', cwv, fieldData: response.data.loadingExperience || null };
@@ -164,7 +160,7 @@ export const cwvHandlers: Record<string, Function> = {
       else if (origin) requestBody.origin = origin;
       else return { toolResult: { isError: true, content: [{ type: "text", text: "Provide either url or origin parameter." }] } };
       if (form_factor && form_factor !== 'ALL_FORM_FACTORS') requestBody.formFactor = form_factor;
-      const response = await axios.post(`${CRUX_BASE}?key=${apiKey}`, requestBody, { timeout: 30000 });
+      const response = await axios.post(CRUX_BASE, requestBody, { params: { key: apiKey }, timeout: 30000 });
       return { toolResult: { content: [{ type: "text", text: JSON.stringify(response.data, null, 2) }] } };
     } catch (error: any) {
       const errorMessage = error.response?.data?.error?.message || error.message;
