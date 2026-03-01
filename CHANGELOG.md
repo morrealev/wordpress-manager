@@ -2,6 +2,33 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.9.0] - 2026-03-01
+
+### Added — Automated Workflows (WCOP Tier 4+5 Complete)
+- **wp-content-workflows skill** — workflow triggers for scheduled events, content lifecycle hooks, and WP action/filter hooks
+- **4 new MCP tools**: `wf_list_triggers`, `wf_create_trigger`, `wf_update_trigger`, `wf_delete_trigger`
+- **5 reference files**: schedule-triggers, content-lifecycle-hooks, wp-action-hooks, multi-channel-actions, trigger-management
+- **Detection script**: `workflow_inspect.mjs` — detects action channels, automation plugins, custom REST endpoints, WP-Cron config
+- **Safety hook**: PreToolUse confirmation for `wf_delete_trigger` (prevents accidental deletion of active workflows)
+
+### Changed
+- **wp-site-manager agent**: added Workflow Automation Management section (6-step procedure), 4 Workflow MCP tools, wp-content-workflows in Related Skills
+- **Router v16**: added 9 workflow keywords and `wp-content-workflows` route
+- **Cross-references**: wp-webhooks → wp-content-workflows, wp-social-email → wp-content-workflows
+
+### Metrics
+- Skills: 39 (+1) | MCP tools: 132 (+4) | Reference files: 192 (+5) | Detection scripts: 27 (+1) | Safety hooks: 5 (+1)
+
+### WCOP Score (Final)
+| Layer | v2.6.0 | v2.9.0 |
+|-------|--------|--------|
+| Content Factory | 9/10 | 9/10 |
+| Quality Assurance | 9/10 | 9/10 |
+| Distribution | 8/10 | 8/10 |
+| Observability | 7/10 | **9/10** |
+| Automation | 7/10 | **9/10** |
+| **Total** | **8/10** | **8.8/10** |
+
 ## [2.8.0] - 2026-03-01
 
 ### Added — Smart Alerting (WCOP Tier 4b)

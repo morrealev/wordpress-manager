@@ -150,3 +150,4 @@ Use the **`wp-distribution-manager`** agent for complex multi-channel distributi
 - **`wp-webhooks`** — trigger distribution on WordPress events (publish, update)
 - **`wp-content`** — create and manage WordPress content for distribution
 - **`wp-content-attribution`** — track content sources and attribution across channels
+- **`wp-content-workflows`** — automate distribution via workflow triggers (schedule, content lifecycle, hooks)
