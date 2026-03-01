@@ -1,5 +1,7 @@
 // src/wordpress.ts - Multi-site WordPress REST API client
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { google } from 'googleapis';
+import { readFileSync } from 'fs';
 
 interface SiteConfig {
   id: string;
@@ -19,6 +21,9 @@ interface SiteConfig {
   mailchimp_api_key?: string;    // Format: "key-dc" (e.g., "abc123-us21")
   buffer_access_token?: string;  // Buffer OAuth access token
   sendgrid_api_key?: string;     // SendGrid API key (starts with "SG.")
+  // Google Search Console (optional)
+  gsc_service_account_key?: string;  // Path to service account JSON key file
+  gsc_site_url?: string;             // GSC site URL (e.g., "sc-domain:mysite.com")
 }
 
 // ── Concurrency Limiter ──────────────────────────────────────────────
@@ -611,6 +616,55 @@ export async function makeSendGridRequest(
   } finally {
     limiter.release();
   }
+}
+
+// ── Google Search Console Interface ─────────────────────────────
+
+const gscAuthClients = new Map<string, any>();
+
+export function hasGSC(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  return !!(site?.gsc_service_account_key && site?.gsc_site_url);
+}
+
+export function getGSCSiteUrl(siteId?: string): string {
+  const id = siteId || activeSiteId;
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  if (!site?.gsc_site_url) {
+    throw new Error(`GSC site URL not configured for site "${id}". Add gsc_site_url to WP_SITES_CONFIG.`);
+  }
+  return site.gsc_site_url;
+}
+
+export async function getGSCAuth(siteId?: string) {
+  const id = siteId || activeSiteId;
+
+  // Return cached client if available
+  if (gscAuthClients.has(id)) {
+    return gscAuthClients.get(id);
+  }
+
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+
+  if (!site?.gsc_service_account_key) {
+    throw new Error(
+      `GSC not configured for site "${id}". Add gsc_service_account_key (path to JSON key file) to WP_SITES_CONFIG.`
+    );
+  }
+
+  const keyContent = JSON.parse(readFileSync(site.gsc_service_account_key, 'utf-8'));
+  const auth = new google.auth.GoogleAuth({
+    credentials: keyContent,
+    scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
+  });
+
+  const authClient = await auth.getClient();
+  gscAuthClients.set(id, authClient);
+  return authClient;
 }
 
 // ── Plugin Repository (External API) ────────────────────────────────
