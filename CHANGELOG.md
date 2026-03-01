@@ -2,6 +2,27 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.12.1] — 2026-03-01
+
+### Fixed — Critical MCP Tool Parameter Passing
+
+**Server registration fix (affects ~60 tools)**
+- Fixed `toZodType()` conversion in server.js: tools defined with JSON Schema properties (plain objects) instead of Zod `.shape` references were not receiving parameters from the MCP client
+- Affected modules: GSC (8), Mailchimp (7), Buffer (5), SendGrid (6), Slack (3), CWV (4), Plausible (4), GA4 (6), LinkedIn (5), Twitter (5), Schema (3), WC-Webhooks (4), WC-Workflows (4)
+- Original WordPress core (44) and WooCommerce (30) tools were unaffected (use Zod `.shape`)
+
+**Schema tool fixes**
+- Fixed import `makeRequest` → `makeWordPressRequest` in schema.js (prevented server startup)
+- Fixed duplicated REST API path `wp/v2/wp/v2/posts` → `posts` in sd_list_schemas and sd_inject
+
+**Documentation**
+- Corrected tool count from 145 to 148 across GUIDE.md and package.json
+- WordPress core: Plugins 6 (not 5), Users 6 (not 5), Media 5 (not 4), +Search (1)
+
+### Validated end-to-end on opencactus.com
+- `get_active_site`, `list_content`, `sd_validate` (markup + URL), `sd_list_schemas`
+- GSC, Mailchimp tools return correct "not configured" errors
+
 ## [2.12.0] — 2026-03-01
 
 ### Added — Content Generation + Structured Data (Tier 7: Content Factory Completeness)
@@ -25,7 +46,7 @@ All notable changes to the WordPress Manager plugin for Claude Code.
 - Router v18 (+2 categories: content generation, structured data)
 - Updated wp-content-strategist agent with AI generation and schema procedures
 
-**Stats:** 41 → 43 skills | 142 → 145 MCP tools | Router v17 → v18
+**Stats:** 41 → 43 skills | 142 → 148 MCP tools | Router v17 → v18
 
 ### WCOP Score
 - Content Factory: 9/10 → 10/10 (AI generation + structured data)

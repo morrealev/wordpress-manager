@@ -1,6 +1,6 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 2.12.0
+**Versione:** 2.12.1
 **Ultimo aggiornamento:** 2026-03-01
 **Repository:** https://github.com/morrealev/wordpress-manager
 
@@ -110,7 +110,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v2.12.0
+wordpress-manager/                          # v2.12.1
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
@@ -181,8 +181,8 @@ wordpress-manager/                          # v2.12.0
 |   +-- [DISTRIBUZIONE DIRETTA + CONTENT FACTORY - 4 skill]
 |   +-- wp-linkedin/                            # LinkedIn direct posting e analytics (v2.10.0)
 |   +-- wp-twitter/                             # Twitter/X direct posting e thread (v2.10.0)
-|   +-- wp-structured-data/                     # Schema.org/JSON-LD validation e injection (v2.12.0)
-|   +-- wp-content-generation/                  # AI content generation pipeline (v2.12.0)
+|   +-- wp-structured-data/                     # Schema.org/JSON-LD validation e injection (v2.12.1)
+|   +-- wp-content-generation/                  # AI content generation pipeline (v2.12.1)
 +-- hooks/                                  # 12 hook di sicurezza
 |   +-- hooks.json                              # 10 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
@@ -619,9 +619,9 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 
 **AI Content Optimization** (v2.6.0): Pipeline AI-driven in 5 step per ottimizzazione contenuti: headline scoring → readability analysis (Flesch-Kincaid) → SEO scoring → meta optimization → content freshness check. Include bulk triage per analisi rapida di tutti i contenuti con classificazione Quick Wins / Maintain / Deep Review / Outdated. Usa la skill `wp-content-optimization`.
 
-**AI Content Generation** (v2.12.0): Pipeline completa 7 step per generare contenuti da zero: brief → keyword research (GSC se disponibile) → outline (4 pattern: standard, tutorial, listicle, FAQ) → draft (calibrato sulla voce del sito) → SEO optimize → structured data injection → publish as draft. Procedure-based, usa tool MCP esistenti (`wp/v2`, `gsc_*`, `sd_*`). Usa la skill `wp-content-generation`.
+**AI Content Generation** (v2.12.1): Pipeline completa 7 step per generare contenuti da zero: brief → keyword research (GSC se disponibile) → outline (4 pattern: standard, tutorial, listicle, FAQ) → draft (calibrato sulla voce del sito) → SEO optimize → structured data injection → publish as draft. Procedure-based, usa tool MCP esistenti (`wp/v2`, `gsc_*`, `sd_*`). Usa la skill `wp-content-generation`.
 
-**Structured Data Management** (v2.12.0): Gestione completa Schema.org/JSON-LD con 3 tool MCP dedicati: `sd_validate` (validazione markup via URL o inline), `sd_inject` (iniezione JSON-LD nei post), `sd_list_schemas` (audit sitewide). 8 tipi supportati: Article, Product, FAQ, HowTo, LocalBusiness, Event, Organization, BreadcrumbList. Usa la skill `wp-structured-data`.
+**Structured Data Management** (v2.12.1): Gestione completa Schema.org/JSON-LD con 3 tool MCP dedicati: `sd_validate` (validazione markup via URL o inline), `sd_inject` (iniezione JSON-LD nei post), `sd_list_schemas` (audit sitewide). 8 tipi supportati: Article, Product, FAQ, HowTo, LocalBusiness, Event, Organization, BreadcrumbList. Usa la skill `wp-structured-data`.
 
 **Skill correlata**: `wp-content`, `wp-i18n`, `wp-content-repurposing`, `wp-programmatic-seo`, `wp-search-console`, `wp-content-optimization`, `wp-content-generation`, `wp-structured-data`
 
@@ -965,7 +965,7 @@ Le skill di sviluppo provengono da due fonti:
 - **3 skill strategia + SEO internazionale** (MIT) aggiunte in v2.3.0: Programmatic SEO, Content-Commerce Attribution, Multi-Language Network.
 - **3 skill distribuzione + SEO avanzato** (MIT) aggiunte in v2.4.0-v2.6.0: Social/Email Distribution, Google Search Console, AI Content Optimization.
 - **3 skill analytics + alerting + automazione** (MIT) aggiunte in v2.7.0-v2.9.0: Analytics (GA4/Plausible/CWV), Smart Alerting (Slack/SendGrid severity routing), Automated Workflows (triggers + multi-channel actions).
-- **4 skill distribuzione diretta + content factory** (MIT) aggiunte in v2.10.0-v2.12.0: LinkedIn Direct (posting + analytics), Twitter/X Direct (tweet + thread + metriche), Structured Data (Schema.org/JSON-LD), AI Content Generation (pipeline 7-step).
+- **4 skill distribuzione diretta + content factory** (MIT) aggiunte in v2.10.0-v2.12.1: LinkedIn Direct (posting + analytics), Twitter/X Direct (tweet + thread + metriche), Structured Data (Schema.org/JSON-LD), AI Content Generation (pipeline 7-step).
 
 ### Il Router Unificato
 
@@ -1194,7 +1194,7 @@ Aggiunte in v2.7.0-v2.9.0, queste skill completano il layer Observability + Auto
 
 ### Panoramica Skills Distribuzione Diretta + Content Factory (4)
 
-Aggiunte in v2.10.0-v2.12.0, queste skill completano il WCOP portando il punteggio totale da 8.8/10 a 9.2/10 (Distribution 9/10, Content Factory 10/10).
+Aggiunte in v2.10.0-v2.12.1, queste skill completano il WCOP portando il punteggio totale da 8.8/10 a 9.2/10 (Distribution 9/10, Content Factory 10/10).
 
 | Skill | Si attiva quando... | Risorse | Agent dedicato |
 |-------|---------------------|---------|----------------|
@@ -1238,8 +1238,8 @@ Le skill includono 31 script Node.js (`.mjs`) che eseguono analisi automatica de
 | `workflow_inspect.mjs` | Action channel config, automation plugins, custom REST endpoints, WP-Cron, webhook config (v2.9.0) |
 | `linkedin_inspect.mjs` | LinkedIn access token, profile info, API connectivity (v2.10.0) |
 | `twitter_inspect.mjs` | Twitter Bearer token, OAuth tokens, API v2 connectivity (v2.10.0) |
-| `schema_inspect.mjs` | SEO plugins (Yoast, Rank Math), existing JSON-LD in theme, Schema Pro (v2.12.0) |
-| `content_gen_inspect.mjs` | REST access, GSC credentials, pipeline step availability (v2.12.0) |
+| `schema_inspect.mjs` | SEO plugins (Yoast, Rank Math), existing JSON-LD in theme, Schema Pro (v2.12.1) |
+| `content_gen_inspect.mjs` | REST access, GSC credentials, pipeline step availability (v2.12.1) |
 
 ### WordPress Playground — Ambienti Disposable
 
@@ -2363,6 +2363,6 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 
 ---
 
-*Guida v2.12.0 — WordPress Manager Plugin per Claude Code*
+*Guida v2.12.1 — WordPress Manager Plugin per Claude Code*
 *Ultimo aggiornamento: 2026-03-01*
 *WCOP Score: 8.8/10 (Tier 4+5 complete)*
