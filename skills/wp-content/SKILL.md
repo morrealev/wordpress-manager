@@ -106,3 +106,4 @@ Tool: assign_terms_to_content — assign terms to content
 - **`wp-content-repurposing`** — transform existing content for social media, email, and multi-channel distribution
 - **`wp-content-attribution`** — measure which content drives WooCommerce sales (UTM tracking, attribution models, ROI)
 - **wp-social-email** — distribute content to social media and email after creation
+- **wp-content-optimization** — optimize existing content: headlines, readability, SEO scoring, meta descriptions, freshness audit

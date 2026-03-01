@@ -45,6 +45,13 @@ description: |
   assistant: "I'll use the wp-content-strategist agent to run the SEO Feedback Loop — fetching search analytics, identifying high-impression/low-CTR opportunities, and suggesting title/meta optimizations."
   <commentary>GSC-driven content optimization combines search analytics with content editing for measurable SEO gains.</commentary>
   </example>
+
+  <example>
+  Context: User wants to run a bulk content optimization audit.
+  user: "Audit all my blog posts and tell me which ones need improvement"
+  assistant: "I'll use the wp-content-strategist agent to run the Content Optimization Pipeline — fetching all published content, analyzing headlines, readability, and SEO scores, then classifying into quick wins, needs rewrite, and archive."
+  <commentary>Bulk content triage combines Claude's linguistic analysis with GSC data for data-driven content prioritization.</commentary>
+  </example>
 model: inherit
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
@@ -256,6 +263,45 @@ Compare against previous period to detect:
 
 See the `wp-search-console` skill for detailed reference files on keyword tracking, indexing management, content SEO feedback, and competitor gap analysis.
 
+## AI Content Optimization Workflow
+
+When optimizing existing WordPress content using Claude's linguistic analysis:
+
+### Content Optimization Pipeline
+
+1. **Fetch published content** via `list_content` (status=published, ordered by date)
+2. **For each content piece:**
+   a. Fetch GSC data if available (`gsc_page_performance`) for traffic and CTR metrics
+   b. **Headline Analysis** — score 1-10, generate 3 optimized alternatives
+   c. **Readability Analysis** — compute Flesch-Kincaid score, flag long sentences and passive voice
+   d. **SEO Content Scoring** — check keyword density (target 1-2%), H2/H3 coverage, internal linking
+3. **Generate Optimization Report** ordered by potential impact (high traffic + low quality = highest priority)
+4. **For priority content**: suggest specific modifications (new headline, meta description, section rewrites)
+5. **If approved by user**: apply changes via `update_content` through WP REST Bridge
+
+### Bulk Content Triage
+
+For large content libraries, classify each piece:
+
+| Category | Criteria | Action |
+|----------|---------|--------|
+| **Quick Wins** | High traffic + low CTR, weak headline | Optimize title/meta only |
+| **Needs Rewrite** | >12 months old, low readability, keyword off-target | Full content rewrite |
+| **Performing** | High traffic + high CTR | Maintain, refresh publish date |
+| **Archive** | Zero traffic >6 months, no ranking keywords | 301 redirect or noindex |
+
+### Optimization Procedures
+
+Each procedure from `wp-content-optimization` skill:
+- **Procedure 1 — Headline Analysis**: Title + target keyword → score 1-10, 3 alternatives
+- **Procedure 2 — Readability Analysis**: Body content → Flesch-Kincaid score, suggestions
+- **Procedure 3 — SEO Content Scoring**: Body + keyword + GSC data → density, H-tag gaps, linking gaps
+- **Procedure 4 — Meta Description Optimization**: Current meta + GSC CTR → optimized meta, A/B variant
+- **Procedure 5 — Content Freshness Audit**: Content list + dates → stale content, update priorities
+- **Procedure 6 — Bulk Content Triage**: N contents + GSC data → classified list with actions
+
+See the `wp-content-optimization` skill for reference files on headline formulas, readability scoring, SEO scoring criteria, meta optimization, and content freshness strategies.
+
 ## Multilingual Content
 
 When creating content for multilingual sites:
@@ -276,3 +322,4 @@ When creating content for multilingual sites:
 - **`wp-content-repurposing` skill** — content transformation for multi-channel distribution
 - **`wp-programmatic-seo` skill** — scalable page generation from structured data (city pages, product variants, comparison pages)
 - **`wp-search-console` skill** — Google Search Console integration for keyword tracking, indexing, and SEO feedback loops
+- **`wp-content-optimization` skill** — AI-driven content optimization: headline scoring, readability, SEO scoring, meta optimization, content freshness, bulk triage

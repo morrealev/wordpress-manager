@@ -96,3 +96,4 @@ The script checks WooCommerce presence, analytics plugins, UTM tracking setup, c
 - `wp-monitoring` — ongoing site performance and health tracking
 - `wp-content-repurposing` — transform high-ROI content into multi-channel formats
 - `wp-search-console` — correlate GSC keyword data with WooCommerce conversions for content-commerce attribution
+- `wp-content-optimization` — prioritize optimization of high-revenue content using attribution data

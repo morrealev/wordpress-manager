@@ -118,3 +118,4 @@ Use the **`wp-content-strategist`** agent for SEO feedback loops and content opt
 - **`wp-monitoring`** — monitor site health metrics alongside search performance
 - **`wp-social-email`** — distribute optimized content across social and email channels
 - **`wp-content`** — create and manage WordPress content informed by search analytics
+- **`wp-content-optimization`** — use GSC data as input for AI-driven content optimization and triage

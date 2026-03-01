@@ -96,3 +96,4 @@ The script checks headless frontend presence, SEO plugins, content volume, custo
 - `wp-content` — content management fundamentals
 - `wp-content-repurposing` — transform existing content into new formats
 - `wp-search-console` — monitor performance of generated pages via GSC keyword tracking and indexing status
+- `wp-content-optimization` — optimize programmatic page templates for headlines, readability, and SEO scoring
