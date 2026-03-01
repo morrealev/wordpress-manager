@@ -24,6 +24,14 @@ interface SiteConfig {
   // Google Search Console (optional)
   gsc_service_account_key?: string;  // Path to service account JSON key file
   gsc_site_url?: string;             // GSC site URL (e.g., "sc-domain:mysite.com")
+  // Google Analytics 4 (optional)
+  ga4_property_id?: string;            // GA4 property (e.g., "properties/123456789")
+  ga4_service_account_key?: string;    // Path to service account JSON (can reuse GSC key)
+  // Plausible Analytics (optional)
+  plausible_api_key?: string;          // Plausible API key (Bearer token)
+  plausible_base_url?: string;         // Default: "https://plausible.io" (or self-hosted)
+  // Google API key for public APIs (PageSpeed Insights, CrUX)
+  google_api_key?: string;
 }
 
 // ── Concurrency Limiter ──────────────────────────────────────────────
@@ -61,6 +69,7 @@ const wcSiteClients = new Map<string, AxiosInstance>();
 const mcSiteClients = new Map<string, AxiosInstance>();
 const bufSiteClients = new Map<string, AxiosInstance>();
 const sgSiteClients = new Map<string, AxiosInstance>();
+const plSiteClients = new Map<string, AxiosInstance>();
 let activeSiteId: string = '';
 const parsedSiteConfigs = new Map<string, SiteConfig>();
 
@@ -134,6 +143,10 @@ export async function initWordPress() {
     if (site.sendgrid_api_key) {
       await initSendGridClient(site.id, site.sendgrid_api_key);
       logToStderr(`Initialized SendGrid for site: ${site.id}`);
+    }
+    if (site.plausible_api_key) {
+      await initPlausibleClient(site.id, site.plausible_api_key, site.plausible_base_url);
+      logToStderr(`Initialized Plausible for site: ${site.id}`);
     }
   }
 
@@ -249,6 +262,17 @@ async function initSendGridClient(id: string, apiKey: string) {
     timeout: DEFAULT_TIMEOUT_MS,
   });
   sgSiteClients.set(id, client);
+}
+
+async function initPlausibleClient(id: string, apiKey: string, baseUrl?: string) {
+  const client = axios.create({
+    baseURL: (baseUrl || 'https://plausible.io') + '/api/v1/',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    timeout: DEFAULT_TIMEOUT_MS,
+  });
+  plSiteClients.set(id, client);
 }
 
 // ── Site Management ──────────────────────────────────────────────────
@@ -665,6 +689,94 @@ export async function getGSCAuth(siteId?: string) {
   const authClient = await auth.getClient();
   gscAuthClients.set(id, authClient);
   return authClient;
+}
+
+// ── Google Analytics 4 Interface ─────────────────────────────────
+
+const ga4AuthClients = new Map<string, any>();
+
+export function hasGA4(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  return !!(site?.ga4_property_id && site?.ga4_service_account_key);
+}
+
+export function getGA4PropertyId(siteId?: string): string {
+  const id = siteId || activeSiteId;
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  if (!site?.ga4_property_id) {
+    throw new Error(`GA4 property not configured for site "${id}". Add ga4_property_id to WP_SITES_CONFIG.`);
+  }
+  return site.ga4_property_id;
+}
+
+export async function getGA4Auth(siteId?: string) {
+  const id = siteId || activeSiteId;
+  if (ga4AuthClients.has(id)) return ga4AuthClients.get(id);
+
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  if (!site?.ga4_service_account_key) {
+    throw new Error(`GA4 not configured for site "${id}". Add ga4_service_account_key to WP_SITES_CONFIG.`);
+  }
+
+  const keyContent = JSON.parse(readFileSync(site.ga4_service_account_key, 'utf-8'));
+  const auth = new google.auth.GoogleAuth({
+    credentials: keyContent,
+    scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
+  });
+  const authClient = await auth.getClient();
+  ga4AuthClients.set(id, authClient);
+  return authClient;
+}
+
+// ── Plausible Analytics Interface ────────────────────────────────
+
+export function hasPlausible(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  return plSiteClients.has(id);
+}
+
+export async function makePlausibleRequest(
+  method: string,
+  endpoint: string,
+  params?: Record<string, any>,
+  siteId?: string
+): Promise<any> {
+  const id = siteId || activeSiteId;
+  const client = plSiteClients.get(id);
+  if (!client) {
+    throw new Error(`Plausible not configured for site "${id}". Add plausible_api_key to WP_SITES_CONFIG.`);
+  }
+  const limiter = getLimiter(id);
+  await limiter.acquire();
+  try {
+    const response = await client.request({ method, url: endpoint, params });
+    return response.data;
+  } finally {
+    limiter.release();
+  }
+}
+
+// ── Core Web Vitals Interface (Google API Key) ───────────────────
+
+export function hasGoogleApiKey(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  return !!site?.google_api_key;
+}
+
+export function getGoogleApiKey(siteId?: string): string {
+  const id = siteId || activeSiteId;
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  if (!site?.google_api_key) {
+    throw new Error(`Google API key not configured for site "${id}". Add google_api_key to WP_SITES_CONFIG.`);
+  }
+  return site.google_api_key;
 }
 
 // ── Plugin Repository (External API) ────────────────────────────────

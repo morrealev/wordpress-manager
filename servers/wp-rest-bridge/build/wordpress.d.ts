@@ -16,6 +16,11 @@ interface SiteConfig {
     sendgrid_api_key?: string;
     gsc_service_account_key?: string;
     gsc_site_url?: string;
+    ga4_property_id?: string;
+    ga4_service_account_key?: string;
+    plausible_api_key?: string;
+    plausible_base_url?: string;
+    google_api_key?: string;
 }
 /**
  * Parse WP_SITES_CONFIG JSON and initialize all site clients
@@ -83,6 +88,13 @@ export declare function makeSendGridRequest(method: string, endpoint: string, da
 export declare function hasGSC(siteId?: string): boolean;
 export declare function getGSCSiteUrl(siteId?: string): string;
 export declare function getGSCAuth(siteId?: string): Promise<any>;
+export declare function hasGA4(siteId?: string): boolean;
+export declare function getGA4PropertyId(siteId?: string): string;
+export declare function getGA4Auth(siteId?: string): Promise<any>;
+export declare function hasPlausible(siteId?: string): boolean;
+export declare function makePlausibleRequest(method: string, endpoint: string, params?: Record<string, any>, siteId?: string): Promise<any>;
+export declare function hasGoogleApiKey(siteId?: string): boolean;
+export declare function getGoogleApiKey(siteId?: string): string;
 /**
  * Search the WordPress.org Plugin Repository
  */
