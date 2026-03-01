@@ -78,6 +78,15 @@
             "prompt": "The agent is about to SEND an email via SendGrid. Verify the user explicitly requested this email send and the recipient list is correct. Respond 'approve' only if intentional."
           }
         ]
+      },
+      {
+        "matcher": "mcp__wp-rest-bridge__wf_delete_trigger",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "The agent is about to DELETE a workflow trigger. This will permanently stop all associated automation and notifications (Slack alerts, emails, webhooks) configured for this trigger. Verify the user explicitly requested this deletion and understands that dependent workflows will stop firing."
+          }
+        ]
       }
     ]
   }
