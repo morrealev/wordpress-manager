@@ -2,6 +2,18 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.11.0] — 2026-03-01
+
+### Added — Auto-Transform Pipeline (Tier 6b: Distribution Completeness)
+
+- Auto-transform pipeline in `wp-content-repurposing` skill (new Section 5)
+- Template system: blog→tweet, blog→thread, blog→LinkedIn post, blog→LinkedIn article, blog→email snippet
+- Platform-specific formatting rules with character limits
+- Integration with `li_*`, `tw_*`, `buf_*`, `mc_*` MCP tools
+- New references: `auto-transform-pipeline.md`, `transform-templates.md`
+
+**Stats:** 41 skills (unchanged) | 142 MCP tools (unchanged) | WCOP Distribution: 8/10 → 9/10
+
 ## [2.10.0] — 2026-03-01
 
 ### Added — Direct Social APIs (Tier 6a: Distribution Completeness)
