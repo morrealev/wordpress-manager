@@ -5,6 +5,8 @@
 //   node scripts/run-validation.mjs                    # test all read tools
 //   node scripts/run-validation.mjs --module=gsc       # single module
 //   node scripts/run-validation.mjs --include-writes   # include write tools
+//   node scripts/run-validation.mjs --test-writes      # CRUD sequence testing for write tools
+//   node scripts/run-validation.mjs --test-writes --tier=1  # only Tier 1 sequences
 //   node scripts/run-validation.mjs --delay=200        # ms between calls
 
 import { createRequire } from 'module';
@@ -18,7 +20,7 @@ const SERVER_DIR = resolve(PROJECT_ROOT, 'servers/wp-rest-bridge');
 const SDK_PATH = resolve(SERVER_DIR, 'node_modules/@modelcontextprotocol/sdk');
 const RESULTS_PATH = resolve(PROJECT_ROOT, 'docs/validation/results.json');
 const VALIDATION_MD_PATH = resolve(PROJECT_ROOT, 'docs/VALIDATION.md');
-const RUNNER_VERSION = '1.0.0';
+const RUNNER_VERSION = '1.1.0';
 
 // Dynamic import of MCP SDK from server's node_modules
 const require = createRequire(resolve(SERVER_DIR, 'package.json'));
@@ -33,6 +35,8 @@ const hasFlag = (name) => args.includes(`--${name}`);
 
 const filterModule = getArg('module');
 const includeWrites = hasFlag('include-writes');
+const testWrites = hasFlag('test-writes');
+const filterTier = getArg('tier') ? parseInt(getArg('tier'), 10) : null;
 const delay = parseInt(getArg('delay') || '100', 10);
 const TIMEOUT_MS = parseInt(getArg('timeout') || '10000', 10);
 
@@ -265,6 +269,113 @@ const SERVICE_PROBES = {
   twitter: 'tw_list_tweets',
 };
 
+// ── Write Sequences ─────────────────────────────────────────────────
+// CRUD sequences: create → verify → update → verify → delete → verify(404)
+// Each step extracts context for subsequent steps via `extract` and `as`.
+const WRITE_SEQUENCES = [
+  // --- Tier 1: Safe standalone CRUD ---
+  {
+    name: 'content', tier: 1, service: 'wordpress_core',
+    steps: [
+      { action: 'create', tool: 'create_content', args: { content_type: 'post', title: '[TEST] Validation Post', content: 'Test content — created by validation runner', status: 'draft' }, extract: 'id' },
+      { action: 'verify', tool: 'get_content', argsFrom: ctx => ({ content_type: 'post', id: ctx.id }), expect: 'exists' },
+      { action: 'update', tool: 'update_content', argsFrom: ctx => ({ content_type: 'post', id: ctx.id, title: '[TEST] Updated Validation Post' }) },
+      { action: 'verify', tool: 'get_content', argsFrom: ctx => ({ content_type: 'post', id: ctx.id }), expect: 'exists' },
+      { action: 'delete', tool: 'delete_content', argsFrom: ctx => ({ content_type: 'post', id: ctx.id, force: true }) },
+    ],
+    cleanup: ctx => ctx.id ? { tool: 'delete_content', args: { content_type: 'post', id: ctx.id, force: true } } : null,
+  },
+  {
+    name: 'term', tier: 1, service: 'wordpress_core',
+    steps: [
+      { action: 'create', tool: 'create_term', args: { taxonomy: 'category', name: '[TEST] Validation Category' }, extract: 'id' },
+      { action: 'verify', tool: 'get_term', argsFrom: ctx => ({ taxonomy: 'category', id: ctx.id }), expect: 'exists' },
+      { action: 'update', tool: 'update_term', argsFrom: ctx => ({ taxonomy: 'category', id: ctx.id, name: '[TEST] Updated Category' }) },
+      { action: 'verify', tool: 'get_term', argsFrom: ctx => ({ taxonomy: 'category', id: ctx.id }), expect: 'exists' },
+      { action: 'delete', tool: 'delete_term', argsFrom: ctx => ({ taxonomy: 'category', id: ctx.id, force: true }) },
+    ],
+    cleanup: ctx => ctx.id ? { tool: 'delete_term', args: { taxonomy: 'category', id: ctx.id, force: true } } : null,
+  },
+  {
+    name: 'comment', tier: 1, service: 'wordpress_core',
+    // Needs a real post — uses dynamic postId resolved before running
+    steps: [
+      { action: 'create', tool: 'create_comment', argsFrom: ctx => ({ post: ctx._postId, content: '[TEST] Validation comment', author_name: 'Validator', author_email: 'test@validation.local' }), extract: 'id' },
+      { action: 'verify', tool: 'get_comment', argsFrom: ctx => ({ id: ctx.id }), expect: 'exists' },
+      { action: 'update', tool: 'update_comment', argsFrom: ctx => ({ id: ctx.id, content: '[TEST] Updated comment' }) },
+      { action: 'verify', tool: 'get_comment', argsFrom: ctx => ({ id: ctx.id }), expect: 'exists' },
+      { action: 'delete', tool: 'delete_comment', argsFrom: ctx => ({ id: ctx.id, force: true }) },
+    ],
+    cleanup: ctx => ctx.id ? { tool: 'delete_comment', args: { id: ctx.id, force: true } } : null,
+  },
+  {
+    name: 'user', tier: 1, service: 'wordpress_core',
+    steps: [
+      { action: 'create', tool: 'create_user', argsFrom: () => ({ username: 'test_validator_' + Date.now(), email: `validator_${Date.now()}@test.local`, password: 'Val1dation!Test#2026', role: 'subscriber' }), extract: 'id' },
+      { action: 'verify', tool: 'get_user', argsFrom: ctx => ({ id: ctx.id }), expect: 'exists' },
+      { action: 'update', tool: 'update_user', argsFrom: ctx => ({ id: ctx.id, first_name: 'Test', last_name: 'Validator' }) },
+      { action: 'verify', tool: 'get_user', argsFrom: ctx => ({ id: ctx.id }), expect: 'exists' },
+      { action: 'delete', tool: 'delete_user', argsFrom: ctx => ({ id: ctx.id, reassign: 1, force: true }) },
+    ],
+    cleanup: ctx => ctx.id ? { tool: 'delete_user', args: { id: ctx.id, reassign: 1, force: true } } : null,
+  },
+
+  // --- Tier 2: CRUD with dependencies ---
+  {
+    name: 'media', tier: 2, service: 'wordpress_core',
+    steps: [
+      { action: 'create', tool: 'create_media', args: { title: '[TEST] Validation Image', source_url: 'https://s.w.org/images/core/emoji/15.0.3/72x72/2705.png' }, extract: 'id' },
+      { action: 'verify', tool: 'get_media', argsFrom: ctx => ({ id: ctx.id }), expect: 'exists' },
+      { action: 'update', tool: 'edit_media', argsFrom: ctx => ({ id: ctx.id, title: '[TEST] Updated Image', alt_text: 'validation test' }) },
+      { action: 'verify', tool: 'get_media', argsFrom: ctx => ({ id: ctx.id }), expect: 'exists' },
+      { action: 'delete', tool: 'delete_media', argsFrom: ctx => ({ id: ctx.id, force: true }) },
+    ],
+    cleanup: ctx => ctx.id ? { tool: 'delete_media', args: { id: ctx.id, force: true } } : null,
+  },
+  {
+    name: 'plugin', tier: 2, service: 'wordpress_core',
+    steps: [
+      { action: 'create', tool: 'create_plugin', args: { slug: 'hello-dolly', status: 'inactive' }, extract: 'plugin' },
+      { action: 'verify', tool: 'get_plugin', argsFrom: ctx => ({ plugin: ctx.plugin }), expect: 'exists' },
+      { action: 'update', tool: 'activate_plugin', argsFrom: ctx => ({ plugin: ctx.plugin }) },
+      { action: 'update', tool: 'deactivate_plugin', argsFrom: ctx => ({ plugin: ctx.plugin }) },
+      { action: 'delete', tool: 'delete_plugin', argsFrom: ctx => ({ plugin: ctx.plugin }) },
+    ],
+    cleanup: ctx => ctx.plugin ? { tool: 'delete_plugin', args: { plugin: ctx.plugin } } : null,
+  },
+  {
+    name: 'assign_terms', tier: 2, service: 'wordpress_core',
+    steps: [
+      // Create own test entities
+      { action: 'create', tool: 'create_content', args: { content_type: 'post', title: '[TEST] Terms Assignment Post', content: 'test', status: 'draft' }, extract: 'id', as: 'postId' },
+      { action: 'create', tool: 'create_term', args: { taxonomy: 'post_tag', name: '[TEST] Validation Tag' }, extract: 'id', as: 'tagId' },
+      { action: 'update', tool: 'assign_terms_to_content', argsFrom: ctx => ({ content_id: ctx.postId, content_type: 'post', taxonomy: 'post_tag', terms: [ctx.tagId] }) },
+      { action: 'verify', tool: 'get_content_terms', argsFrom: ctx => ({ content_id: ctx.postId, content_type: 'post' }), expect: 'exists' },
+      // Cleanup created entities
+      { action: 'delete', tool: 'delete_content', argsFrom: ctx => ({ content_type: 'post', id: ctx.postId, force: true }) },
+      { action: 'delete', tool: 'delete_term', argsFrom: ctx => ({ taxonomy: 'post_tag', id: ctx.tagId, force: true }) },
+    ],
+    cleanup: ctx => {
+      const tasks = [];
+      if (ctx.postId) tasks.push({ tool: 'delete_content', args: { content_type: 'post', id: ctx.postId, force: true } });
+      if (ctx.tagId) tasks.push({ tool: 'delete_term', args: { taxonomy: 'post_tag', id: ctx.tagId, force: true } });
+      return tasks.length ? tasks : null;
+    },
+  },
+
+  // --- Tier 3: Special operations ---
+  {
+    name: 'switch_site', tier: 3, service: 'wordpress_core',
+    steps: [
+      { action: 'verify', tool: 'get_active_site', args: {}, extract: 'site_id', as: 'originalSite', extractFn: text => { try { const d = JSON.parse(text); return d.site_id || d.id || text; } catch { return text; } } },
+      { action: 'update', tool: 'switch_site', args: { site_id: 'bioinagro' } },
+      { action: 'verify', tool: 'get_active_site', args: {}, expect: 'exists' },
+      { action: 'update', tool: 'switch_site', argsFrom: ctx => ({ site_id: ctx.originalSite }) },
+    ],
+    cleanup: null,
+  },
+];
+
 // ── Helpers ──────────────────────────────────────────────────────────
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
@@ -276,6 +387,189 @@ function truncate(str, max = 200) {
 
 function log(msg) {
   process.stderr.write(`[validation] ${msg}\n`);
+}
+
+// ── Write Sequence Executor ──────────────────────────────────────────
+async function executeWriteSequences(client, services, delay) {
+  const results = []; // per-tool results
+  const cleanupQueue = []; // { tool, args } for emergency cleanup
+
+  // Resolve a dynamic postId for comment sequence
+  let sharedPostId = null;
+  if (services.wordpress_core?.configured) {
+    try {
+      const r = await client.callTool({ name: 'list_content', arguments: { content_type: 'post', per_page: 1 } });
+      const text = r.content?.[0]?.text || '';
+      sharedPostId = JSON.parse(text)?.[0]?.id || null;
+    } catch { /* ignore */ }
+  }
+
+  // Filter sequences by tier and service
+  const sequences = WRITE_SEQUENCES.filter(seq => {
+    if (filterTier && seq.tier !== filterTier) return false;
+    const svc = services[seq.service];
+    if (!svc || !svc.configured) return false;
+    return true;
+  });
+
+  log(`Write sequences to run: ${sequences.map(s => `${s.name}(T${s.tier})`).join(', ') || 'none'}`);
+
+  for (const seq of sequences) {
+    log(`\n  ── Sequence: ${seq.name} (Tier ${seq.tier}) ──`);
+    const ctx = { _postId: sharedPostId }; // shared context for this sequence
+    let aborted = false;
+
+    for (const step of seq.steps) {
+      if (aborted && step.action !== 'delete') {
+        // After abort, only attempt deletes (cleanup)
+        results.push({
+          name: step.tool,
+          type: 'write',
+          status: 'skipped',
+          tested_at: null,
+          duration_ms: null,
+          response_preview: null,
+          error_message: null,
+          skip_reason: `Sequence "${seq.name}" aborted at earlier step`,
+        });
+        continue;
+      }
+
+      // Resolve arguments
+      let toolArgs;
+      if (step.argsFrom) {
+        try {
+          toolArgs = step.argsFrom(ctx);
+        } catch (err) {
+          results.push({
+            name: step.tool,
+            type: step.action === 'verify' ? 'read' : 'write',
+            status: 'error',
+            tested_at: new Date().toISOString(),
+            duration_ms: 0,
+            response_preview: null,
+            error_message: `argsFrom failed: ${err.message}`,
+            skip_reason: null,
+          });
+          if (step.action === 'create') aborted = true;
+          continue;
+        }
+      } else {
+        toolArgs = step.args || {};
+      }
+
+      // Execute tool call
+      const startTime = Date.now();
+      const toolResult = {
+        name: step.tool,
+        type: step.action === 'verify' ? 'read' : 'write',
+        status: 'untested',
+        tested_at: null,
+        duration_ms: null,
+        response_preview: null,
+        error_message: null,
+        skip_reason: null,
+      };
+
+      try {
+        const result = await Promise.race([
+          client.callTool({ name: step.tool, arguments: toolArgs }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), TIMEOUT_MS)),
+        ]);
+        const elapsed = Date.now() - startTime;
+        const text = result.content?.map(c => c.text || '').join(' ') || '';
+
+        toolResult.tested_at = new Date().toISOString();
+        toolResult.duration_ms = elapsed;
+        toolResult.response_preview = truncate(`Seq:${seq.name} ${step.action} → ${text}`, 200);
+
+        if (result.isError) {
+          toolResult.status = 'failed';
+          toolResult.error_message = truncate(text);
+          if (step.action === 'create') aborted = true;
+        } else {
+          toolResult.status = 'passed';
+
+          // Extract values into context
+          if (step.extract) {
+            let extracted;
+            if (step.extractFn) {
+              extracted = step.extractFn(text);
+            } else {
+              try {
+                const parsed = JSON.parse(text);
+                extracted = parsed[step.extract];
+              } catch {
+                // Try regex fallback for "id": 123 pattern
+                const m = text.match(new RegExp(`"${step.extract}"\\s*:\\s*(\\d+|"[^"]+")`));
+                if (m) extracted = m[1].replace(/"/g, '');
+              }
+            }
+            if (extracted) {
+              const key = step.as || step.extract;
+              ctx[key] = extracted;
+              log(`    → extracted ${key}=${extracted}`);
+            }
+          }
+
+          // Register for cleanup if this was a create
+          if (step.action === 'create' && seq.cleanup) {
+            const cleanupSpec = seq.cleanup(ctx);
+            if (cleanupSpec) {
+              const specs = Array.isArray(cleanupSpec) ? cleanupSpec : [cleanupSpec];
+              for (const spec of specs) {
+                const tagged = { ...spec, seq: seq.name };
+                // Deduplicate: don't re-add if same tool+args already queued
+                const dup = cleanupQueue.find(c => c.tool === tagged.tool && c.seq === tagged.seq && JSON.stringify(c.args) === JSON.stringify(tagged.args));
+                if (!dup) cleanupQueue.push(tagged);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        toolResult.tested_at = new Date().toISOString();
+        toolResult.duration_ms = Date.now() - startTime;
+        toolResult.status = 'error';
+        toolResult.error_message = truncate(err.message);
+        if (step.action === 'create') aborted = true;
+      }
+
+      const icon = { passed: '+', failed: 'X', error: '!', skipped: '-' }[toolResult.status] || '?';
+      log(`    [${icon}] ${step.action}:${step.tool} (${toolResult.duration_ms}ms)`);
+
+      // For verify steps, don't add duplicate results — they test read tools
+      // Only add results for write tools (create/update/delete)
+      if (step.action !== 'verify') {
+        results.push(toolResult);
+      }
+
+      // Remove from cleanup queue if delete succeeded
+      if (step.action === 'delete' && toolResult.status === 'passed') {
+        const idx = cleanupQueue.findIndex(c => c.tool === step.tool && c.seq === seq.name);
+        if (idx >= 0) cleanupQueue.splice(idx, 1);
+      }
+
+      await sleep(delay);
+    }
+  }
+
+  // ── Emergency Cleanup Phase ─────────────────────────────────────
+  if (cleanupQueue.length > 0) {
+    log(`\n  ── Cleanup: ${cleanupQueue.length} entity(s) to remove ──`);
+    for (const item of cleanupQueue) {
+      try {
+        log(`    Cleaning: ${item.tool} ${JSON.stringify(item.args)}`);
+        await client.callTool({ name: item.tool, arguments: item.args });
+        log(`    → cleaned OK`);
+      } catch (err) {
+        log(`    → CLEANUP FAILED: ${err.message}`);
+        log(`    ⚠ Manual cleanup needed: ${item.tool} ${JSON.stringify(item.args)}`);
+      }
+      await sleep(delay);
+    }
+  }
+
+  return results;
 }
 
 // ── Main ─────────────────────────────────────────────────────────────
@@ -354,6 +648,70 @@ async function main() {
       await sleep(delay);
     }
     log('Service detection complete: ' + Object.entries(services).map(([k, v]) => `${k}=${v.configured ? 'OK' : 'NO'}`).join(', '));
+
+    // ── Write Sequence Testing (--test-writes) ───────────────────
+    if (testWrites) {
+      log('\n=== WRITE TOOL TESTING (CRUD Sequences) ===');
+      const writeResults = await executeWriteSequences(client, services, delay);
+
+      // Merge write results into existing results.json
+      let existing = { meta: {}, services: {}, modules: {}, summary: { by_status: {} } };
+      if (existsSync(RESULTS_PATH)) {
+        try {
+          existing = JSON.parse(readFileSync(RESULTS_PATH, 'utf-8'));
+        } catch { /* start fresh if corrupted */ }
+      }
+
+      // Update meta
+      existing.meta = {
+        ...existing.meta,
+        generated_at: new Date().toISOString(),
+        runner_version: RUNNER_VERSION,
+        last_write_test: new Date().toISOString(),
+        write_test_tier: filterTier || 'all',
+      };
+      existing.services = { ...existing.services, ...services };
+
+      // Update individual tool results within modules
+      for (const wr of writeResults) {
+        // Find which module this tool belongs to
+        const regEntry = TOOL_REGISTRY.find(t => t.name === wr.name);
+        if (!regEntry) continue;
+        const mod = regEntry.module;
+        if (!existing.modules[mod]) {
+          existing.modules[mod] = { service: regEntry.service, tools: [] };
+        }
+        // Replace existing result for this tool, or add new
+        const idx = existing.modules[mod].tools.findIndex(t => t.name === wr.name);
+        if (idx >= 0) {
+          existing.modules[mod].tools[idx] = wr;
+        } else {
+          existing.modules[mod].tools.push(wr);
+        }
+      }
+
+      // Recalculate summary
+      const allTools = Object.values(existing.modules).flatMap(m => m.tools);
+      existing.summary.by_status = {};
+      for (const status of ['passed', 'failed', 'error', 'not_configured', 'skipped_write', 'skipped', 'untested']) {
+        existing.summary.by_status[status] = allTools.filter(r => r.status === status).length;
+      }
+
+      writeFileSync(RESULTS_PATH, JSON.stringify(existing, null, 2));
+      generateMarkdown(existing);
+
+      // Print summary
+      const wPassed = writeResults.filter(r => r.status === 'passed').length;
+      const wFailed = writeResults.filter(r => r.status === 'failed').length;
+      const wError = writeResults.filter(r => r.status === 'error').length;
+      const wSkipped = writeResults.filter(r => r.status === 'skipped').length;
+      log(`\nWrite test summary: ${wPassed} passed, ${wFailed} failed, ${wError} errors, ${wSkipped} skipped`);
+      log(`Results merged into ${RESULTS_PATH}`);
+      log(`Markdown updated at ${VALIDATION_MD_PATH}`);
+
+      await client.close();
+      return;
+    }
 
     // ── Dynamic Args Resolution ──────────────────────────────────
     // For tools marked safeArgs:'dynamic', discover real IDs from the live site
