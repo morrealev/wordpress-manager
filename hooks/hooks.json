@@ -60,6 +60,24 @@
             "prompt": "The agent is about to DELETE a WooCommerce webhook. This will stop notifications to the configured delivery URL. Verify the user explicitly requested this deletion and understands that external integrations depending on this webhook will stop receiving events."
           }
         ]
+      },
+      {
+        "matcher": "mcp__wp-rest-bridge__mc_send_campaign",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "The agent is about to SEND a Mailchimp email campaign. This will deliver emails to all subscribers in the target audience. Verify the user explicitly requested this send and has reviewed the campaign content. Respond 'approve' only if the send was clearly intentional."
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__wp-rest-bridge__sg_send_email",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "The agent is about to SEND an email via SendGrid. Verify the user explicitly requested this email send and the recipient list is correct. Respond 'approve' only if intentional."
+          }
+        ]
       }
     ]
   }
