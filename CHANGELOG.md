@@ -2,6 +2,29 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.12.2] — 2026-03-01
+
+### Fixed — Structured Data Tools Rewrite
+
+**sd_inject: content-block approach (replaces broken meta approach)**
+- JSON-LD now injected as `<!-- wp:html -->` block in post content
+- No mu-plugin or `register_post_meta()` required — works out of the box
+- Idempotent: re-injecting same @type replaces existing block, no duplicates
+
+**sd_list_schemas: content scanning (replaces broken meta scanning)**
+- Scans post content for `<script type="application/ld+json">` blocks
+- No longer depends on unregistered `_schema_json_ld` meta field
+
+**sd_validate: multi-block support**
+- Now finds ALL JSON-LD scripts on a page (not just the first)
+- Reports per-schema issues with type labels
+
+### Validated end-to-end on opencactus.com
+- sd_inject Article on post 2348: ✅
+- sd_list_schemas finds injected schema: ✅
+- sd_validate on live URL: ✅ (2 schemas detected)
+- Idempotency verified: ✅
+
 ## [2.12.1] — 2026-03-01
 
 ### Fixed — Critical MCP Tool Parameter Passing
