@@ -2,6 +2,23 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.8.0] - 2026-03-01
+
+### Added — Smart Alerting (WCOP Tier 4b)
+- **wp-alerting skill** — severity-based alert routing via Slack and SendGrid
+- **3 new MCP tools**: `slack_send_alert` (webhook), `slack_send_message` (Bot Token + Block Kit), `slack_list_channels`
+- **4 reference files**: slack-integration, alert-thresholds, escalation-paths, report-scheduling
+- **Detection script**: `alerting_inspect.mjs` — detects Slack, SendGrid, monitoring setup
+- **SiteConfig extension**: `slack_webhook_url`, `slack_bot_token`, `slack_channel`
+
+### Changed
+- **wp-monitoring-agent**: added Procedure 10 (Alert Dispatch — severity-based routing: info→Slack webhook, warning→Slack Bot + thread, critical→Slack + email), added Alerting MCP Tools section (3 Slack + 2 SendGrid)
+- **Router v15**: added 13 alerting keywords and `wp-alerting` route
+- **Cross-references**: wp-monitoring → wp-alerting + wp-analytics
+
+### Metrics
+- Skills: 38 (+1) | MCP tools: 128 (+3) | Reference files: 187 (+4) | Detection scripts: 26 (+1)
+
 ## [2.7.0] - 2026-03-01
 
 ### Added — Analytics (WCOP Tier 4a)

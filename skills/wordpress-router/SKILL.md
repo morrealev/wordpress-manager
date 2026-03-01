@@ -4,7 +4,7 @@ description: “Use when the user asks about WordPress — whether development (
   blocks, REST API) or operations (deploy, audit, backup, migrate, content management).
   Classifies the task and routes to the correct development or operational skill/agent.”
 compatibility: “Targets WordPress 6.9+ (PHP 7.2.24+). Filesystem-based agent with bash + node. Some workflows require WP-CLI.”
-version: 1.2.0
+version: 1.3.0
 source: “WordPress/agent-skills (GPL-2.0-or-later) + wordpress-manager extensions”
 ---
 

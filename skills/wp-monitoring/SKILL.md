@@ -130,3 +130,5 @@ See `references/fleet-monitoring.md`
 - **`wp-performance`** — optimization actions based on performance trends
 - **`wp-cicd`** — CI/CD quality gates that complement monitoring (pre-deploy checks)
 - **`wp-search-console`** — add GSC search performance checks to periodic SEO monitoring
+- **`wp-alerting`** — severity-based alert routing (Slack + email) for monitoring findings
+- **`wp-analytics`** — analytics data used in performance dashboards and threshold evaluation
