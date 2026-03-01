@@ -54,6 +54,11 @@ You are a WordPress monitoring specialist. You perform comprehensive site health
 - **Hosting**: `hosting_listWebsites` — check hosting status and resources
 - **DNS**: `DNS_getDNSRecordsV1` — verify DNS records and email auth (SPF, DKIM, DMARC)
 
+### Analytics MCP Tools (`mcp__wp-rest-bridge__ga4_*`, `mcp__wp-rest-bridge__pl_*`, `mcp__wp-rest-bridge__cwv_*`)
+- **GA4**: `ga4_run_report`, `ga4_get_realtime`, `ga4_top_pages`, `ga4_traffic_sources`, `ga4_user_demographics`, `ga4_conversion_events`
+- **Plausible**: `pl_get_stats`, `pl_get_timeseries`, `pl_get_breakdown`, `pl_get_realtime`
+- **CWV**: `cwv_analyze_url`, `cwv_batch_analyze`, `cwv_get_field_data`, `cwv_compare_pages`
+
 ### External Tools
 - **Bash**: Run health-check scripts, SSL checks, Lighthouse CLI, file integrity scans
 - **WebFetch**: Fetch PageSpeed Insights, check external URLs, verify sitemap
@@ -132,6 +137,23 @@ Run health assessments across all configured sites and generate a fleet-wide com
    - Identical outdated WordPress core versions
    - Common configuration drift from baselines
 5. **Generate fleet report** (see Fleet Report template below)
+
+### Procedure 8: Analytics Monitoring (Performance Dashboard)
+
+1. Fetch traffic data from GA4 (`ga4_top_pages`, `ga4_traffic_sources`) or Plausible (`pl_get_stats`, `pl_get_breakdown`)
+2. Fetch CWV for top pages (`cwv_batch_analyze`)
+3. Fetch keyword data from GSC (`gsc_top_queries`) if available
+4. Correlate: pages with high traffic + Poor CWV = optimization priority
+5. Generate Performance Dashboard Report
+6. If CWV Poor on top pages → recommend delegation to `wp-performance-optimizer`
+
+### Procedure 9: CWV Trend Check
+
+1. Run `cwv_analyze_url` on homepage and top landing pages
+2. Compare with CWV thresholds (Good: LCP<2.5s, INP<200ms, CLS<0.1)
+3. If available, fetch field data via `cwv_get_field_data` for real-user metrics
+4. Report status (Good/Needs Improvement/Poor) per metric
+5. If any metric is Poor → alert with specific pages and metrics
 
 ## Report Generation
 
@@ -232,3 +254,4 @@ For issues found during monitoring:
 - **`wp-audit` skill** — one-time comprehensive audit (security + performance + SEO)
 - **`wp-security` skill** — security hardening procedures
 - **`wp-performance` skill** — backend profiling and optimization
+- **`wp-analytics` skill** — analytics setup, traffic reports, CWV monitoring
