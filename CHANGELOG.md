@@ -2,6 +2,37 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.10.0] — 2026-03-01
+
+### Added — Direct Social APIs (Tier 6a: Distribution Completeness)
+
+**LinkedIn Integration (5 MCP tools)**
+- `li_get_profile` — get authenticated user profile
+- `li_create_post` — create feed post (text, link, image)
+- `li_create_article` — publish long-form article
+- `li_get_analytics` — post analytics (impressions, clicks, engagement)
+- `li_list_posts` — list recent user posts
+- New skill: `wp-linkedin` with setup, posting, and analytics references
+- Detection script: `linkedin_inspect.mjs`
+
+**Twitter/X Integration (5 MCP tools)**
+- `tw_create_tweet` — publish tweet (text, media)
+- `tw_create_thread` — publish connected tweet thread
+- `tw_get_metrics` — tweet metrics (impressions, likes, retweets)
+- `tw_list_tweets` — list recent user tweets
+- `tw_delete_tweet` — delete tweet
+- New skill: `wp-twitter` with setup, posting, and analytics references
+- Detection script: `twitter_inspect.mjs`
+
+**Infrastructure**
+- LinkedIn client helpers in wordpress.js (hasLinkedIn, makeLinkedInRequest)
+- Twitter client helpers in wordpress.js (hasTwitter, makeTwitterRequest)
+- Router v17 (+2 categories: LinkedIn, Twitter/X)
+- +2 safety hooks (tw_delete_tweet, li_create_article)
+- Updated wp-distribution-manager agent with LinkedIn + Twitter procedures
+
+**Stats:** 39 → 41 skills | 132 → 142 MCP tools | 10 → 12 hooks | Router v16 → v17
+
 ## [2.9.0] - 2026-03-01
 
 ### Added — Automated Workflows (WCOP Tier 4+5 Complete)

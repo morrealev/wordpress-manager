@@ -1,7 +1,7 @@
 {
   "name": "claude-plugin-wordpress-manager",
-  "version": "2.9.1",
-  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (132 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks + 7 Mailchimp + 5 Buffer + 6 SendGrid + 8 GSC + 6 GA4 + 4 Plausible + 4 CWV + 3 Slack + 4 Workflows), and WordPress.com MCP with 39 skills, 12 agents, and security hooks. v2.9.0 adds automated workflows (triggers, cron, content lifecycle). WCOP Tier 4+5 complete.",
+  "version": "2.10.0",
+  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (142 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks + 7 Mailchimp + 5 Buffer + 6 SendGrid + 8 GSC + 6 GA4 + 4 Plausible + 4 CWV + 3 Slack + 4 Workflows + 5 LinkedIn + 5 Twitter), and WordPress.com MCP with 41 skills, 12 agents, and security hooks. v2.10.0 adds direct LinkedIn + Twitter/X social APIs. WCOP Tier 6a complete.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -63,7 +63,10 @@
     "severity-routing",
     "workflows",
     "automation",
-    "cron-triggers"
+    "cron-triggers",
+    "linkedin",
+    "twitter",
+    "direct-social"
   ],
   "repository": {
     "type": "git",
