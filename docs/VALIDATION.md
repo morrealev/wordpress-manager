@@ -1,6 +1,6 @@
 # WP REST Bridge — Validation Report
 
-> Generated: 2026-03-01T21:12:28.001Z  
+> Generated: 2026-03-01T21:15:22.960Z  
 > Active site: `opencactus`  
 > Tools registered: 148 | On server: 135  
 > Runner: v1.2.0
@@ -27,11 +27,11 @@
 
 | Status | Count |
 |--------|-------|
-| passed | 43 |
+| passed | 22 |
 | failed | 0 |
 | error | 0 |
 | not_configured | 64 |
-| skipped_write | 38 |
+| skipped_write | 59 |
 | skipped | 3 |
 | untested | 0 |
 | **Total** | **148** |
@@ -42,90 +42,90 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_content | READ | passed | 2026-03-01 | 367ms |
-| get_content | READ | passed | 2026-03-01 | 331ms |
-| create_content | WRITE | passed | 2026-03-01 | 571ms |
-| update_content | WRITE | passed | 2026-03-01 | 426ms |
-| delete_content | WRITE | passed | 2026-03-01 | 415ms |
-| discover_content_types | READ | passed | 2026-03-01 | 388ms |
-| find_content_by_url | READ | passed | 2026-03-01 | 513ms |
-| get_content_by_slug | READ | passed | 2026-03-01 | 309ms |
+| list_content | READ | passed | 2026-03-01 | 388ms |
+| get_content | READ | passed | 2026-03-01 | 402ms |
+| create_content | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| update_content | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| delete_content | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| discover_content_types | READ | passed | 2026-03-01 | 365ms |
+| find_content_by_url | READ | passed | 2026-03-01 | 506ms |
+| get_content_by_slug | READ | passed | 2026-03-01 | 370ms |
 
 ### unified-taxonomies (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| discover_taxonomies | READ | passed | 2026-03-01 | 327ms |
-| list_terms | READ | passed | 2026-03-01 | 370ms |
-| get_term | READ | passed | 2026-03-01 | 383ms |
-| create_term | WRITE | passed | 2026-03-01 | 491ms |
-| update_term | WRITE | passed | 2026-03-01 | 325ms |
-| delete_term | WRITE | passed | 2026-03-01 | 363ms |
-| assign_terms_to_content | WRITE | passed | 2026-03-01 | 1591ms |
-| get_content_terms | READ | passed | 2026-03-01 | 774ms |
+| discover_taxonomies | READ | passed | 2026-03-01 | 343ms |
+| list_terms | READ | passed | 2026-03-01 | 376ms |
+| get_term | READ | passed | 2026-03-01 | 920ms |
+| create_term | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| update_term | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| delete_term | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| assign_terms_to_content | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| get_content_terms | READ | passed | 2026-03-01 | 708ms |
 
 ### comments (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_comments | READ | passed | 2026-03-01 | 296ms |
+| list_comments | READ | passed | 2026-03-01 | 361ms |
 | get_comment | READ | skipped |  | No data found for dynamic args resolution |
-| create_comment | WRITE | passed | 2026-03-01 | 2861ms |
-| update_comment | WRITE | passed | 2026-03-01 | 417ms |
-| delete_comment | WRITE | passed | 2026-03-01 | 326ms |
+| create_comment | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| update_comment | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| delete_comment | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 
 ### media (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_media | READ | passed | 2026-03-01 | 294ms |
-| get_media | READ | passed | 2026-03-01 | 619ms |
-| create_media | WRITE | passed | 2026-03-01 | 698ms |
-| edit_media | WRITE | passed | 2026-03-01 | 296ms |
-| delete_media | WRITE | passed | 2026-03-01 | 325ms |
+| list_media | READ | passed | 2026-03-01 | 344ms |
+| get_media | READ | passed | 2026-03-01 | 428ms |
+| create_media | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| edit_media | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| delete_media | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 
 ### users (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_users | READ | passed | 2026-03-01 | 353ms |
-| get_user | READ | passed | 2026-03-01 | 386ms |
-| get_me | READ | passed | 2026-03-01 | 325ms |
-| create_user | WRITE | passed | 2026-03-01 | 661ms |
-| update_user | WRITE | passed | 2026-03-01 | 531ms |
-| delete_user | WRITE | passed | 2026-03-01 | 334ms |
+| list_users | READ | passed | 2026-03-01 | 373ms |
+| get_user | READ | passed | 2026-03-01 | 409ms |
+| get_me | READ | passed | 2026-03-01 | 307ms |
+| create_user | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| update_user | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| delete_user | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 
 ### plugins (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_plugins | READ | passed | 2026-03-01 | 345ms |
-| get_plugin | READ | passed | 2026-03-01 | 270ms |
-| activate_plugin | WRITE | passed | 2026-03-01 | 381ms |
-| deactivate_plugin | WRITE | passed | 2026-03-01 | 389ms |
-| create_plugin | WRITE | passed | 2026-03-01 | 1063ms |
-| delete_plugin | WRITE | passed | 2026-03-01 | 508ms |
+| list_plugins | READ | passed | 2026-03-01 | 413ms |
+| get_plugin | READ | passed | 2026-03-01 | 315ms |
+| activate_plugin | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| deactivate_plugin | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| create_plugin | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| delete_plugin | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 
 ### search (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| wp_search | READ | passed | 2026-03-01 | 337ms |
+| wp_search | READ | passed | 2026-03-01 | 452ms |
 
 ### plugin-repository (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| search_plugin_repository | READ | passed | 2026-03-01 | 1265ms |
-| get_plugin_details | READ | passed | 2026-03-01 | 661ms |
+| search_plugin_repository | READ | passed | 2026-03-01 | 1286ms |
+| get_plugin_details | READ | passed | 2026-03-01 | 618ms |
 
 ### server (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| switch_site | WRITE | passed | 2026-03-01 | 1ms |
-| list_sites | READ | passed | 2026-03-01 | 3ms |
-| get_active_site | READ | passed | 2026-03-01 | 3ms |
+| switch_site | WRITE | skipped_write |  | Write tool — use --include-writes to test |
+| list_sites | READ | passed | 2026-03-01 | 2ms |
+| get_active_site | READ | passed | 2026-03-01 | 1ms |
 
 ### multisite-network (multisite)
 
@@ -338,4 +338,4 @@
 
 ## Changelog
 
-- 2026-03-01T21:12:28.001Z — Run on `opencactus`: passed=43, failed=0, error=0, not_configured=64, skipped_write=38, skipped=3, untested=0
+- 2026-03-01T21:15:22.960Z — Run on `opencactus`: passed=22, failed=0, error=0, not_configured=64, skipped_write=59, skipped=3, untested=0
