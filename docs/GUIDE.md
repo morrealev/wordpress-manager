@@ -1,6 +1,6 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 2.9.0
+**Versione:** 2.12.0
 **Ultimo aggiornamento:** 2026-03-01
 **Repository:** https://github.com/morrealev/wordpress-manager
 
@@ -69,6 +69,11 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **Analytics unificata**: GA4, Plausible e Core Web Vitals in un unico punto di accesso, con dashboard, trend e confronto pagine
 - **Smart alerting**: routing alerting basato su severity (info→Slack webhook, warning→Slack Bot con thread, critical→Slack + email) via Slack e SendGrid
 - **Workflow automatizzati**: trigger basati su schedule (cron), hook WordPress e lifecycle contenuti con azioni multi-canale (Slack, email, webhook)
+- **Pubblicare su LinkedIn**: postare contenuti nel feed, articoli long-form, analytics engagement (impressions, click, reaction)
+- **Pubblicare su Twitter/X**: tweet singoli, thread multi-tweet, metriche interazioni, gestione tweet
+- **Auto-transform contenuti**: convertire automaticamente post WordPress in tweet, thread, post LinkedIn, articoli LinkedIn, email snippet con template per piattaforma
+- **Generare contenuti AI**: pipeline 7 step (brief → keyword research → outline → draft → SEO optimize → structured data → publish) con template e pattern
+- **Gestire dati strutturati**: validare, iniettare e auditare Schema.org/JSON-LD (Article, Product, FAQ, HowTo, LocalBusiness, Event, Organization, BreadcrumbList)
 
 ### Requisiti
 
@@ -92,7 +97,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
                     wordpress-manager plugin
                     /         |         \
             Hostinger MCP    WP REST Bridge    WordPress.com MCP
-            (119 tool)       (85 tool)         (~15 tool)
+            (119 tool)       (145 tool)        (~15 tool)
                 |                |                    |
           Infrastruttura    Contenuti +          Siti hosted
           DNS, SSL, VPS     Plugin, Utenti       su WordPress.com
@@ -105,7 +110,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v2.9.0
+wordpress-manager/                          # v2.12.0
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
@@ -113,7 +118,7 @@ wordpress-manager/                          # v2.9.0
 +-- agents/                                 # 12 agenti specializzati
 |   +-- wp-site-manager.md                      # Orchestratore centrale
 |   +-- wp-deployment-engineer.md               # Specialista deploy
-|   +-- wp-content-strategist.md                # Contenuti, SEO, GSC feedback, AI optimization
+|   +-- wp-content-strategist.md                # Contenuti, SEO, GSC feedback, AI optimization, content generation, structured data
 |   +-- wp-security-auditor.md                  # Audit sicurezza (read-only)
 |   +-- wp-security-hardener.md                 # Hardening e incident response
 |   +-- wp-performance-optimizer.md             # Performance e CWV
@@ -122,10 +127,10 @@ wordpress-manager/                          # v2.9.0
 |   +-- wp-ecommerce-manager.md                 # WooCommerce store management (v1.8.0)
 |   +-- wp-cicd-engineer.md                     # CI/CD pipeline specialist (v2.0.0)
 |   +-- wp-monitoring-agent.md                  # Site monitoring read-only (v2.1.0)
-|   +-- wp-distribution-manager.md              # Multi-channel distribution (v2.4.0)
+|   +-- wp-distribution-manager.md              # Multi-channel distribution + LinkedIn + Twitter/X (v2.10.0)
 +-- commands/                               # 5 slash commands
 |   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
-+-- skills/                                 # 39 skill totali
++-- skills/                                 # 43 skill totali
 |   +-- [OPERATIVE - 5 skill]
 |   +-- wp-deploy/                              # Procedure deploy
 |   +-- wp-audit/                               # Checklist audit
@@ -135,7 +140,7 @@ wordpress-manager/                          # v2.9.0
 |   +-- [AMBIENTE LOCALE - 1 skill]
 |   +-- wp-local-env/                           # Studio/LocalWP/wp-env
 |   +-- [SVILUPPO - 13 skill da WordPress/agent-skills]
-|   +-- wordpress-router/                       # Router unificato v16 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing + pseo + attribution + multilang + distribution + gsc + content-optimization + analytics + alerting + workflows)
+|   +-- wordpress-router/                       # Router unificato v18 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing + pseo + attribution + multilang + distribution + gsc + content-optimization + analytics + alerting + workflows + linkedin + twitter + content-generation + structured-data)
 |   +-- wp-project-triage/                      # Auto-detect tipo progetto
 |   +-- wp-block-development/                   # Blocchi Gutenberg
 |   +-- wp-block-themes/                        # Temi a blocchi
@@ -173,8 +178,13 @@ wordpress-manager/                          # v2.9.0
 |   +-- wp-analytics/                           # GA4, Plausible, Core Web Vitals unificati (v2.7.0)
 |   +-- wp-alerting/                            # Smart alerting severity-based via Slack/SendGrid (v2.8.0)
 |   +-- wp-content-workflows/                   # Workflow triggers (schedule, lifecycle, hooks) con azioni multi-canale (v2.9.0)
-+-- hooks/                                  # 10 hook di sicurezza
-|   +-- hooks.json                              # 8 prompt + 2 command
+|   +-- [DISTRIBUZIONE DIRETTA + CONTENT FACTORY - 4 skill]
+|   +-- wp-linkedin/                            # LinkedIn direct posting e analytics (v2.10.0)
+|   +-- wp-twitter/                             # Twitter/X direct posting e thread (v2.10.0)
+|   +-- wp-structured-data/                     # Schema.org/JSON-LD validation e injection (v2.12.0)
+|   +-- wp-content-generation/                  # AI content generation pipeline (v2.12.0)
++-- hooks/                                  # 12 hook di sicurezza
+|   +-- hooks.json                              # 10 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
 +-- scripts/                                # Utility
 +-- servers/wp-rest-bridge/                 # MCP Server custom (TypeScript)
@@ -582,8 +592,8 @@ Il plugin include **12 agenti** organizzati per area di competenza. Alcuni agent
 | Proprieta | Valore |
 |-----------|--------|
 | Colore | Magenta |
-| Ruolo | Creazione contenuti, SEO, gestione editoriale, contenuti multilingue, GSC feedback, AI optimization |
-| Attivazione | Creazione post, ottimizzazione SEO, gestione tassonomie, keyword tracking, content optimization |
+| Ruolo | Creazione contenuti, SEO, gestione editoriale, contenuti multilingue, GSC feedback, AI optimization, content generation, structured data |
+| Attivazione | Creazione post, ottimizzazione SEO, gestione tassonomie, keyword tracking, content optimization, genera contenuto, structured data, Schema.org |
 
 **Ciclo di vita contenuti**:
 ```
@@ -609,7 +619,11 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 
 **AI Content Optimization** (v2.6.0): Pipeline AI-driven in 5 step per ottimizzazione contenuti: headline scoring → readability analysis (Flesch-Kincaid) → SEO scoring → meta optimization → content freshness check. Include bulk triage per analisi rapida di tutti i contenuti con classificazione Quick Wins / Maintain / Deep Review / Outdated. Usa la skill `wp-content-optimization`.
 
-**Skill correlata**: `wp-content`, `wp-i18n`, `wp-content-repurposing`, `wp-programmatic-seo`, `wp-search-console`, `wp-content-optimization`
+**AI Content Generation** (v2.12.0): Pipeline completa 7 step per generare contenuti da zero: brief → keyword research (GSC se disponibile) → outline (4 pattern: standard, tutorial, listicle, FAQ) → draft (calibrato sulla voce del sito) → SEO optimize → structured data injection → publish as draft. Procedure-based, usa tool MCP esistenti (`wp/v2`, `gsc_*`, `sd_*`). Usa la skill `wp-content-generation`.
+
+**Structured Data Management** (v2.12.0): Gestione completa Schema.org/JSON-LD con 3 tool MCP dedicati: `sd_validate` (validazione markup via URL o inline), `sd_inject` (iniezione JSON-LD nei post), `sd_list_schemas` (audit sitewide). 8 tipi supportati: Article, Product, FAQ, HowTo, LocalBusiness, Event, Organization, BreadcrumbList. Usa la skill `wp-structured-data`.
+
+**Skill correlata**: `wp-content`, `wp-i18n`, `wp-content-repurposing`, `wp-programmatic-seo`, `wp-search-console`, `wp-content-optimization`, `wp-content-generation`, `wp-structured-data`
 
 ---
 
@@ -860,27 +874,30 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 | Proprieta | Valore |
 |-----------|--------|
 | Colore | Indigo |
-| Ruolo | Distribuzione multi-canale contenuti su Mailchimp, Buffer e SendGrid |
-| Attivazione | "Distribuisci il post", "invia newsletter", "programma social", "email campaign", "Buffer schedule" |
+| Ruolo | Distribuzione multi-canale contenuti su Mailchimp, Buffer, SendGrid, LinkedIn e Twitter/X |
+| Attivazione | "Distribuisci il post", "invia newsletter", "programma social", "email campaign", "Buffer schedule", "pubblica su LinkedIn", "pubblica tweet", "Twitter thread" |
 
-**3 canali supportati**:
+**5 canali supportati**:
 
 | Canale | Servizio | Tool prefix | Operazioni |
 |--------|----------|-------------|-----------|
 | Email Marketing | Mailchimp | `mc_*` | Liste, campagne, template, audience |
-| Social Media | Buffer | `buf_*` | Profili, post scheduling, analytics |
+| Social Scheduling | Buffer | `buf_*` | Profili, post scheduling, analytics |
 | Email Transazionale | SendGrid | `sg_*` | Template, invio, contatti, statistiche |
+| LinkedIn Direct | LinkedIn API | `li_*` | Post feed, articoli long-form, analytics engagement (v2.10.0) |
+| Twitter/X Direct | Twitter API v2 | `tw_*` | Tweet, thread, metriche, gestione tweet (v2.10.0) |
 
 **Workflow distribuzione**:
 1. Seleziona contenuto WordPress da distribuire (via `list_content`)
 2. Detection con `distribution_inspect.mjs` (servizi configurati, credenziali)
 3. Adatta contenuto per ogni canale (lunghezza, formato, CTA)
-4. Programma o invia su canali selezionati
-5. Report: conferma invio, link preview, metriche
+4. Auto-transform se disponibile: usa template pipeline per conversioni blog→tweet, blog→thread, blog→LinkedIn post (v2.11.0)
+5. Programma o invia su canali selezionati
+6. Report: conferma invio, link preview, metriche
 
-**Prerequisiti**: Almeno un servizio configurato in `WP_SITES_CONFIG` (Mailchimp API key, Buffer access token, o SendGrid API key).
+**Prerequisiti**: Almeno un servizio configurato in `WP_SITES_CONFIG` (Mailchimp API key, Buffer access token, SendGrid API key, LinkedIn access token, o Twitter Bearer/OAuth tokens).
 
-**Skill correlata**: `wp-social-email`
+**Skill correlata**: `wp-social-email`, `wp-linkedin`, `wp-twitter`, `wp-content-repurposing`
 
 ---
 
@@ -906,7 +923,7 @@ Il `wp-site-manager` puo delegare a tutti i 12 agent specializzati:
 | WooCommerce, e-commerce | `wp-ecommerce-manager` |
 | CI/CD pipeline | `wp-cicd-engineer` |
 | Site monitoring e health reports | `wp-monitoring-agent` |
-| Distribuzione social/email | `wp-distribution-manager` |
+| Distribuzione social/email, LinkedIn, Twitter | `wp-distribution-manager` |
 
 ---
 
@@ -948,10 +965,11 @@ Le skill di sviluppo provengono da due fonti:
 - **3 skill strategia + SEO internazionale** (MIT) aggiunte in v2.3.0: Programmatic SEO, Content-Commerce Attribution, Multi-Language Network.
 - **3 skill distribuzione + SEO avanzato** (MIT) aggiunte in v2.4.0-v2.6.0: Social/Email Distribution, Google Search Console, AI Content Optimization.
 - **3 skill analytics + alerting + automazione** (MIT) aggiunte in v2.7.0-v2.9.0: Analytics (GA4/Plausible/CWV), Smart Alerting (Slack/SendGrid severity routing), Automated Workflows (triggers + multi-channel actions).
+- **4 skill distribuzione diretta + content factory** (MIT) aggiunte in v2.10.0-v2.12.0: LinkedIn Direct (posting + analytics), Twitter/X Direct (tweet + thread + metriche), Structured Data (Schema.org/JSON-LD), AI Content Generation (pipeline 7-step).
 
 ### Il Router Unificato
 
-La skill `wordpress-router` (v16) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **diciassette categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook, programmatic SEO, content attribution, multi-language network, social/email distribution, search console, content optimization, analytics, alerting, content workflows.
+La skill `wordpress-router` (v18) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **ventuno categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook, programmatic SEO, content attribution, multi-language network, social/email distribution, search console, content optimization, analytics, alerting, content workflows, LinkedIn, Twitter/X, content generation, structured data.
 
 ```
 Utente: "Crea un blocco custom per la gallery"
@@ -1166,7 +1184,7 @@ Aggiunte in v2.4.0-v2.6.0, queste skill coprono distribuzione multi-canale, Goog
 
 ### Panoramica Skills Analytics + Alerting + Automazione (3)
 
-Aggiunte in v2.7.0-v2.9.0, queste skill completano il WCOP (WordPress Content Operations Pipeline) portando il punteggio da 8/10 a 8.8/10.
+Aggiunte in v2.7.0-v2.9.0, queste skill completano il layer Observability + Automation del WCOP (WordPress Content Operations Pipeline).
 
 | Skill | Si attiva quando... | Risorse | Agent dedicato |
 |-------|---------------------|---------|----------------|
@@ -1174,9 +1192,20 @@ Aggiunte in v2.7.0-v2.9.0, queste skill completano il WCOP (WordPress Content Op
 | `wp-alerting` | "alert Slack", "notifica critiche", "severity routing", "escalation", "alert email" | 4 reference files, alerting_inspect.mjs | `wp-monitoring-agent` |
 | `wp-content-workflows` | "crea trigger", "workflow cron", "content lifecycle", "automatizza notifiche", "trigger schedule" | 5 reference files, workflow_inspect.mjs | `wp-site-manager` |
 
+### Panoramica Skills Distribuzione Diretta + Content Factory (4)
+
+Aggiunte in v2.10.0-v2.12.0, queste skill completano il WCOP portando il punteggio totale da 8.8/10 a 9.2/10 (Distribution 9/10, Content Factory 10/10).
+
+| Skill | Si attiva quando... | Risorse | Agent dedicato |
+|-------|---------------------|---------|----------------|
+| `wp-linkedin` | "pubblica su LinkedIn", "LinkedIn post", "LinkedIn article", "B2B social", "LinkedIn analytics" | 3 reference files, linkedin_inspect.mjs | `wp-distribution-manager` |
+| `wp-twitter` | "pubblica tweet", "Twitter thread", "tweet analytics", "Twitter/X", "crea thread" | 3 reference files, twitter_inspect.mjs | `wp-distribution-manager` |
+| `wp-structured-data` | "structured data", "Schema.org", "JSON-LD", "rich snippet", "dati strutturati", "FAQ schema" | 3 reference files, schema_inspect.mjs | `wp-content-strategist` |
+| `wp-content-generation` | "genera contenuto", "scrivi post AI", "content brief", "crea articolo", "draft post" | 3 reference files, content_gen_inspect.mjs | `wp-content-strategist` |
+
 ### Script di Rilevamento Automatico
 
-Le skill includono 27 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
+Le skill includono 31 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
 
 | Script | Cosa rileva |
 |--------|-------------|
@@ -1207,6 +1236,10 @@ Le skill includono 27 script Node.js (`.mjs`) che eseguono analisi automatica de
 | `analytics_inspect.mjs` | GA4 property ID, Plausible config, Google API key, analytics setup (v2.7.0) |
 | `alerting_inspect.mjs` | Slack webhook/bot token, SendGrid config, monitoring setup, alert readiness (v2.8.0) |
 | `workflow_inspect.mjs` | Action channel config, automation plugins, custom REST endpoints, WP-Cron, webhook config (v2.9.0) |
+| `linkedin_inspect.mjs` | LinkedIn access token, profile info, API connectivity (v2.10.0) |
+| `twitter_inspect.mjs` | Twitter Bearer token, OAuth tokens, API v2 connectivity (v2.10.0) |
+| `schema_inspect.mjs` | SEO plugins (Yoast, Rank Math), existing JSON-LD in theme, Schema Pro (v2.12.0) |
+| `content_gen_inspect.mjs` | REST access, GSC credentials, pipeline step availability (v2.12.0) |
 
 ### WordPress Playground — Ambienti Disposable
 
@@ -1241,7 +1274,7 @@ Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components`
 ```
 1. cd mio-progetto-wordpress/
 2. Claude esegue wp-project-triage → rileva "wp-block-plugin"
-3. wordpress-router v16 → instrada a wp-block-development
+3. wordpress-router v18 → instrada a wp-block-development
 4. Claude guida la creazione con block.json, edit.js, save.js
 5. wp-e2e-testing + wp-test-engineer → esegue test E2E con Playwright
 6. wp-accessibility + wp-accessibility-auditor → verifica WCAG 2.2
@@ -1323,6 +1356,8 @@ Questi hook chiedono a Claude di valutare se l'operazione e stata esplicitamente
 | 6 | Invio campagna Mailchimp | `mc_send_campaign` | Conferma prima di inviare una campagna email (azione irreversibile verso tutti i destinatari) |
 | 7 | Invio email SendGrid | `sg_send_email` | Conferma prima di inviare email transazionali (azione irreversibile) |
 | 8 | Eliminazione workflow trigger | `wf_delete_trigger` | Conferma prima di eliminare un trigger di automazione (ferma tutte le notifiche e azioni associate) |
+| 9 | Eliminazione tweet | `tw_delete_tweet` | Conferma prima di eliminare un tweet (azione irreversibile) |
+| 10 | Pubblicazione articolo LinkedIn | `li_create_article` | Conferma prima di pubblicare un articolo long-form su LinkedIn (visibile pubblicamente) |
 
 ### Hook Command-Based (Validazione Script)
 
@@ -1379,7 +1414,7 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Sorgente | Custom TypeScript server in `servers/wp-rest-bridge/` |
 | Trasporto | stdio (JSON-RPC via stdin/stdout) |
 | Autenticazione | `WP_SITES_CONFIG` JSON env var |
-| Tool disponibili | 132 (41 WordPress + 34 WooCommerce + 10 Multisite + 18 Distribution + 8 GSC + 14 Analytics + 3 Alerting + 4 Workflows) |
+| Tool disponibili | 145 (41 WordPress + 34 WooCommerce + 10 Multisite + 18 Distribution + 8 GSC + 14 Analytics + 3 Alerting + 4 Workflows + 5 LinkedIn + 5 Twitter + 3 Schema) |
 
 **Categorie tool WordPress** (`wp/v2`):
 
@@ -1450,6 +1485,32 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Categoria | Tool | Esempio |
 |-----------|------|---------|
 | Trigger Management | 4 | `wf_list_triggers`, `wf_create_trigger`, `wf_update_trigger`, `wf_delete_trigger` |
+
+**Categorie tool LinkedIn** (`li_` prefix, richiede LinkedIn Access Token):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Profile | 1 | `li_get_profile` |
+| Publishing | 2 | `li_create_post` (feed post), `li_create_article` (long-form article) |
+| Analytics | 1 | `li_get_analytics` (impressions, clicks, engagement rate) |
+| Listing | 1 | `li_list_posts` (recent user posts) |
+
+**Categorie tool Twitter/X** (`tw_` prefix, richiede Twitter Bearer Token + OAuth):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Publishing | 2 | `tw_create_tweet` (single tweet), `tw_create_thread` (connected thread) |
+| Analytics | 1 | `tw_get_metrics` (impressions, likes, retweets, quotes) |
+| Listing | 1 | `tw_list_tweets` (recent user tweets) |
+| Management | 1 | `tw_delete_tweet` |
+
+**Categorie tool Structured Data** (`sd_` prefix, usa WordPress REST API):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Validation | 1 | `sd_validate` (URL fetch + inline markup, controlla @context/@type) |
+| Injection | 1 | `sd_inject` (build JSON-LD, store in post meta `_schema_json_ld`) |
+| Audit | 1 | `sd_list_schemas` (scan sitewide, count per @type) |
 
 **Architettura multi-sito**: Il server mantiene una `Map<siteId, AxiosInstance>` dove ogni sito ha la propria istanza HTTP autenticata. Il cambio sito e istantaneo.
 
@@ -1934,6 +1995,67 @@ Claude (attiva wp-site-manager + skill wp-content-workflows):
 -> Report: 2 trigger configurati, Slack + email, prossima esecuzione cron
 ```
 
+### Scenario 29: Pubblicare su LinkedIn dal Blog
+
+```
+Tu: "Pubblica l'ultimo post del blog su LinkedIn come post nel feed"
+
+Claude (attiva wp-distribution-manager + skill wp-linkedin):
+1. Detection con linkedin_inspect.mjs (access token configurato?)
+2. Seleziona ultimo post via list_content
+3. Estrae headline, key points, URL del post
+4. Genera post LinkedIn (max 1300 char): hook + 3 insight + CTA + link
+5. Pubblica con li_create_post
+6. Recupera analytics con li_get_analytics (impressions, click, engagement)
+-> Report: post pubblicato, link al post LinkedIn, metriche iniziali
+```
+
+### Scenario 30: Thread Twitter/X dal Blog
+
+```
+Tu: "Crea un thread Twitter dal mio ultimo articolo sul fico d'India"
+
+Claude (attiva wp-distribution-manager + skill wp-twitter):
+1. Detection con twitter_inspect.mjs (OAuth tokens configurati?)
+2. Seleziona post via list_content (filtro keyword)
+3. Estrae headline, H2 sections, key facts
+4. Genera thread: hook tweet (280 char) + 3-5 tweet di contenuto (uno per H2) + CTA finale
+5. Pubblica con tw_create_thread (connected tweets)
+6. Recupera metriche con tw_get_metrics (impressions, like, retweet)
+-> Report: thread pubblicato (N tweet), link al primo tweet, metriche
+```
+
+### Scenario 31: Generare Contenuto AI da Zero
+
+```
+Tu: "Scrivi un articolo sui benefici dell'acqua di cactus per l'idratazione"
+
+Claude (attiva wp-content-strategist + skill wp-content-generation):
+1. Brief: topic = acqua di cactus, audience = consumatori health-conscious, goal = informare, 1200-1500 parole
+2. Keyword research: se GSC disponibile, gsc_query_analytics per keyword correlate; altrimenti suggerisce keyword semantiche
+3. Outline: pattern "Standard Article" — intro + 4 H2 (benefici, scienza, vs alternative, come usare) + conclusione
+4. Draft: scrive contenuto calibrato sulla voce del sito (analizza ultimi 5 post per tono)
+5. SEO optimize: keyword in title/first paragraph/H2s, meta description, 2-3 internal links
+6. Structured data: auto-detect Article schema, inject con sd_inject
+7. Pubblica come bozza via create_content, presenta per revisione
+-> Output: articolo completo con SEO + schema, pronto per approvazione
+```
+
+### Scenario 32: Audit e Injection Dati Strutturati
+
+```
+Tu: "Controlla quali pagine hanno dati strutturati e aggiungi FAQ schema ai post con domande"
+
+Claude (attiva wp-content-strategist + skill wp-structured-data):
+1. Audit esistente: sd_list_schemas per vedere tipi presenti (Article su 12 post, nessun FAQ)
+2. Validazione: sd_validate su homepage e top 5 pagine per verificare markup corretto
+3. Scan FAQ: list_content + analisi corpo per identificare pattern Q&A (H3 con "?")
+4. Per ogni post con FAQ: genera FAQPage schema con mainEntity array
+5. Injection: sd_inject per iniettare JSON-LD nei post identificati
+6. Verifica: sd_validate su pagine modificate per confermare validita
+-> Report: N post con FAQ schema aggiunto, validazione completata, prossimi step
+```
+
 ---
 
 ## 14. Amministrazione Avanzata
@@ -2240,6 +2362,6 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 
 ---
 
-*Guida v2.9.0 — WordPress Manager Plugin per Claude Code*
+*Guida v2.12.0 — WordPress Manager Plugin per Claude Code*
 *Ultimo aggiornamento: 2026-03-01*
 *WCOP Score: 8.8/10 (Tier 4+5 complete)*
