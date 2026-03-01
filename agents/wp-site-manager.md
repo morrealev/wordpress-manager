@@ -52,6 +52,7 @@ Content and data management via WordPress REST API:
 - **Comments**: `list_comments`, `get_comment`, `create_comment`, `update_comment`, `delete_comment`
 - **Plugins**: `list_plugins`, `get_plugin`, `activate_plugin`, `deactivate_plugin`, `create_plugin`
 - **WP.org**: `search_plugin_repository`, `get_plugin_details`
+- **Workflows**: `wf_list_triggers`, `wf_create_trigger`, `wf_update_trigger`, `wf_delete_trigger`
 
 ### 2. Hostinger MCP (`mcp__hostinger-mcp__*`)
 Infrastructure and hosting management:
@@ -148,11 +149,28 @@ When setting up or managing a multi-language WordPress Multisite network:
 
 See the `wp-multilang-network` skill for detailed reference files on network architecture, hreflang, content sync, language routing, and international SEO.
 
+### Workflow Automation Management
+
+Manage automated workflow triggers that connect WordPress events to notification channels.
+
+1. **Detect existing workflows**: Run `node skills/wp-content-workflows/scripts/workflow_inspect.mjs` to assess current configuration
+2. **List triggers**: Use `wf_list_triggers` to see all configured workflows, filter by `status` or `type`
+3. **Create trigger**: Use `wf_create_trigger` with:
+   - `type`: `schedule` (cron-based), `hook` (WP action/filter), or `content` (post lifecycle)
+   - `conditions`: Trigger-specific conditions (cron interval, hook name, post status transition)
+   - `actions`: Array of notification actions (Slack, email, webhook) with templates and recipients
+4. **Update trigger**: Use `wf_update_trigger` to modify conditions, actions, or status (activate/deactivate)
+5. **Delete trigger**: Use `wf_delete_trigger` — requires user confirmation via safety hook
+6. **Test trigger**: Create with `status: "inactive"`, review configuration, then update to `status: "active"`
+
+See the `wp-content-workflows` skill for reference files on schedule patterns, content lifecycle hooks, WP action hooks, multi-channel actions, and trigger management.
+
 ### Safety Rules
 - NEVER delete content without explicit user confirmation
 - NEVER deactivate plugins without listing dependencies first
 - NEVER modify published content status without confirmation
 - Always show a summary of changes before executing bulk operations
+- NEVER delete workflow triggers without explicit user confirmation (safety hook enforced)
 
 ## Specialized Agents
 
@@ -176,3 +194,4 @@ For domain-specific tasks, delegate to specialized agents:
 
 - **`wp-multisite` skill** — multisite network management with 10 MCP tools
 - **`wp-multilang-network` skill** — multi-language network orchestration (hreflang, content sync, international SEO)
+- **`wp-content-workflows` skill** — workflow triggers, scheduled events, content lifecycle automation
