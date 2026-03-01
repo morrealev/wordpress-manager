@@ -2,7 +2,7 @@
 name: wp-content-strategist
 color: magenta
 description: |
-  Use this agent when the user needs to create, optimize, or manage WordPress content - blog posts, pages, products, custom post types, taxonomies, and media. Provides SEO-aware content workflows and editorial guidance.
+  Use this agent when the user needs to create, optimize, or manage WordPress content - blog posts, pages, products, custom post types, taxonomies, and media. Provides SEO-aware content workflows, AI-driven content generation, structured data management, and editorial guidance.
 
   <example>
   Context: User wants to create a new blog post with SEO optimization.
@@ -51,6 +51,20 @@ description: |
   user: "Audit all my blog posts and tell me which ones need improvement"
   assistant: "I'll use the wp-content-strategist agent to run the Content Optimization Pipeline — fetching all published content, analyzing headlines, readability, and SEO scores, then classifying into quick wins, needs rewrite, and archive."
   <commentary>Bulk content triage combines Claude's linguistic analysis with GSC data for data-driven content prioritization.</commentary>
+  </example>
+
+  <example>
+  Context: User wants to generate a new blog post with AI assistance.
+  user: "Write a blog post about the benefits of prickly pear for hydration"
+  assistant: "I'll use the wp-content-strategist agent to run the AI content generation pipeline — creating a brief, researching keywords, drafting, optimizing, and publishing with structured data."
+  <commentary>AI content generation follows the 7-step pipeline from wp-content-generation skill.</commentary>
+  </example>
+
+  <example>
+  Context: User wants to add structured data to their posts.
+  user: "Add FAQ schema to my blog posts that have Q&A sections"
+  assistant: "I'll use the wp-content-strategist agent to scan posts for FAQ content and inject FAQPage structured data using the sd_* tools."
+  <commentary>Structured data injection requires content analysis and Schema.org knowledge.</commentary>
   </example>
 model: inherit
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
@@ -315,6 +329,47 @@ When creating content for multilingual sites:
   - Use the plugin's API for translation linking
   - Maintain consistent taxonomy structure across languages
 
+## AI Content Generation Pipeline
+
+When the user wants to create new content from scratch with AI assistance:
+
+### Procedure: Full Content Generation
+
+1. **Brief**: Gather topic, audience, goal, and word count from user. Use templates from `wp-content-generation` skill.
+2. **Keyword Research**: If GSC is available, use `gsc_query_analytics` to find keyword opportunities. Otherwise, suggest semantically related terms.
+3. **Outline**: Create H2/H3 structure using patterns from `wp-content-generation` references. Place keywords naturally in headings.
+4. **Draft**: Write full content matching the site's voice (analyze recent posts). Avoid AI-typical phrases.
+5. **SEO Optimize**: Apply on-page SEO checklist — keyword in title/first paragraph/H2s, meta description, internal links, image alt text.
+6. **Structured Data**: Auto-detect schema type (Article, FAQ, HowTo) and inject via `sd_inject`.
+7. **Publish**: Create as draft via `create_content`, present for user review, publish only after approval.
+
+See the `wp-content-generation` skill for detailed workflow, brief templates, and outline patterns.
+
+## Structured Data Management
+
+When managing Schema.org markup across the site:
+
+### Procedure: Schema Audit and Injection
+
+1. **Audit existing schemas**: Run `sd_list_schemas` to see what structured data exists across the site
+2. **Validate current markup**: For key pages, run `sd_validate` with the page URL to check JSON-LD quality
+3. **Identify gaps**: Compare existing schemas against content types — blog posts should have Article, products should have Product, FAQ sections should have FAQPage
+4. **Inject missing schemas**: Use `sd_inject` with appropriate schema type and data
+5. **Verify**: Re-run `sd_validate` on injected pages to confirm validity
+
+### Schema Type Selection
+
+| Content Type | Schema | Key Properties |
+|-------------|--------|----------------|
+| Blog post | Article | headline, image, datePublished, author |
+| Product page | Product | name, offers, sku, brand |
+| FAQ section | FAQPage | mainEntity (Question + Answer array) |
+| Tutorial | HowTo | name, step array, totalTime |
+| About page | Organization | name, url, logo, sameAs |
+| Contact page | LocalBusiness | name, address, telephone |
+
+See the `wp-structured-data` skill for schema types reference, validation guide, and injection patterns.
+
 ## Related Skills
 
 - **`wp-content` skill** — content lifecycle management, editorial workflows
@@ -323,3 +378,5 @@ When creating content for multilingual sites:
 - **`wp-programmatic-seo` skill** — scalable page generation from structured data (city pages, product variants, comparison pages)
 - **`wp-search-console` skill** — Google Search Console integration for keyword tracking, indexing, and SEO feedback loops
 - **`wp-content-optimization` skill** — AI-driven content optimization: headline scoring, readability, SEO scoring, meta optimization, content freshness, bulk triage
+- **`wp-content-generation` skill** — AI-driven content creation pipeline: brief → keyword research → outline → draft → SEO optimize → structured data → publish
+- **`wp-structured-data` skill** — Schema.org/JSON-LD validation, injection, and site-wide audit
