@@ -38,6 +38,13 @@ description: |
   assistant: "I'll use the wp-content-strategist agent to design the template, set up the data source, and bulk-generate the city pages."
   <commentary>Programmatic SEO at scale requires structured data, URL design, and bulk content creation via REST API.</commentary>
   </example>
+
+  <example>
+  Context: User wants to optimize content based on Google Search Console data.
+  user: "Use GSC data to find pages that need SEO improvements"
+  assistant: "I'll use the wp-content-strategist agent to run the SEO Feedback Loop — fetching search analytics, identifying high-impression/low-CTR opportunities, and suggesting title/meta optimizations."
+  <commentary>GSC-driven content optimization combines search analytics with content editing for measurable SEO gains.</commentary>
+  </example>
 model: inherit
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
@@ -200,6 +207,55 @@ When generating large-scale pages from structured data (city pages, product vari
 
 See the `wp-programmatic-seo` skill for reference files on template architecture, location SEO, product SEO, data sources, and technical SEO.
 
+## SEO Feedback Loop (GSC)
+
+When using Google Search Console data to optimize existing content:
+
+### Procedure: GSC-Driven Content Optimization
+
+1. **Fetch top queries** from `gsc_search_analytics` (last 28 days, dimensions: `query`, `page`)
+2. **Identify opportunities**: high impression / low CTR keywords (impressions > 100, CTR < 3%)
+3. **Fetch corresponding content** via `list_content` matching the page URLs from step 1
+4. **Analyze alignment**: Is the title/meta description aligned with the top search queries for that page?
+5. **Suggest optimizations**: Update title tag, meta description, H1, and first paragraph to better match high-impression queries
+6. **Re-measure**: After 2-4 weeks, re-run `gsc_search_analytics` to compare CTR before/after
+
+### Quick Wins Identification
+
+Use `gsc_top_queries` to find striking distance keywords (positions 4-20):
+
+```
+Tool: gsc_top_queries
+Params:
+  start_date: "2026-02-01"
+  end_date: "2026-02-28"
+  row_limit: 50
+```
+
+Filter results for:
+- **High impression, low CTR** → title/meta description needs improvement
+- **Position 4-10** → close to page 1 top, small content improvements can boost rankings
+- **Position 11-20** → striking distance, may need content expansion or internal linking
+
+### Page Performance Audit
+
+Use `gsc_page_performance` to identify underperforming pages:
+
+```
+Tool: gsc_page_performance
+Params:
+  start_date: "2026-02-01"
+  end_date: "2026-02-28"
+  row_limit: 100
+```
+
+Compare against previous period to detect:
+- **Declining clicks** → content may need refresh
+- **Declining position** → competitors may have published better content
+- **Rising impressions but flat clicks** → CTR optimization opportunity
+
+See the `wp-search-console` skill for detailed reference files on keyword tracking, indexing management, content SEO feedback, and competitor gap analysis.
+
 ## Multilingual Content
 
 When creating content for multilingual sites:
@@ -219,3 +275,4 @@ When creating content for multilingual sites:
 - **`wp-i18n` skill** — internationalization and localization procedures
 - **`wp-content-repurposing` skill** — content transformation for multi-channel distribution
 - **`wp-programmatic-seo` skill** — scalable page generation from structured data (city pages, product variants, comparison pages)
+- **`wp-search-console` skill** — Google Search Console integration for keyword tracking, indexing, and SEO feedback loops

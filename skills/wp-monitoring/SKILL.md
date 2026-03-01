@@ -129,3 +129,4 @@ See `references/fleet-monitoring.md`
 - **`wp-security`** — hardening procedures triggered by monitoring alerts
 - **`wp-performance`** — optimization actions based on performance trends
 - **`wp-cicd`** — CI/CD quality gates that complement monitoring (pre-deploy checks)
+- **`wp-search-console`** — add GSC search performance checks to periodic SEO monitoring
