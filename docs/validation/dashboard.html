@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WP REST Bridge — Validation Dashboard</title>
+<style>
+  :root {
+    --bg: #0f172a; --surface: #1e293b; --border: #334155;
+    --text: #e2e8f0; --text-muted: #94a3b8; --text-dim: #64748b;
+    --passed: #22c55e; --failed: #ef4444; --error: #f97316;
+    --not-configured: #eab308; --skipped-write: #94a3b8; --untested: #d1d5db;
+    --skipped: #a78bfa; --accent: #3b82f6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  /* Header */
+  header { text-align: center; margin-bottom: 32px; }
+  header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 8px; }
+  header .meta { color: var(--text-muted); font-size: 0.875rem; }
+  header .meta span { margin: 0 8px; }
+
+  /* Progress Bar */
+  .progress-wrap { background: var(--surface); border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; border: 1px solid var(--border); }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.875rem; color: var(--text-muted); }
+  .progress-bar { height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--passed), #16a34a); border-radius: 6px; transition: width 0.5s ease; }
+
+  /* Service Badges */
+  .services { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; justify-content: center; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: var(--surface); border: 1px solid var(--border); }
+  .badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .badge.ok .dot { background: var(--passed); box-shadow: 0 0 6px var(--passed); }
+  .badge.no .dot { background: var(--failed); box-shadow: 0 0 6px var(--failed); }
+
+  /* Summary Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .card .count { font-size: 2rem; font-weight: 700; line-height: 1; }
+  .card .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.05em; }
+  .card.passed .count { color: var(--passed); }
+  .card.failed .count { color: var(--failed); }
+  .card.error .count { color: var(--error); }
+  .card.not_configured .count { color: var(--not-configured); }
+  .card.skipped_write .count { color: var(--skipped-write); }
+  .card.untested .count { color: var(--untested); }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: center; }
+  .filters input, .filters select { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 0.875rem; }
+  .filters input { flex: 1; min-width: 200px; }
+  .filters select { min-width: 150px; }
+  .filters input:focus, .filters select:focus { outline: none; border-color: var(--accent); }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  th { background: var(--surface); color: var(--text-muted); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em; padding: 10px 12px; text-align: left; cursor: pointer; user-select: none; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  th:hover { color: var(--text); }
+  th.sorted-asc::after { content: ' \u25B2'; }
+  th.sorted-desc::after { content: ' \u25BC'; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover { background: rgba(59,130,246,0.05); }
+
+  .status-pill { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
+  .status-pill.passed { background: rgba(34,197,94,0.15); color: var(--passed); }
+  .status-pill.failed { background: rgba(239,68,68,0.15); color: var(--failed); }
+  .status-pill.error { background: rgba(249,115,22,0.15); color: var(--error); }
+  .status-pill.not_configured { background: rgba(234,179,8,0.15); color: var(--not-configured); }
+  .status-pill.skipped_write { background: rgba(148,163,184,0.15); color: var(--skipped-write); }
+  .status-pill.skipped { background: rgba(167,139,250,0.15); color: var(--skipped); }
+  .status-pill.untested { background: rgba(209,213,219,0.1); color: var(--untested); }
+  .type-tag { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .type-tag.read { color: var(--accent); }
+  .type-tag.write { color: var(--error); }
+  td.note { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-dim); font-size: 0.8rem; }
+
+  /* Footer */
+  footer { text-align: center; margin-top: 32px; color: var(--text-dim); font-size: 0.75rem; }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+  .empty h2 { margin-bottom: 12px; }
+  .empty code { background: var(--surface); padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .cards { grid-template-columns: repeat(3, 1fr); }
+    .filters { flex-direction: column; }
+    .filters input, .filters select { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>WP REST Bridge Validation Dashboard</h1>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div id="content">
+    <div class="empty">
+      <h2>Loading...</h2>
+    </div>
+  </div>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+(async () => {
+  const contentEl = document.getElementById('content');
+  const metaEl = document.getElementById('meta');
+  const footerEl = document.getElementById('footer');
+
+  let data;
+  try {
+    const resp = await fetch('./results.json');
+    if (!resp.ok) throw new Error(resp.statusText);
+    data = await resp.json();
+  } catch {
+    contentEl.innerHTML = `
+      <div class="empty">
+        <h2>Nessun dato disponibile</h2>
+        <p style="margin-top:12px">Esegui il runner per generare i risultati:</p>
+        <p style="margin-top:8px"><code>node scripts/run-validation.mjs</code></p>
+      </div>`;
+    return;
+  }
+
+  const { meta, services, modules, summary } = data;
+  const allTools = Object.values(modules).flatMap(m => m.tools);
+
+  // Meta
+  metaEl.innerHTML = `
+    <span>Site: <strong>${meta.active_site}</strong></span>
+    <span>Tools: <strong>${meta.total_tools_registered}</strong></span>
+    <span>Runner: v${meta.runner_version}</span>
+    <span>${new Date(meta.generated_at).toLocaleString()}</span>`;
+
+  // Build all modules list and all statuses
+  const moduleNames = [...new Set(Object.keys(modules))].sort();
+  const statusNames = ['passed','failed','error','not_configured','skipped_write','skipped','untested'];
+
+  // Count tested (not untested, not skipped_write, not skipped)
+  const tested = allTools.filter(t => !['untested','skipped_write','skipped'].includes(t.status)).length;
+
+  let html = '';
+
+  // Progress bar
+  const pct = allTools.length ? Math.round((tested / allTools.length) * 100) : 0;
+  html += `
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Tested: ${tested} / ${allTools.length}</span>
+        <span>${pct}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+
+  // Service badges
+  html += '<div class="services">';
+  const svcLabels = { wordpress_core:'WP', woocommerce:'WC', multisite:'MS', mailchimp:'MC', buffer:'BUF', sendgrid:'SG', gsc:'GSC', ga4:'GA4', plausible:'PL', cwv:'CWV', slack:'Slack', linkedin:'LI', twitter:'TW' };
+  for (const [svc, info] of Object.entries(services)) {
+    const cls = info.configured ? 'ok' : 'no';
+    const label = svcLabels[svc] || svc;
+    html += `<span class="badge ${cls}" title="${svc}: ${info.reason || 'configured'}"><span class="dot"></span>${label}</span>`;
+  }
+  html += '</div>';
+
+  // Summary cards
+  html += '<div class="cards">';
+  for (const s of statusNames) {
+    const count = summary.by_status[s] || 0;
+    if (count === 0 && (s === 'skipped')) continue;
+    const label = s.replace(/_/g, ' ');
+    html += `<div class="card ${s}"><div class="count">${count}</div><div class="label">${label}</div></div>`;
+  }
+  html += '</div>';
+
+  // Filters
+  html += `
+    <div class="filters">
+      <input type="text" id="search" placeholder="Search tool name...">
+      <select id="filterModule"><option value="">All Modules</option>${moduleNames.map(m => `<option value="${m}">${m}</option>`).join('')}</select>
+      <select id="filterStatus"><option value="">All Statuses</option>${statusNames.map(s => `<option value="${s}">${s.replace(/_/g,' ')}</option>`).join('')}</select>
+      <select id="filterType"><option value="">All Types</option><option value="read">READ</option><option value="write">WRITE</option></select>
+    </div>`;
+
+  // Table
+  html += `
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th data-col="module">Module</th>
+          <th data-col="name">Tool Name</th>
+          <th data-col="type">Type</th>
+          <th data-col="status">Status</th>
+          <th data-col="tested_at">Date</th>
+          <th data-col="duration_ms">Duration</th>
+          <th data-col="note">Note</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>`;
+
+  contentEl.innerHTML = html;
+  footerEl.innerHTML = `Generated: ${meta.generated_at} | Site: ${meta.active_site} | Runner v${meta.runner_version}`;
+
+  // Build flat row data
+  const rows = [];
+  for (const [mod, mdata] of Object.entries(modules)) {
+    for (const t of mdata.tools) {
+      rows.push({ module: mod, ...t, note: t.error_message || t.skip_reason || (t.duration_ms != null ? t.duration_ms + 'ms' : '') });
+    }
+  }
+
+  const tbody = document.getElementById('tbody');
+  const searchEl = document.getElementById('search');
+  const filterModuleEl = document.getElementById('filterModule');
+  const filterStatusEl = document.getElementById('filterStatus');
+  const filterTypeEl = document.getElementById('filterType');
+
+  let sortCol = 'module';
+  let sortDir = 'asc';
+
+  function render() {
+    const search = searchEl.value.toLowerCase();
+    const fModule = filterModuleEl.value;
+    const fStatus = filterStatusEl.value;
+    const fType = filterTypeEl.value;
+
+    let filtered = rows.filter(r => {
+      if (search && !r.name.toLowerCase().includes(search) && !r.module.toLowerCase().includes(search)) return false;
+      if (fModule && r.module !== fModule) return false;
+      if (fStatus && r.status !== fStatus) return false;
+      if (fType && r.type !== fType) return false;
+      return true;
+    });
+
+    // Sort
+    filtered.sort((a, b) => {
+      let va = a[sortCol] ?? '', vb = b[sortCol] ?? '';
+      if (sortCol === 'duration_ms') { va = va || 0; vb = vb || 0; }
+      if (typeof va === 'number') return sortDir === 'asc' ? va - vb : vb - va;
+      return sortDir === 'asc' ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+    });
+
+    tbody.innerHTML = filtered.map(r => `
+      <tr>
+        <td>${r.module}</td>
+        <td><strong>${r.name}</strong></td>
+        <td><span class="type-tag ${r.type}">${r.type.toUpperCase()}</span></td>
+        <td><span class="status-pill ${r.status}">${r.status.replace(/_/g,' ')}</span></td>
+        <td style="color:var(--text-dim);font-size:0.8rem">${r.tested_at ? r.tested_at.split('T')[0] : ''}</td>
+        <td style="color:var(--text-dim);font-size:0.8rem">${r.duration_ms != null ? r.duration_ms + 'ms' : ''}</td>
+        <td class="note" title="${(r.note||'').replace(/"/g,'&quot;')}">${r.note || ''}</td>
+      </tr>`).join('');
+  }
+
+  // Filter listeners
+  searchEl.addEventListener('input', render);
+  filterModuleEl.addEventListener('change', render);
+  filterStatusEl.addEventListener('change', render);
+  filterTypeEl.addEventListener('change', render);
+
+  // Sort listeners
+  document.querySelectorAll('th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortCol === col) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
+      else { sortCol = col; sortDir = 'asc'; }
+      document.querySelectorAll('th').forEach(h => h.classList.remove('sorted-asc','sorted-desc'));
+      th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+      render();
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

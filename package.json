@@ -76,6 +76,11 @@
   "bugs": {
     "url": "https://github.com/morrealev/wordpress-manager/issues"
   },
+  "scripts": {
+    "validate": "node scripts/run-validation.mjs",
+    "validate:module": "node scripts/run-validation.mjs --module",
+    "validate:all": "node scripts/run-validation.mjs --include-writes"
+  },
   "files": [
     ".claude-plugin/",
     ".mcp.json",

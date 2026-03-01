@@ -2,3 +2,4 @@ node_modules/
 servers/wp-rest-bridge/build/
 *.log
 .DS_Store
+docs/validation/results.json
