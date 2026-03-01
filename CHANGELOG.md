@@ -2,6 +2,26 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.4.0] - 2026-03-01
+
+### Added
+- **Social/Email Distribution skill** (`wp-social-email`) — content distribution to Mailchimp, Buffer, and SendGrid
+  - 6 reference files: `mailchimp-integration.md`, `buffer-social-publishing.md`, `sendgrid-transactional.md`, `content-to-distribution.md`, `audience-segmentation.md`, `distribution-analytics.md`
+  - Detection script: `distribution_inspect.mjs` (WP_SITES_CONFIG keys, WP distribution plugins, content readiness)
+- **18 new MCP tools** via WP REST Bridge:
+  - 7 Mailchimp tools: `mc_list_audiences`, `mc_get_audience_members`, `mc_create_campaign`, `mc_update_campaign_content`, `mc_send_campaign`, `mc_get_campaign_report`, `mc_add_subscriber`
+  - 5 Buffer tools: `buf_list_profiles`, `buf_create_update`, `buf_list_pending`, `buf_list_sent`, `buf_get_analytics`
+  - 6 SendGrid tools: `sg_send_email`, `sg_list_templates`, `sg_get_template`, `sg_list_contacts`, `sg_add_contacts`, `sg_get_stats`
+- **wp-distribution-manager agent** (indigo) — 5 procedures: detect services, fetch WP content, format for channel, publish/schedule, track analytics
+- **2 safety hooks**: PreToolUse confirmation for `mc_send_campaign` and `sg_send_email`
+- TypeScript types: `MCMailchimpAudience`, `MCCampaign`, `MCCampaignReport`, `BufProfile`, `BufUpdate`, `SGEmailRequest`, `SGTemplate`, `SGStats`
+- SiteConfig extended with `mailchimp_api_key`, `buffer_access_token`, `sendgrid_api_key`
+
+### Changed
+- Router decision-tree.md upgraded to v11 with social/email distribution keywords and routing
+- Cross-references added: `wp-content-repurposing` → wp-social-email, `wp-webhooks` → wp-social-email, `wp-content` → wp-social-email
+- Plugin now has 34 skills, 12 agents, and 103 MCP tools
+
 ## [2.3.1] - 2026-02-28
 
 ### Changed
