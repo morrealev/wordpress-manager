@@ -1,6 +1,6 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 2.6.0
+**Versione:** 2.9.0
 **Ultimo aggiornamento:** 2026-03-01
 **Repository:** https://github.com/morrealev/wordpress-manager
 
@@ -66,6 +66,9 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **Distribuzione social/email**: distribuire contenuti su Mailchimp, Buffer e SendGrid con workflow multi-canale
 - **Google Search Console**: monitorare keyword, indicizzazione, performance pagine e feedback SEO da GSC
 - **Ottimizzazione contenuti AI**: headline scoring, readability analysis, SEO scoring, meta optimization, content freshness e bulk triage
+- **Analytics unificata**: GA4, Plausible e Core Web Vitals in un unico punto di accesso, con dashboard, trend e confronto pagine
+- **Smart alerting**: routing alerting basato su severity (info→Slack webhook, warning→Slack Bot con thread, critical→Slack + email) via Slack e SendGrid
+- **Workflow automatizzati**: trigger basati su schedule (cron), hook WordPress e lifecycle contenuti con azioni multi-canale (Slack, email, webhook)
 
 ### Requisiti
 
@@ -102,7 +105,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v2.6.0
+wordpress-manager/                          # v2.9.0
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
@@ -122,7 +125,7 @@ wordpress-manager/                          # v2.6.0
 |   +-- wp-distribution-manager.md              # Multi-channel distribution (v2.4.0)
 +-- commands/                               # 5 slash commands
 |   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
-+-- skills/                                 # 36 skill totali
++-- skills/                                 # 39 skill totali
 |   +-- [OPERATIVE - 5 skill]
 |   +-- wp-deploy/                              # Procedure deploy
 |   +-- wp-audit/                               # Checklist audit
@@ -132,7 +135,7 @@ wordpress-manager/                          # v2.6.0
 |   +-- [AMBIENTE LOCALE - 1 skill]
 |   +-- wp-local-env/                           # Studio/LocalWP/wp-env
 |   +-- [SVILUPPO - 13 skill da WordPress/agent-skills]
-|   +-- wordpress-router/                       # Router unificato v13 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing + pseo + attribution + multilang + distribution + gsc + content-optimization)
+|   +-- wordpress-router/                       # Router unificato v16 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing + pseo + attribution + multilang + distribution + gsc + content-optimization + analytics + alerting + workflows)
 |   +-- wp-project-triage/                      # Auto-detect tipo progetto
 |   +-- wp-block-development/                   # Blocchi Gutenberg
 |   +-- wp-block-themes/                        # Temi a blocchi
@@ -166,8 +169,12 @@ wordpress-manager/                          # v2.6.0
 |   +-- wp-social-email/                        # Distribuzione social/email multi-canale (v2.4.0)
 |   +-- wp-search-console/                      # Google Search Console integration (v2.5.0)
 |   +-- wp-content-optimization/                # AI content optimization e bulk triage (v2.6.0)
-+-- hooks/                                  # 9 hook di sicurezza
-|   +-- hooks.json                              # 7 prompt + 2 command
+|   +-- [ANALYTICS + ALERTING + AUTOMAZIONE - 3 skill]
+|   +-- wp-analytics/                           # GA4, Plausible, Core Web Vitals unificati (v2.7.0)
+|   +-- wp-alerting/                            # Smart alerting severity-based via Slack/SendGrid (v2.8.0)
+|   +-- wp-content-workflows/                   # Workflow triggers (schedule, lifecycle, hooks) con azioni multi-canale (v2.9.0)
++-- hooks/                                  # 10 hook di sicurezza
+|   +-- hooks.json                              # 8 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
 +-- scripts/                                # Utility
 +-- servers/wp-rest-bridge/                 # MCP Server custom (TypeScript)
@@ -358,6 +365,9 @@ WordPress Manager comprende richieste in linguaggio naturale. Ecco come formular
 | Distribuzione social/email | "Distribuisci il post" / "Mailchimp campaign" / "Buffer schedule" / "SendGrid email" |
 | Google Search Console | "Keyword tracking" / "Search analytics" / "Indicizzazione" / "GSC performance" |
 | Ottimizzazione contenuti | "Ottimizza titoli" / "Headline score" / "Readability" / "Content triage" / "Quick wins" |
+| Analytics unificata | "GA4 report" / "Plausible stats" / "Core Web Vitals" / "Traffic sources" / "Page performance" |
+| Smart alerting | "Configura alert Slack" / "Notifica critiche" / "Severity routing" / "Alert su Slack" |
+| Workflow automatizzati | "Crea trigger" / "Workflow cron" / "Automatizza notifiche" / "Content lifecycle trigger" |
 
 ---
 
@@ -815,7 +825,7 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 | Ruolo | Monitoring continuo del sito (read-only, non modifica nulla) |
 | Attivazione | "Monitora il sito", "health report", "uptime check", "performance trend", "security scan periodico", "fleet health", "monitora tutti i siti" |
 
-**5 aree di monitoraggio + fleet**:
+**8 aree di monitoraggio + fleet**:
 
 | Area | Cosa monitora |
 |------|--------------|
@@ -825,6 +835,9 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 | Content | Modifiche non autorizzate, broken links, spam comments, media integrity |
 | Alerting | Threshold P0-P3, notifiche email/Slack/webhook, escalation |
 | Fleet (v2.2.0) | Cross-site health comparison, fleet-wide patterns, per-site breakdown |
+| Analytics (v2.7.0) | GA4 report, Plausible stats, traffic sources, user demographics, conversion events |
+| CWV Trend (v2.7.0) | Core Web Vitals trend analysis, field data, page comparison |
+| Alert Dispatch (v2.8.0) | Severity-based routing: info→Slack webhook, warning→Slack Bot + thread, critical→Slack + email |
 
 **Report disponibili**: Daily Health Summary, Weekly Performance, Monthly Security, Quarterly Trend, Executive Dashboard, Fleet Health Report (v2.2.0).
 
@@ -838,7 +851,7 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 
 **Detection**: `monitoring_inspect.mjs` rileva setup monitoring esistente (uptime tools, Lighthouse CI, security plugins, logging config).
 
-**Skill correlata**: `wp-monitoring`
+**Skill correlata**: `wp-monitoring`, `wp-analytics`, `wp-alerting`
 
 ---
 
@@ -934,10 +947,11 @@ Le skill di sviluppo provengono da due fonti:
 - **6 skill e-commerce + infrastruttura** (MIT) aggiunte in v1.8.0-v2.2.0: WooCommerce, Multisite, CI/CD, Monitoring, Content Repurposing, Webhooks.
 - **3 skill strategia + SEO internazionale** (MIT) aggiunte in v2.3.0: Programmatic SEO, Content-Commerce Attribution, Multi-Language Network.
 - **3 skill distribuzione + SEO avanzato** (MIT) aggiunte in v2.4.0-v2.6.0: Social/Email Distribution, Google Search Console, AI Content Optimization.
+- **3 skill analytics + alerting + automazione** (MIT) aggiunte in v2.7.0-v2.9.0: Analytics (GA4/Plausible/CWV), Smart Alerting (Slack/SendGrid severity routing), Automated Workflows (triggers + multi-channel actions).
 
 ### Il Router Unificato
 
-La skill `wordpress-router` (v13) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **quattordici categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook, programmatic SEO, content attribution, multi-language network, social/email distribution, search console, content optimization.
+La skill `wordpress-router` (v16) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **diciassette categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook, programmatic SEO, content attribution, multi-language network, social/email distribution, search console, content optimization, analytics, alerting, content workflows.
 
 ```
 Utente: "Crea un blocco custom per la gallery"
@@ -1061,6 +1075,30 @@ wordpress-router: TASK = operativo (content optimization)
 wp-content-optimization skill + wp-content-strategist agent
 ```
 
+```
+Utente: "Mostrami il report GA4 e le Core Web Vitals del mio sito"
+  |
+wordpress-router: TASK = operativo (analytics)
+  |
+wp-analytics skill + wp-monitoring-agent agent
+```
+
+```
+Utente: "Configura un alert Slack quando il sito va giu"
+  |
+wordpress-router: TASK = operativo (alerting)
+  |
+wp-alerting skill + wp-monitoring-agent agent
+```
+
+```
+Utente: "Crea un trigger che invia su Slack quando un post viene pubblicato"
+  |
+wordpress-router: TASK = operativo (content workflows)
+  |
+wp-content-workflows skill + wp-site-manager agent
+```
+
 ### Panoramica Skills di Sviluppo — Community (13)
 
 | Skill | Si attiva quando... | Risorse |
@@ -1126,9 +1164,19 @@ Aggiunte in v2.4.0-v2.6.0, queste skill coprono distribuzione multi-canale, Goog
 | `wp-search-console` | "Search Console", "keyword tracking", "indicizzazione", "GSC", "search analytics" | 5 reference files, search_console_inspect.mjs | `wp-content-strategist` |
 | `wp-content-optimization` | "ottimizza titoli", "readability", "headline score", "content triage", "meta optimization" | 5 reference files, content_optimization_inspect.mjs | `wp-content-strategist` |
 
+### Panoramica Skills Analytics + Alerting + Automazione (3)
+
+Aggiunte in v2.7.0-v2.9.0, queste skill completano il WCOP (WordPress Content Operations Pipeline) portando il punteggio da 8/10 a 8.8/10.
+
+| Skill | Si attiva quando... | Risorse | Agent dedicato |
+|-------|---------------------|---------|----------------|
+| `wp-analytics` | "GA4 report", "Plausible stats", "Core Web Vitals", "traffic sources", "page performance", "conversion events" | 5 reference files, analytics_inspect.mjs | `wp-monitoring-agent` |
+| `wp-alerting` | "alert Slack", "notifica critiche", "severity routing", "escalation", "alert email" | 4 reference files, alerting_inspect.mjs | `wp-monitoring-agent` |
+| `wp-content-workflows` | "crea trigger", "workflow cron", "content lifecycle", "automatizza notifiche", "trigger schedule" | 5 reference files, workflow_inspect.mjs | `wp-site-manager` |
+
 ### Script di Rilevamento Automatico
 
-Le skill includono 24 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
+Le skill includono 27 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
 
 | Script | Cosa rileva |
 |--------|-------------|
@@ -1156,6 +1204,9 @@ Le skill includono 24 script Node.js (`.mjs`) che eseguono analisi automatica de
 | `distribution_inspect.mjs` | Mailchimp, Buffer, SendGrid config, API keys, servizi attivi (v2.4.0) |
 | `search_console_inspect.mjs` | GSC service account, siti verificati, sitemap, keyword data (v2.5.0) |
 | `content_optimization_inspect.mjs` | Content volume, titoli, meta description, readability readiness (v2.6.0) |
+| `analytics_inspect.mjs` | GA4 property ID, Plausible config, Google API key, analytics setup (v2.7.0) |
+| `alerting_inspect.mjs` | Slack webhook/bot token, SendGrid config, monitoring setup, alert readiness (v2.8.0) |
+| `workflow_inspect.mjs` | Action channel config, automation plugins, custom REST endpoints, WP-Cron, webhook config (v2.9.0) |
 
 ### WordPress Playground — Ambienti Disposable
 
@@ -1190,7 +1241,7 @@ Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components`
 ```
 1. cd mio-progetto-wordpress/
 2. Claude esegue wp-project-triage → rileva "wp-block-plugin"
-3. wordpress-router v13 → instrada a wp-block-development
+3. wordpress-router v16 → instrada a wp-block-development
 4. Claude guida la creazione con block.json, edit.js, save.js
 5. wp-e2e-testing + wp-test-engineer → esegue test E2E con Playwright
 6. wp-accessibility + wp-accessibility-auditor → verifica WCAG 2.2
@@ -1271,6 +1322,7 @@ Questi hook chiedono a Claude di valutare se l'operazione e stata esplicitamente
 | 5 | Eliminazione webhook WC | `wc_delete_webhook` | Conferma prima di eliminare un webhook (le integrazioni esterne smetteranno di ricevere eventi) |
 | 6 | Invio campagna Mailchimp | `mc_send_campaign` | Conferma prima di inviare una campagna email (azione irreversibile verso tutti i destinatari) |
 | 7 | Invio email SendGrid | `sg_send_email` | Conferma prima di inviare email transazionali (azione irreversibile) |
+| 8 | Eliminazione workflow trigger | `wf_delete_trigger` | Conferma prima di eliminare un trigger di automazione (ferma tutte le notifiche e azioni associate) |
 
 ### Hook Command-Based (Validazione Script)
 
@@ -1327,7 +1379,7 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Sorgente | Custom TypeScript server in `servers/wp-rest-bridge/` |
 | Trasporto | stdio (JSON-RPC via stdin/stdout) |
 | Autenticazione | `WP_SITES_CONFIG` JSON env var |
-| Tool disponibili | 111 (41 WordPress + 34 WooCommerce + 10 Multisite + 18 Distribution + 8 GSC) |
+| Tool disponibili | 132 (41 WordPress + 34 WooCommerce + 10 Multisite + 18 Distribution + 8 GSC + 14 Analytics + 3 Alerting + 4 Workflows) |
 
 **Categorie tool WordPress** (`wp/v2`):
 
@@ -1378,6 +1430,26 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Site Management | 2 | `gsc_list_sites`, `gsc_inspect_url` |
 | Search Analytics | 3 | `gsc_search_analytics`, `gsc_top_queries`, `gsc_page_performance` |
 | Sitemaps | 3 | `gsc_list_sitemaps`, `gsc_submit_sitemap`, `gsc_delete_sitemap` |
+
+**Categorie tool Analytics** (richiede GA4 Property ID, Plausible API key, o Google API key):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| GA4 | 6 | `ga4_run_report`, `ga4_get_realtime`, `ga4_top_pages`, `ga4_traffic_sources`, `ga4_user_demographics`, `ga4_conversion_events` |
+| Plausible | 4 | `pl_get_stats`, `pl_get_timeseries`, `pl_get_breakdown`, `pl_get_realtime` |
+| Core Web Vitals | 4 | `cwv_analyze_url`, `cwv_batch_analyze`, `cwv_get_field_data`, `cwv_compare_pages` |
+
+**Categorie tool Alerting** (richiede Slack webhook URL o Bot Token):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Slack | 3 | `slack_send_alert` (webhook), `slack_send_message` (Bot Token + Block Kit), `slack_list_channels` |
+
+**Categorie tool Workflows** (namespace `wp-manager/v1/workflows`):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Trigger Management | 4 | `wf_list_triggers`, `wf_create_trigger`, `wf_update_trigger`, `wf_delete_trigger` |
 
 **Architettura multi-sito**: Il server mantiene una `Map<siteId, AxiosInstance>` dove ogni sito ha la propria istanza HTTP autenticata. Il cambio sito e istantaneo.
 
@@ -1814,6 +1886,54 @@ Claude (attiva wp-content-strategist + skill wp-content-optimization):
 -> Report: matrice triage, top 10 titoli da migliorare, 5 contenuti obsoleti, azioni immediate
 ```
 
+### Scenario 26: Analytics Unificata con GA4 e Plausible
+
+```
+Tu: "Mostrami il report GA4, le top pages e le Core Web Vitals del mio sito"
+
+Claude (attiva wp-monitoring-agent + skill wp-analytics):
+1. Detection con analytics_inspect.mjs (GA4 configurato? Plausible? Google API key?)
+2. GA4 report: ga4_run_report per sessioni, pageviews, bounce rate ultimi 28 giorni
+3. Top pages: ga4_top_pages con traffic sources breakdown
+4. Traffic sources: ga4_traffic_sources per organic vs direct vs referral vs social
+5. Core Web Vitals: cwv_analyze_url per homepage + landing pages principali
+6. CWV field data: cwv_get_field_data per dati reali degli utenti
+7. Confronto pagine: cwv_compare_pages per identificare pagine lente
+-> Report: dashboard analytics unificata, CWV score per pagina, raccomandazioni
+```
+
+### Scenario 27: Smart Alerting con Slack
+
+```
+Tu: "Configura alert Slack per quando il sito ha problemi critici"
+
+Claude (attiva wp-monitoring-agent + skill wp-alerting):
+1. Detection con alerting_inspect.mjs (Slack webhook? Bot token? SendGrid?)
+2. Configura severity routing:
+   - P3 (info): slack_send_alert via webhook (canale #wp-info)
+   - P2 (warning): slack_send_message via Bot Token con thread per dettagli
+   - P1/P0 (critical): Slack message + email via SendGrid ai responsabili
+3. Imposta threshold per metriche chiave (response time > 3s, SSL < 14 giorni, errori 5xx)
+4. Test alert: invia messaggio di test su canale Slack
+-> Report: severity routing configurato, threshold impostati, test completato
+```
+
+### Scenario 28: Workflow Automatizzato per Content Lifecycle
+
+```
+Tu: "Crea un workflow che notifica su Slack quando un post viene pubblicato e invia un'email di recap settimanale"
+
+Claude (attiva wp-site-manager + skill wp-content-workflows):
+1. Detection con workflow_inspect.mjs (action channels, automation plugins, WP-Cron)
+2. Crea trigger "hook": wf_create_trigger con hook "transition_post_status" (publish)
+   - Azione: Slack notification con titolo, autore, link del post
+3. Crea trigger "schedule": wf_create_trigger con cron "0 9 * * 1" (lunedi ore 9)
+   - Azione: email recap settimanale con post pubblicati nell'ultima settimana
+4. Verifica trigger attivi: wf_list_triggers
+5. Test trigger manuale per verificare funzionamento
+-> Report: 2 trigger configurati, Slack + email, prossima esecuzione cron
+```
+
 ---
 
 ## 14. Amministrazione Avanzata
@@ -2097,7 +2217,7 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **x-default** | Valore hreflang speciale che indica la pagina fallback per utenti senza match di lingua |
 | **Content Sync** | Sincronizzazione di contenuti tra sub-site di lingua diversa in un network multilingua |
 | **MultilingualPress** | Plugin WordPress nativo per multisite multilingua — connessioni tra contenuti cross-site |
-| **WCOP** | WordPress Content Optimization Pipeline — pipeline AI a 5 step per ottimizzazione contenuti (headline → readability → SEO → meta → freshness) |
+| **WCOP** | WordPress Content Operations Pipeline — framework a 5 layer per la gestione completa dei contenuti WordPress (Content Factory, Quality Assurance, Distribution, Observability, Automation). Score attuale: 8.8/10 |
 | **CTR (Click-Through Rate)** | Rapporto percentuale tra impressioni e click — metrica chiave in Google Search Console e email marketing |
 | **Flesch-Kincaid** | Formula di leggibilita che stima il livello scolastico necessario per comprendere un testo — usata nell'AI content optimization |
 | **Content Triage** | Classificazione rapida di tutti i contenuti in categorie di azione: Quick Wins, Maintain, Deep Review, Outdated |
@@ -2107,8 +2227,19 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **Buffer** | Piattaforma di social media scheduling — integrata via API con 5 tool MCP (prefix `buf_*`) |
 | **SendGrid** | Servizio di email transazionale e marketing — integrato via API con 6 tool MCP (prefix `sg_*`) |
 | **GSC (Google Search Console)** | Strumento Google per monitorare presence del sito nei risultati di ricerca — integrato con 8 tool MCP (prefix `gsc_*`) |
+| **GA4 (Google Analytics 4)** | Piattaforma di analytics web di Google — integrata via API con 6 tool MCP (prefix `ga4_*`) per report, realtime, traffic sources e conversioni |
+| **Plausible Analytics** | Alternativa privacy-first a Google Analytics — integrata via API con 4 tool MCP (prefix `pl_*`) per stats, timeseries e breakdown |
+| **CWV (Core Web Vitals)** | Metriche Google (LCP, INP, CLS) per UX — 4 tool MCP (prefix `cwv_*`) per analisi URL, batch, field data e confronto pagine |
+| **Slack Webhook** | URL di callback per inviare messaggi a un canale Slack — usato per alert di severity info (P3) |
+| **Slack Bot Token** | Token di autenticazione per Slack Bot API — permette messaggi formattati con Block Kit, thread e interazioni avanzate |
+| **Severity Routing** | Pattern di alerting dove il livello di gravita (P0-P3) determina il canale di notifica (webhook, bot, email) |
+| **Workflow Trigger** | Regola di automazione che esegue azioni (Slack, email, webhook) in risposta a eventi (schedule, hook WordPress, lifecycle contenuto) |
+| **WP-Cron** | Sistema di scheduling di WordPress — usato per trigger workflow basati su cron expression (es. "ogni lunedi alle 9") |
+| **Content Lifecycle Hook** | Hook WordPress legato al ciclo di vita dei contenuti (publish, update, trash) — usato come trigger per workflow automatizzati |
+| **WCOP Score** | WordPress Content Operations Pipeline — score 0-10 su 5 layer: Content Factory, Quality Assurance, Distribution, Observability, Automation |
 
 ---
 
-*Guida v2.6.0 - WordPress Manager Plugin per Claude Code*
+*Guida v2.9.0 — WordPress Manager Plugin per Claude Code*
 *Ultimo aggiornamento: 2026-03-01*
+*WCOP Score: 8.8/10 (Tier 4+5 complete)*
