@@ -170,3 +170,4 @@ Use the **`wp-content-strategist`** agent for content optimization workflows tha
 - **`wp-content-attribution`** — track content sources and attribute traffic
 - **`wp-programmatic-seo`** — generate SEO-optimized content at scale
 - **`wp-social-email`** — distribute optimized content across channels
+- Per prioritizzare ottimizzazione con dati CWV, combina `wp-analytics` + `wp-content-optimization`

@@ -119,3 +119,4 @@ Use the **`wp-content-strategist`** agent for SEO feedback loops and content opt
 - **`wp-social-email`** — distribute optimized content across social and email channels
 - **`wp-content`** — create and manage WordPress content informed by search analytics
 - **`wp-content-optimization`** — use GSC data as input for AI-driven content optimization and triage
+- Per correlare keyword GSC con traffico GA4, vedi `wp-analytics`
