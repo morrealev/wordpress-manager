@@ -39,6 +39,7 @@ const bufSiteClients = new Map();
 const sgSiteClients = new Map();
 const plSiteClients = new Map();
 const slackBotClients = new Map();
+const liSiteClients = new Map();
 let activeSiteId = '';
 const parsedSiteConfigs = new Map();
 const MAX_CONCURRENT_PER_SITE = 5;
@@ -110,6 +111,10 @@ export async function initWordPress() {
         if (site.slack_bot_token) {
             await initSlackBotClient(site.id, site.slack_bot_token);
             logToStderr(`Initialized Slack Bot for site: ${site.id}`);
+        }
+        if (site.linkedin_access_token) {
+            await initLinkedInClient(site.id, site.linkedin_access_token);
+            logToStderr(`Initialized LinkedIn for site: ${site.id}`);
         }
     }
     activeSiteId = defaultSite || sites[0].id;
@@ -233,6 +238,19 @@ async function initSlackBotClient(id, botToken) {
         timeout: DEFAULT_TIMEOUT_MS,
     });
     slackBotClients.set(id, client);
+}
+async function initLinkedInClient(id, accessToken) {
+    const client = axios.create({
+        baseURL: 'https://api.linkedin.com/rest/',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            'LinkedIn-Version': '202401',
+            'X-Restli-Protocol-Version': '2.0.0',
+        },
+        timeout: DEFAULT_TIMEOUT_MS,
+    });
+    liSiteClients.set(id, client);
 }
 // ── Site Management ──────────────────────────────────────────────────
 /**
@@ -646,6 +664,36 @@ export async function makeSlackBotRequest(method, endpoint, data, siteId) {
     finally {
         limiter.release();
     }
+}
+// ── LinkedIn Interface ──────────────────────────────────────────
+export function hasLinkedIn(siteId) {
+    const id = siteId || activeSiteId;
+    return liSiteClients.has(id);
+}
+export async function makeLinkedInRequest(method, endpoint, data, siteId) {
+    const id = siteId || activeSiteId;
+    const client = liSiteClients.get(id);
+    if (!client) {
+        throw new Error(`LinkedIn not configured for site "${id}". Add linkedin_access_token to WP_SITES_CONFIG.`);
+    }
+    const limiter = getLimiter(id);
+    await limiter.acquire();
+    try {
+        const response = await client.request({ method, url: endpoint, data: method !== 'GET' ? data : undefined, params: method === 'GET' ? data : undefined });
+        return response.data;
+    }
+    finally {
+        limiter.release();
+    }
+}
+export function getLinkedInPersonUrn(siteId) {
+    const id = siteId || activeSiteId;
+    const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+    const site = sites.find((s) => s.id === id);
+    if (!site?.linkedin_person_urn) {
+        throw new Error(`LinkedIn person URN not configured for site "${id}". Add linkedin_person_urn to WP_SITES_CONFIG.`);
+    }
+    return site.linkedin_person_urn;
 }
 // ── Plugin Repository (External API) ────────────────────────────────
 /**
