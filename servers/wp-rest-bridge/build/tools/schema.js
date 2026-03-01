@@ -121,7 +121,7 @@ export const schemaHandlers = {
                 ...schema_data,
             });
             // Store JSON-LD in post meta via WordPress REST API
-            const response = await makeWordPressRequest('POST', `wp/v2/posts/${post_id}`, {
+            const response = await makeWordPressRequest('POST', `posts/${post_id}`, {
                 meta: { _schema_json_ld: jsonLd },
             });
             return { toolResult: { content: [{ type: "text", text: JSON.stringify({ success: true, post_id, schema_type, stored: true }, null, 2) }] } };
@@ -135,7 +135,7 @@ export const schemaHandlers = {
         try {
             const { schema_type } = params;
             // Fetch recent posts and check for JSON-LD in meta
-            const posts = await makeWordPressRequest('GET', 'wp/v2/posts', { per_page: 100, _fields: 'id,title,meta' });
+            const posts = await makeWordPressRequest('GET', 'posts', { per_page: 100, _fields: 'id,title,meta' });
             const schemas = {};
             for (const post of posts) {
                 const meta = post.meta?._schema_json_ld;

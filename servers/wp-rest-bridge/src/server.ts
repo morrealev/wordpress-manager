@@ -46,6 +46,23 @@ server.tool(
   }
 );
 
+// Convert a JSON Schema property to a Zod type, or return as-is if already Zod
+function toZodType(prop: any, isRequired: boolean): z.ZodTypeAny {
+  if (prop instanceof z.ZodType) return prop;
+  let zodType: z.ZodTypeAny;
+  switch (prop.type) {
+    case 'string': zodType = z.string(); break;
+    case 'number': case 'integer': zodType = z.number(); break;
+    case 'boolean': zodType = z.boolean(); break;
+    case 'array': zodType = z.array(z.any()); break;
+    case 'object': zodType = z.record(z.any()); break;
+    default: zodType = z.any();
+  }
+  if (prop.description) zodType = zodType.describe(prop.description);
+  if (!isRequired) zodType = zodType.optional();
+  return zodType;
+}
+
 // Register all WordPress content tools from the ported modules
 for (const tool of allTools) {
   const handler = toolHandlers[tool.name as keyof typeof toolHandlers];
@@ -62,8 +79,13 @@ for (const tool of allTools) {
     };
   };
 
-  const zodSchema = z.object(tool.inputSchema.properties as z.ZodRawShape);
-  server.tool(tool.name, zodSchema.shape, wrappedHandler);
+  const props = tool.inputSchema.properties || {};
+  const required: string[] = (tool.inputSchema as any).required || [];
+  const zodShape: Record<string, z.ZodTypeAny> = {};
+  for (const [key, prop] of Object.entries(props)) {
+    zodShape[key] = toZodType(prop, required.includes(key));
+  }
+  server.tool(tool.name, zodShape, wrappedHandler);
 }
 
 async function main() {

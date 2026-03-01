@@ -30,6 +30,25 @@ server.tool('get_active_site', {}, async () => {
     const { getActiveSite } = await import('./wordpress.js');
     return { content: [{ type: 'text', text: getActiveSite() }] };
 });
+// Convert a JSON Schema property to a Zod type, or return as-is if already Zod
+function toZodType(prop, isRequired) {
+    if (prop instanceof z.ZodType)
+        return prop;
+    let zodType;
+    switch (prop.type) {
+        case 'string': zodType = z.string(); break;
+        case 'number': case 'integer': zodType = z.number(); break;
+        case 'boolean': zodType = z.boolean(); break;
+        case 'array': zodType = z.array(z.any()); break;
+        case 'object': zodType = z.record(z.any()); break;
+        default: zodType = z.any();
+    }
+    if (prop.description)
+        zodType = zodType.describe(prop.description);
+    if (!isRequired)
+        zodType = zodType.optional();
+    return zodType;
+}
 // Register all WordPress content tools from the ported modules
 for (const tool of allTools) {
     const handler = toolHandlers[tool.name];
@@ -45,8 +64,13 @@ for (const tool of allTools) {
             isError: result.toolResult.isError,
         };
     };
-    const zodSchema = z.object(tool.inputSchema.properties);
-    server.tool(tool.name, zodSchema.shape, wrappedHandler);
+    const props = tool.inputSchema.properties || {};
+    const required = tool.inputSchema.required || [];
+    const zodShape = {};
+    for (const [key, prop] of Object.entries(props)) {
+        zodShape[key] = toZodType(prop, required.includes(key));
+    }
+    server.tool(tool.name, zodShape, wrappedHandler);
 }
 async function main() {
     const { logToStderr, initWordPress } = await import('./wordpress.js');
