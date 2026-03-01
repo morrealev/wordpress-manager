@@ -2,6 +2,36 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.12.0] — 2026-03-01
+
+### Added — Content Generation + Structured Data (Tier 7: Content Factory Completeness)
+
+**Structured Data (3 MCP tools)**
+- `sd_validate` — validate JSON-LD/Schema.org markup
+- `sd_inject` — inject/update JSON-LD in WordPress posts
+- `sd_list_schemas` — audit Schema.org types across the site
+- New skill: `wp-structured-data` with schema types, validation, and injection references
+- Detection script: `schema_inspect.mjs`
+- Supported types: Article, Product, FAQ, HowTo, LocalBusiness, Event, Organization, BreadcrumbList
+
+**Content Generation (procedure-based, no new MCP tools)**
+- New skill: `wp-content-generation` with AI-driven content pipeline
+- 7-step procedure: brief → keyword research → outline → draft → SEO optimize → structured data → publish
+- Uses existing MCP tools (wp/v2, gsc_*, sd_*)
+- Detection script: `content_gen_inspect.mjs`
+- References: generation workflow, brief templates, outline patterns
+
+**Infrastructure**
+- Router v18 (+2 categories: content generation, structured data)
+- Updated wp-content-strategist agent with AI generation and schema procedures
+
+**Stats:** 41 → 43 skills | 142 → 145 MCP tools | Router v17 → v18
+
+### WCOP Score
+- Content Factory: 9/10 → 10/10 (AI generation + structured data)
+- Distribution: 9/10 (completed in v2.10-2.11)
+- **Total: 8.8/10 → 9.2/10**
+
 ## [2.11.0] — 2026-03-01
 
 ### Added — Auto-Transform Pipeline (Tier 6b: Distribution Completeness)
