@@ -38,6 +38,7 @@ Content repurposing is the systematic transformation of canonical WordPress cont
    - "email" / "newsletter" / "digest" → Email newsletter (Section 2)
    - "atomize" / "break down" / "content calendar" → Content atomization (Section 3)
    - "character limits" / "platform specs" / "image sizes" → Platform specifications (Section 4)
+   - "auto-transform" / "automatic conversion" / "template pipeline" → Auto-Transform Pipeline (Section 5)
 
 2. **Run detection first:**
    ```bash
@@ -76,6 +77,14 @@ See `references/platform-specs.md`
 - Hashtag and link strategies
 - Posting frequency recommendations
 
+### Section 5: Auto-Transform Pipeline
+See `references/auto-transform-pipeline.md`
+- Automated blog post → multi-platform output
+- Template system for consistent formatting
+- Integration with LinkedIn (`li_create_post`), Twitter (`tw_create_tweet`, `tw_create_thread`), Buffer (`buf_create_update`), Mailchimp (`mc_set_campaign_content`)
+- Platform-specific formatting rules and character limits
+- See `references/transform-templates.md` for ready-to-use templates
+
 ## Reference Files
 
 | File | Content |
@@ -84,6 +93,8 @@ See `references/platform-specs.md`
 | `references/email-newsletter.md` | Newsletter digest, drip sequences, subject lines |
 | `references/content-atomization.md` | Atomization workflow, content calendar, repurposing matrix |
 | `references/platform-specs.md` | Character limits, image sizes, posting frequency |
+| `references/auto-transform-pipeline.md` | Pipeline architecture: fetch → extract → template → output |
+| `references/transform-templates.md` | Ready-to-use templates: blog→tweet, thread, LinkedIn, email |
 
 ## Recommended Agent
 
@@ -95,3 +106,5 @@ See `references/platform-specs.md`
 - **`wp-headless`** — headless content delivery for multi-channel architectures
 - **`wp-woocommerce`** — product content for e-commerce repurposing
 - **wp-social-email** — publish repurposed content to social and email channels
+- **`wp-linkedin`** — direct LinkedIn publishing for transformed content
+- **`wp-twitter`** — direct Twitter/X publishing for transformed content
