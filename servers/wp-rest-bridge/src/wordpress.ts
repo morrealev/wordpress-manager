@@ -32,6 +32,9 @@ interface SiteConfig {
   plausible_base_url?: string;         // Default: "https://plausible.io" (or self-hosted)
   // Google API key for public APIs (PageSpeed Insights, CrUX)
   google_api_key?: string;
+  // Slack Integration (optional)
+  slack_webhook_url?: string;    // Incoming Webhook URL for alerts
+  slack_bot_token?: string;      // Bot Token (xoxb-...) for advanced messaging
 }
 
 // ── Concurrency Limiter ──────────────────────────────────────────────
@@ -70,6 +73,7 @@ const mcSiteClients = new Map<string, AxiosInstance>();
 const bufSiteClients = new Map<string, AxiosInstance>();
 const sgSiteClients = new Map<string, AxiosInstance>();
 const plSiteClients = new Map<string, AxiosInstance>();
+const slackBotClients = new Map<string, AxiosInstance>();
 let activeSiteId: string = '';
 const parsedSiteConfigs = new Map<string, SiteConfig>();
 
@@ -147,6 +151,10 @@ export async function initWordPress() {
     if (site.plausible_api_key) {
       await initPlausibleClient(site.id, site.plausible_api_key, site.plausible_base_url);
       logToStderr(`Initialized Plausible for site: ${site.id}`);
+    }
+    if (site.slack_bot_token) {
+      await initSlackBotClient(site.id, site.slack_bot_token);
+      logToStderr(`Initialized Slack Bot for site: ${site.id}`);
     }
   }
 
@@ -273,6 +281,18 @@ async function initPlausibleClient(id: string, apiKey: string, baseUrl?: string)
     timeout: DEFAULT_TIMEOUT_MS,
   });
   plSiteClients.set(id, client);
+}
+
+async function initSlackBotClient(id: string, botToken: string) {
+  const client = axios.create({
+    baseURL: 'https://slack.com/api/',
+    headers: {
+      'Authorization': `Bearer ${botToken}`,
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    timeout: DEFAULT_TIMEOUT_MS,
+  });
+  slackBotClients.set(id, client);
 }
 
 // ── Site Management ──────────────────────────────────────────────────
@@ -777,6 +797,51 @@ export function getGoogleApiKey(siteId?: string): string {
     throw new Error(`Google API key not configured for site "${id}". Add google_api_key to WP_SITES_CONFIG.`);
   }
   return site.google_api_key;
+}
+
+// ── Slack Interface ─────────────────────────────────────────────
+
+export function hasSlackWebhook(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  return !!site?.slack_webhook_url;
+}
+
+export function getSlackWebhookUrl(siteId?: string): string {
+  const id = siteId || activeSiteId;
+  const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
+  const site = sites.find((s: SiteConfig) => s.id === id);
+  if (!site?.slack_webhook_url) {
+    throw new Error(`Slack webhook not configured for site "${id}". Add slack_webhook_url to WP_SITES_CONFIG.`);
+  }
+  return site.slack_webhook_url;
+}
+
+export function hasSlackBot(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  return slackBotClients.has(id);
+}
+
+export async function makeSlackBotRequest(
+  method: string,
+  endpoint: string,
+  data?: Record<string, any>,
+  siteId?: string
+): Promise<any> {
+  const id = siteId || activeSiteId;
+  const client = slackBotClients.get(id);
+  if (!client) {
+    throw new Error(`Slack Bot not configured for site "${id}". Add slack_bot_token to WP_SITES_CONFIG.`);
+  }
+  const limiter = getLimiter(id);
+  await limiter.acquire();
+  try {
+    const response = await client.request({ method, url: endpoint, data });
+    return response.data;
+  } finally {
+    limiter.release();
+  }
 }
 
 // ── Plugin Repository (External API) ────────────────────────────────

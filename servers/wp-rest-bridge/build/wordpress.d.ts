@@ -21,6 +21,8 @@ interface SiteConfig {
     plausible_api_key?: string;
     plausible_base_url?: string;
     google_api_key?: string;
+    slack_webhook_url?: string;
+    slack_bot_token?: string;
 }
 /**
  * Parse WP_SITES_CONFIG JSON and initialize all site clients
@@ -95,6 +97,10 @@ export declare function hasPlausible(siteId?: string): boolean;
 export declare function makePlausibleRequest(method: string, endpoint: string, params?: Record<string, any>, siteId?: string): Promise<any>;
 export declare function hasGoogleApiKey(siteId?: string): boolean;
 export declare function getGoogleApiKey(siteId?: string): string;
+export declare function hasSlackWebhook(siteId?: string): boolean;
+export declare function getSlackWebhookUrl(siteId?: string): string;
+export declare function hasSlackBot(siteId?: string): boolean;
+export declare function makeSlackBotRequest(method: string, endpoint: string, data?: Record<string, any>, siteId?: string): Promise<any>;
 /**
  * Search the WordPress.org Plugin Repository
  */

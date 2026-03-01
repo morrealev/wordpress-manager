@@ -24,6 +24,7 @@ import { gscTools, gscHandlers } from './gsc.js';
 import { ga4Tools, ga4Handlers } from './ga4.js';
 import { plausibleTools, plausibleHandlers } from './plausible.js';
 import { cwvTools, cwvHandlers } from './cwv.js';
+import { slackTools, slackHandlers } from './slack.js';
 
 // Combine all tools
 export const allTools: Tool[] = [
@@ -51,6 +52,7 @@ export const allTools: Tool[] = [
   ...ga4Tools,                   // 6 tools
   ...plausibleTools,             // 4 tools
   ...cwvTools,                   // 4 tools
+  ...slackTools,                  // 3 tools
 ];
 
 // Combine all handlers
@@ -79,4 +81,5 @@ export const toolHandlers = {
   ...ga4Handlers,
   ...plausibleHandlers,
   ...cwvHandlers,
+  ...slackHandlers,
 };
