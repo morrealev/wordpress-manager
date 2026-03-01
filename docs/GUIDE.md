@@ -97,7 +97,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
                     wordpress-manager plugin
                     /         |         \
             Hostinger MCP    WP REST Bridge    WordPress.com MCP
-            (119 tool)       (145 tool)        (~15 tool)
+            (119 tool)       (148 tool)        (~15 tool)
                 |                |                    |
           Infrastruttura    Contenuti +          Siti hosted
           DNS, SSL, VPS     Plugin, Utenti       su WordPress.com
@@ -1414,19 +1414,20 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Sorgente | Custom TypeScript server in `servers/wp-rest-bridge/` |
 | Trasporto | stdio (JSON-RPC via stdin/stdout) |
 | Autenticazione | `WP_SITES_CONFIG` JSON env var |
-| Tool disponibili | 145 (41 WordPress + 34 WooCommerce + 10 Multisite + 18 Distribution + 8 GSC + 14 Analytics + 3 Alerting + 4 Workflows + 5 LinkedIn + 5 Twitter + 3 Schema) |
+| Tool disponibili | 148 (44 WordPress + 34 WooCommerce + 10 Multisite + 18 Distribution + 8 GSC + 14 Analytics + 3 Alerting + 4 Workflows + 5 LinkedIn + 5 Twitter + 3 Schema) |
 
 **Categorie tool WordPress** (`wp/v2`):
 
 | Categoria | Tool | Esempio |
 |-----------|------|---------|
 | Multi-site | 3 | `switch_site`, `list_sites`, `get_active_site` |
-| Content | 8 | `list_content`, `create_content`, `find_content_by_url` |
-| Taxonomies | 8 | `list_terms`, `create_term`, `assign_terms_to_content` |
-| Plugins | 5 | `list_plugins`, `activate_plugin`, `deactivate_plugin` |
-| Users | 5 | `list_users`, `create_user`, `update_user` |
-| Comments | 5 | `list_comments`, `create_comment`, `delete_comment` |
-| Media | 4 | `list_media`, `create_media`, `delete_media` |
+| Content | 8 | `list_content`, `get_content`, `create_content`, `find_content_by_url` |
+| Taxonomies | 8 | `list_terms`, `get_term`, `create_term`, `assign_terms_to_content` |
+| Plugins | 6 | `list_plugins`, `get_plugin`, `activate_plugin`, `deactivate_plugin`, `create_plugin`, `delete_plugin` |
+| Users | 6 | `list_users`, `get_user`, `get_me`, `create_user`, `update_user`, `delete_user` |
+| Comments | 5 | `list_comments`, `get_comment`, `create_comment`, `update_comment`, `delete_comment` |
+| Media | 5 | `list_media`, `get_media`, `create_media`, `edit_media`, `delete_media` |
+| Search | 1 | `wp_search` |
 | WP.org | 2 | `search_plugin_repository`, `get_plugin_details` |
 
 **Categorie tool WooCommerce** (`wc/v3`, richiede Consumer Key/Secret):
