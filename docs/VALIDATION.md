@@ -1,6 +1,6 @@
 # WP REST Bridge — Validation Report
 
-> Generated: 2026-03-01T20:15:23.449Z  
+> Generated: 2026-03-01T20:22:10.938Z  
 > Active site: `opencactus`  
 > Tools registered: 148 | On server: 135  
 > Runner: v1.1.0
@@ -28,11 +28,11 @@
 | Status | Count |
 |--------|-------|
 | passed | 42 |
-| failed | 0 |
+| failed | 1 |
 | error | 0 |
 | not_configured | 64 |
 | skipped_write | 38 |
-| skipped | 4 |
+| skipped | 3 |
 | untested | 0 |
 | **Total** | **148** |
 
@@ -42,90 +42,90 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_content | READ | passed | 2026-03-01 | 436ms |
-| get_content | READ | passed | 2026-03-01 | 374ms |
-| create_content | WRITE | passed | 2026-03-01 | 403ms |
-| update_content | WRITE | passed | 2026-03-01 | 402ms |
-| delete_content | WRITE | passed | 2026-03-01 | 361ms |
-| discover_content_types | READ | passed | 2026-03-01 | 431ms |
-| find_content_by_url | READ | passed | 2026-03-01 | 462ms |
-| get_content_by_slug | READ | passed | 2026-03-01 | 518ms |
+| list_content | READ | passed | 2026-03-01 | 367ms |
+| get_content | READ | passed | 2026-03-01 | 331ms |
+| create_content | WRITE | passed | 2026-03-01 | 442ms |
+| update_content | WRITE | passed | 2026-03-01 | 438ms |
+| delete_content | WRITE | passed | 2026-03-01 | 678ms |
+| discover_content_types | READ | passed | 2026-03-01 | 388ms |
+| find_content_by_url | READ | passed | 2026-03-01 | 513ms |
+| get_content_by_slug | READ | passed | 2026-03-01 | 309ms |
 
 ### unified-taxonomies (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| discover_taxonomies | READ | passed | 2026-03-01 | 928ms |
-| list_terms | READ | passed | 2026-03-01 | 307ms |
-| get_term | READ | passed | 2026-03-01 | 386ms |
-| create_term | WRITE | passed | 2026-03-01 | 375ms |
-| update_term | WRITE | passed | 2026-03-01 | 417ms |
-| delete_term | WRITE | passed | 2026-03-01 | 336ms |
-| assign_terms_to_content | WRITE | passed | 2026-03-01 | 1642ms |
-| get_content_terms | READ | passed | 2026-03-01 | 659ms |
+| discover_taxonomies | READ | passed | 2026-03-01 | 327ms |
+| list_terms | READ | passed | 2026-03-01 | 370ms |
+| get_term | READ | passed | 2026-03-01 | 383ms |
+| create_term | WRITE | passed | 2026-03-01 | 330ms |
+| update_term | WRITE | passed | 2026-03-01 | 502ms |
+| delete_term | WRITE | passed | 2026-03-01 | 546ms |
+| assign_terms_to_content | WRITE | passed | 2026-03-01 | 2090ms |
+| get_content_terms | READ | passed | 2026-03-01 | 774ms |
 
 ### comments (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_comments | READ | passed | 2026-03-01 | 416ms |
+| list_comments | READ | passed | 2026-03-01 | 296ms |
 | get_comment | READ | skipped |  | No data found for dynamic args resolution |
-| create_comment | WRITE | passed | 2026-03-01 | 1608ms |
-| update_comment | WRITE | passed | 2026-03-01 | 376ms |
-| delete_comment | WRITE | passed | 2026-03-01 | 375ms |
+| create_comment | WRITE | passed | 2026-03-01 | 1637ms |
+| update_comment | WRITE | passed | 2026-03-01 | 344ms |
+| delete_comment | WRITE | passed | 2026-03-01 | 298ms |
 
 ### media (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_media | READ | passed | 2026-03-01 | 306ms |
-| get_media | WRITE | skipped |  | Sequence "media" aborted at earlier step |
-| create_media | WRITE | passed | 2026-03-01 | 715ms |
-| edit_media | WRITE | passed | 2026-03-01 | 366ms |
-| delete_media | WRITE | passed | 2026-03-01 | 377ms |
+| list_media | READ | passed | 2026-03-01 | 294ms |
+| get_media | READ | passed | 2026-03-01 | 619ms |
+| create_media | WRITE | passed | 2026-03-01 | 758ms |
+| edit_media | WRITE | passed | 2026-03-01 | 333ms |
+| delete_media | WRITE | passed | 2026-03-01 | 450ms |
 
 ### users (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_users | READ | passed | 2026-03-01 | 414ms |
-| get_user | READ | passed | 2026-03-01 | 407ms |
-| get_me | READ | passed | 2026-03-01 | 312ms |
-| create_user | WRITE | passed | 2026-03-01 | 533ms |
-| update_user | WRITE | passed | 2026-03-01 | 604ms |
-| delete_user | WRITE | passed | 2026-03-01 | 483ms |
+| list_users | READ | passed | 2026-03-01 | 353ms |
+| get_user | READ | passed | 2026-03-01 | 386ms |
+| get_me | READ | passed | 2026-03-01 | 325ms |
+| create_user | WRITE | passed | 2026-03-01 | 539ms |
+| update_user | WRITE | passed | 2026-03-01 | 475ms |
+| delete_user | WRITE | passed | 2026-03-01 | 371ms |
 
 ### plugins (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_plugins | READ | passed | 2026-03-01 | 394ms |
-| get_plugin | READ | passed | 2026-03-01 | 408ms |
-| activate_plugin | WRITE | passed | 2026-03-01 | 433ms |
-| deactivate_plugin | WRITE | passed | 2026-03-01 | 424ms |
-| create_plugin | WRITE | passed | 2026-03-01 | 1648ms |
-| delete_plugin | WRITE | passed | 2026-03-01 | 358ms |
+| list_plugins | READ | passed | 2026-03-01 | 345ms |
+| get_plugin | READ | passed | 2026-03-01 | 270ms |
+| activate_plugin | WRITE | passed | 2026-03-01 | 612ms |
+| deactivate_plugin | WRITE | passed | 2026-03-01 | 510ms |
+| create_plugin | WRITE | passed | 2026-03-01 | 1414ms |
+| delete_plugin | WRITE | passed | 2026-03-01 | 392ms |
 
 ### search (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| wp_search | READ | passed | 2026-03-01 | 418ms |
+| wp_search | READ | passed | 2026-03-01 | 337ms |
 
 ### plugin-repository (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| search_plugin_repository | READ | passed | 2026-03-01 | 1302ms |
-| get_plugin_details | READ | passed | 2026-03-01 | 670ms |
+| search_plugin_repository | READ | passed | 2026-03-01 | 1656ms |
+| get_plugin_details | READ | failed | 2026-03-01 | Error getting plugin details:  |
 
 ### server (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| switch_site | WRITE | passed | 2026-03-01 | 2ms |
+| switch_site | WRITE | passed | 2026-03-01 | 3ms |
 | list_sites | READ | passed | 2026-03-01 | 3ms |
-| get_active_site | READ | passed | 2026-03-01 | 2ms |
+| get_active_site | READ | passed | 2026-03-01 | 3ms |
 
 ### multisite-network (multisite)
 
@@ -336,6 +336,14 @@
 | sd_inject | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | sd_list_schemas | READ | skipped |  | Tool not registered on server |
 
+## Failed Tools Detail
+
+### get_plugin_details (failed)
+- **Tested**: 2026-03-01T20:20:57.142Z
+- **Duration**: 277ms
+- **Error**: Error getting plugin details: 
+- **Response**: Error getting plugin details: 
+
 ## Changelog
 
-- 2026-03-01T20:15:23.449Z — Run on `opencactus`: passed=42, failed=0, error=0, not_configured=64, skipped_write=38, skipped=4, untested=0
+- 2026-03-01T20:22:10.938Z — Run on `opencactus`: passed=42, failed=1, error=0, not_configured=64, skipped_write=38, skipped=3, untested=0
