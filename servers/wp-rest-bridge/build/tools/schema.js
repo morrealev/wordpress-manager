@@ -72,29 +72,35 @@ export const schemaHandlers = {
                     return { toolResult: { isError: true, content: [{ type: "text", text: "Invalid JSON in markup parameter." }] } };
                 }
             } else {
-                // Fetch URL and extract JSON-LD
+                // Fetch URL and extract ALL JSON-LD blocks
                 const response = await axios.get(url, { timeout: 15000 });
                 const html = response.data;
-                const jsonLdMatch = html.match(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/i);
-                if (!jsonLdMatch) {
-                    return { toolResult: { content: [{ type: "text", text: JSON.stringify({ valid: false, error: "No JSON-LD found on page", url }, null, 2) }] } };
+                const jsonLdRegex = /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi;
+                const allJsonLd = [];
+                let match;
+                while ((match = jsonLdRegex.exec(html)) !== null) {
+                    try {
+                        const parsed = JSON.parse(match[1]);
+                        if (Array.isArray(parsed)) allJsonLd.push(...parsed);
+                        else allJsonLd.push(parsed);
+                    } catch { /* skip invalid JSON-LD blocks */ }
                 }
-                try {
-                    jsonLd = JSON.parse(jsonLdMatch[1]);
-                } catch {
-                    return { toolResult: { content: [{ type: "text", text: JSON.stringify({ valid: false, error: "Invalid JSON-LD on page", url }, null, 2) }] } };
+                if (allJsonLd.length === 0) {
+                    return { toolResult: { content: [{ type: "text", text: JSON.stringify({ valid: false, error: "No valid JSON-LD found on page", url }, null, 2) }] } };
                 }
+                jsonLd = allJsonLd;
             }
 
             // Basic Schema.org validation
             const issues = [];
             const schemas = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
             for (const schema of schemas) {
-                if (!schema['@context'] || !schema['@context'].includes('schema.org')) {
-                    issues.push('Missing or invalid @context (should include schema.org)');
+                const schemaLabel = schema['@type'] || '(unnamed)';
+                if (!schema['@context'] || !String(schema['@context']).includes('schema.org')) {
+                    issues.push(`${schemaLabel}: Missing or invalid @context (should include schema.org)`);
                 }
                 if (!schema['@type']) {
-                    issues.push('Missing @type');
+                    issues.push(`${schemaLabel}: Missing @type`);
                 }
             }
 
@@ -119,12 +125,22 @@ export const schemaHandlers = {
                 '@context': 'https://schema.org',
                 '@type': schema_type,
                 ...schema_data,
-            });
-            // Store JSON-LD in post meta via WordPress REST API
-            const response = await makeWordPressRequest('POST', `posts/${post_id}`, {
-                meta: { _schema_json_ld: jsonLd },
-            });
-            return { toolResult: { content: [{ type: "text", text: JSON.stringify({ success: true, post_id, schema_type, stored: true }, null, 2) }] } };
+            }, null, 2);
+            const scriptBlock = `\n<!-- wp:html -->\n<script type="application/ld+json">\n${jsonLd}\n</script>\n<!-- /wp:html -->`;
+            // Fetch current post content
+            const post = await makeWordPressRequest('GET', `posts/${post_id}`, { _fields: 'content', context: 'edit' });
+            let content = post.content?.raw || post.content?.rendered || '';
+            // Remove existing JSON-LD block for this schema type if present
+            const existingPattern = new RegExp(
+                `\\n?<!-- wp:html -->\\n<script type="application/ld\\+json">\\n[\\s\\S]*?"@type":\\s*"${schema_type}"[\\s\\S]*?</script>\\n<!-- /wp:html -->`,
+                'g'
+            );
+            content = content.replace(existingPattern, '');
+            // Append new JSON-LD block
+            content = content.trimEnd() + scriptBlock;
+            // Update post
+            await makeWordPressRequest('POST', `posts/${post_id}`, { content });
+            return { toolResult: { content: [{ type: "text", text: JSON.stringify({ success: true, post_id, schema_type, method: 'content_block', note: 'JSON-LD injected as wp:html block in post content' }, null, 2) }] } };
         } catch (error) {
             const errorMessage = error.response?.data?.message || error.message;
             return { toolResult: { isError: true, content: [{ type: "text", text: `Error injecting schema: ${errorMessage}` }] } };
@@ -134,19 +150,24 @@ export const schemaHandlers = {
     sd_list_schemas: async (params) => {
         try {
             const { schema_type } = params;
-            // Fetch recent posts and check for JSON-LD in meta
-            const posts = await makeWordPressRequest('GET', 'posts', { per_page: 100, _fields: 'id,title,meta' });
+            // Fetch posts and scan content for JSON-LD script blocks
+            const posts = await makeWordPressRequest('GET', 'posts', { per_page: 100, _fields: 'id,title,content' });
             const schemas = {};
+            const jsonLdRegex = /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi;
             for (const post of posts) {
-                const meta = post.meta?._schema_json_ld;
-                if (meta) {
+                const content = post.content?.rendered || '';
+                let match;
+                while ((match = jsonLdRegex.exec(content)) !== null) {
                     try {
-                        const parsed = JSON.parse(meta);
-                        const type = parsed['@type'] || 'Unknown';
-                        if (schema_type && type !== schema_type) continue;
-                        if (!schemas[type]) schemas[type] = { count: 0, posts: [] };
-                        schemas[type].count++;
-                        schemas[type].posts.push({ id: post.id, title: post.title?.rendered });
+                        const parsed = JSON.parse(match[1]);
+                        const items = Array.isArray(parsed) ? parsed : [parsed];
+                        for (const item of items) {
+                            const type = item['@type'] || 'Unknown';
+                            if (schema_type && type !== schema_type) continue;
+                            if (!schemas[type]) schemas[type] = { count: 0, posts: [] };
+                            schemas[type].count++;
+                            schemas[type].posts.push({ id: post.id, title: post.title?.rendered });
+                        }
                     } catch { /* skip invalid JSON */ }
                 }
             }
