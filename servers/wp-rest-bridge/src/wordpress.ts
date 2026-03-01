@@ -15,6 +15,10 @@ interface SiteConfig {
   ssh_key?: string;        // Path to SSH private key
   ssh_port?: number;       // SSH port (default: 22)
   is_multisite?: boolean;  // Flag: this site is a multisite network
+  // Social/Email connector API keys (optional)
+  mailchimp_api_key?: string;    // Format: "key-dc" (e.g., "abc123-us21")
+  buffer_access_token?: string;  // Buffer OAuth access token
+  sendgrid_api_key?: string;     // SendGrid API key (starts with "SG.")
 }
 
 // ── Concurrency Limiter ──────────────────────────────────────────────
@@ -49,6 +53,9 @@ class ConcurrencyLimiter {
 const siteClients = new Map<string, AxiosInstance>();
 const siteLimiters = new Map<string, ConcurrencyLimiter>();
 const wcSiteClients = new Map<string, AxiosInstance>();
+const mcSiteClients = new Map<string, AxiosInstance>();
+const bufSiteClients = new Map<string, AxiosInstance>();
+const sgSiteClients = new Map<string, AxiosInstance>();
 let activeSiteId: string = '';
 const parsedSiteConfigs = new Map<string, SiteConfig>();
 
@@ -110,6 +117,18 @@ export async function initWordPress() {
     if (site.wc_consumer_key && site.wc_consumer_secret) {
       await initWcClient(site.id, site.url, site.wc_consumer_key, site.wc_consumer_secret);
       logToStderr(`Initialized WooCommerce for site: ${site.id}`);
+    }
+    if (site.mailchimp_api_key) {
+      await initMailchimpClient(site.id, site.mailchimp_api_key);
+      logToStderr(`Initialized Mailchimp for site: ${site.id}`);
+    }
+    if (site.buffer_access_token) {
+      await initBufferClient(site.id, site.buffer_access_token);
+      logToStderr(`Initialized Buffer for site: ${site.id}`);
+    }
+    if (site.sendgrid_api_key) {
+      await initSendGridClient(site.id, site.sendgrid_api_key);
+      logToStderr(`Initialized SendGrid for site: ${site.id}`);
     }
   }
 
@@ -188,6 +207,43 @@ async function initWcClient(id: string, url: string, consumerKey: string, consum
   }
 
   wcSiteClients.set(id, client);
+}
+
+async function initMailchimpClient(id: string, apiKey: string) {
+  const dc = apiKey.split('-').pop() || 'us21';
+  const client = axios.create({
+    baseURL: `https://${dc}.api.mailchimp.com/3.0/`,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${Buffer.from(`anystring:${apiKey}`).toString('base64')}`,
+    },
+    timeout: DEFAULT_TIMEOUT_MS,
+  });
+  mcSiteClients.set(id, client);
+}
+
+async function initBufferClient(id: string, accessToken: string) {
+  const client = axios.create({
+    baseURL: 'https://api.bufferapp.com/1/',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { access_token: accessToken },
+    timeout: DEFAULT_TIMEOUT_MS,
+  });
+  bufSiteClients.set(id, client);
+}
+
+async function initSendGridClient(id: string, apiKey: string) {
+  const client = axios.create({
+    baseURL: 'https://api.sendgrid.com/v3/',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    timeout: DEFAULT_TIMEOUT_MS,
+  });
+  sgSiteClients.set(id, client);
 }
 
 // ── Site Management ──────────────────────────────────────────────────
@@ -462,6 +518,96 @@ export async function makeWooCommerceRequest(
   await limiter.acquire();
   try {
     return await executeWithRetry(client, method, path, data, siteId, options);
+  } finally {
+    limiter.release();
+  }
+}
+
+// ── Mailchimp Request Interface ──────────────────────────────────
+
+export function hasMailchimp(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  return mcSiteClients.has(id);
+}
+
+export async function makeMailchimpRequest(
+  method: string,
+  endpoint: string,
+  data?: any,
+  siteId?: string
+): Promise<any> {
+  const id = siteId || activeSiteId;
+  const client = mcSiteClients.get(id);
+  if (!client) {
+    throw new Error(
+      `Mailchimp not configured for site "${id}". Add mailchimp_api_key to WP_SITES_CONFIG.`
+    );
+  }
+  const limiter = getLimiter(id);
+  await limiter.acquire();
+  try {
+    const response = await client.request({ method, url: endpoint, data: method !== 'GET' ? data : undefined, params: method === 'GET' ? data : undefined });
+    return response.data;
+  } finally {
+    limiter.release();
+  }
+}
+
+// ── Buffer Request Interface ─────────────────────────────────────
+
+export function hasBuffer(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  return bufSiteClients.has(id);
+}
+
+export async function makeBufferRequest(
+  method: string,
+  endpoint: string,
+  data?: any,
+  siteId?: string
+): Promise<any> {
+  const id = siteId || activeSiteId;
+  const client = bufSiteClients.get(id);
+  if (!client) {
+    throw new Error(
+      `Buffer not configured for site "${id}". Add buffer_access_token to WP_SITES_CONFIG.`
+    );
+  }
+  const limiter = getLimiter(id);
+  await limiter.acquire();
+  try {
+    const response = await client.request({ method, url: endpoint, data: method !== 'GET' ? data : undefined, params: method === 'GET' ? data : undefined });
+    return response.data;
+  } finally {
+    limiter.release();
+  }
+}
+
+// ── SendGrid Request Interface ───────────────────────────────────
+
+export function hasSendGrid(siteId?: string): boolean {
+  const id = siteId || activeSiteId;
+  return sgSiteClients.has(id);
+}
+
+export async function makeSendGridRequest(
+  method: string,
+  endpoint: string,
+  data?: any,
+  siteId?: string
+): Promise<any> {
+  const id = siteId || activeSiteId;
+  const client = sgSiteClients.get(id);
+  if (!client) {
+    throw new Error(
+      `SendGrid not configured for site "${id}". Add sendgrid_api_key to WP_SITES_CONFIG.`
+    );
+  }
+  const limiter = getLimiter(id);
+  await limiter.acquire();
+  try {
+    const response = await client.request({ method, url: endpoint, data: method !== 'GET' ? data : undefined, params: method === 'GET' ? data : undefined });
+    return response.data;
   } finally {
     limiter.release();
   }
