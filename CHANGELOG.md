@@ -2,6 +2,11 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.3.1] - 2026-02-28
+
+### Changed
+- **GUIDE.md**: aggiornamento completo da v2.2.0 a v2.3.0 — documenta programmatic SEO, content-commerce attribution, multi-language network (22 scenari, 33 skill, 85 tool, router v10, +16 termini glossario)
+
 ## [2.3.0] - 2026-02-28
 
 ### Added

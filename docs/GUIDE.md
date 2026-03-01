@@ -1,6 +1,6 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 2.2.0
+**Versione:** 2.3.0
 **Ultimo aggiornamento:** 2026-02-28
 **Repository:** https://github.com/morrealev/wordpress-manager
 
@@ -60,6 +60,9 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **Fleet monitoring**: monitorare tutti i siti configurati con report comparativi cross-site
 - **Riproporre contenuti**: trasformare post WordPress in social media, email, newsletter multi-canale
 - **Gestire webhook**: configurare notifiche outbound WordPress verso servizi esterni (Zapier, Slack, CDN)
+- **SEO programmatico**: generare centinaia di pagine template da dati strutturati (city pages, product variants, directory)
+- **Attribuzione contenuti-vendite**: misurare quale contenuto WordPress genera conversioni WooCommerce (UTM tracking, attribution models, ROI)
+- **Rete multilingua**: orchestrare WordPress Multisite come network multilingua con hreflang, content sync e SEO internazionale
 
 ### Requisiti
 
@@ -96,7 +99,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v2.2.0
+wordpress-manager/                          # v2.3.0
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
@@ -115,7 +118,7 @@ wordpress-manager/                          # v2.2.0
 |   +-- wp-monitoring-agent.md                  # Site monitoring read-only (v2.1.0)
 +-- commands/                               # 5 slash commands
 |   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
-+-- skills/                                 # 30 skill totali
++-- skills/                                 # 33 skill totali
 |   +-- [OPERATIVE - 5 skill]
 |   +-- wp-deploy/                              # Procedure deploy
 |   +-- wp-audit/                               # Checklist audit
@@ -125,7 +128,7 @@ wordpress-manager/                          # v2.2.0
 |   +-- [AMBIENTE LOCALE - 1 skill]
 |   +-- wp-local-env/                           # Studio/LocalWP/wp-env
 |   +-- [SVILUPPO - 13 skill da WordPress/agent-skills]
-|   +-- wordpress-router/                       # Router unificato v9 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing)
+|   +-- wordpress-router/                       # Router unificato v10 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing + pseo + attribution + multilang)
 |   +-- wp-project-triage/                      # Auto-detect tipo progetto
 |   +-- wp-block-development/                   # Blocchi Gutenberg
 |   +-- wp-block-themes/                        # Temi a blocchi
@@ -151,6 +154,10 @@ wordpress-manager/                          # v2.2.0
 |   +-- wp-monitoring/                          # Site monitoring, fleet monitoring e observability (v2.1.0-v2.2.0)
 |   +-- wp-content-repurposing/                 # Content repurposing multi-canale (v2.2.0)
 |   +-- wp-webhooks/                            # Webhook propagation e integrazioni (v2.2.0)
+|   +-- [STRATEGIA + SEO INTERNAZIONALE - 3 skill]
+|   +-- wp-programmatic-seo/                    # SEO programmatico scalabile (v2.3.0)
+|   +-- wp-content-attribution/                 # Attribuzione content-to-commerce (v2.3.0)
+|   +-- wp-multilang-network/                   # Rete multilingua su multisite (v2.3.0)
 +-- hooks/                                  # 7 hook di sicurezza
 |   +-- hooks.json                              # 5 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
@@ -337,6 +344,9 @@ WordPress Manager comprende richieste in linguaggio naturale. Ecco come formular
 | Fleet monitoring | "Monitora tutti i siti" / "Fleet health" / "Cross-site comparison" |
 | Riproporre contenuti | "Riproponi il post per social" / "Newsletter dal blog" / "Atomizza contenuto" |
 | Gestire webhook | "Configura webhook" / "Notifica Zapier" / "WooCommerce webhook" |
+| SEO programmatico | "Genera city pages" / "Template pages" / "Pagine da dati" / "Programmatic SEO" |
+| Attribuzione contenuti | "Quale contenuto genera vendite?" / "UTM tracking" / "Content ROI" / "Revenue per post" |
+| Rete multilingua | "Sito multilingua" / "Hreflang" / "International SEO" / "Sub-site per lingua" |
 
 ---
 
@@ -572,7 +582,9 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 
 **Content repurposing** (v2.2.0): Trasforma contenuti WordPress in output multi-canale — social media post (Twitter/LinkedIn/Instagram/Facebook), email newsletter, drip sequence. Usa la skill `wp-content-repurposing` per template e regole per piattaforma.
 
-**Skill correlata**: `wp-content`, `wp-i18n`, `wp-content-repurposing`
+**Programmatic SEO** (v2.3.0): Guida la generazione scalabile di pagine da dati strutturati — city pages, product variants, comparison pages, directory listings. Workflow: assess data source → design URL pattern → create CPT → build template → generate in bulk → configure ISR/SSG → submit sitemap. Usa la skill `wp-programmatic-seo`.
+
+**Skill correlata**: `wp-content`, `wp-i18n`, `wp-content-repurposing`, `wp-programmatic-seo`
 
 ---
 
@@ -745,7 +757,9 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 
 **Prerequisiti**: WooCommerce attivo + Consumer Key/Secret configurati in `WP_SITES_CONFIG` (generare da WooCommerce > Settings > Advanced > REST API).
 
-**Skill correlata**: `wp-woocommerce`, `wp-webhooks`
+**Content Attribution** (v2.3.0): Misura quale contenuto WordPress genera conversioni WooCommerce. Workflow: verifica WooCommerce + contenuti → check UTM tracking (guida setup mu-plugin) → pull sales data → pull content data → correla con attribution model → genera report con top converting content. Usa la skill `wp-content-attribution`.
+
+**Skill correlata**: `wp-woocommerce`, `wp-webhooks`, `wp-content-attribution`
 
 ---
 
@@ -873,10 +887,11 @@ Le skill di sviluppo provengono da due fonti:
 - **13 skill community** integrate dal repository [WordPress/agent-skills](https://github.com/WordPress/agent-skills) (licenza GPL-2.0-or-later). Coprono blocchi, temi, plugin, endpoint REST, analisi statica, profiling e altro.
 - **5 skill estese** (MIT) aggiunte in v1.6.0: testing, security, internazionalizzazione, accessibilita, headless.
 - **6 skill e-commerce + infrastruttura** (MIT) aggiunte in v1.8.0-v2.2.0: WooCommerce, Multisite, CI/CD, Monitoring, Content Repurposing, Webhooks.
+- **3 skill strategia + SEO internazionale** (MIT) aggiunte in v2.3.0: Programmatic SEO, Content-Commerce Attribution, Multi-Language Network.
 
 ### Il Router Unificato
 
-La skill `wordpress-router` (v9) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **otto categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook.
+La skill `wordpress-router` (v10) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **undici categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook, programmatic SEO, content attribution, multi-language network.
 
 ```
 Utente: "Crea un blocco custom per la gallery"
@@ -952,6 +967,30 @@ wordpress-router: TASK = operativo (webhook)
 wp-webhooks skill + wp-site-manager agent
 ```
 
+```
+Utente: "Genera 200 city pages per il nostro servizio idraulico"
+  |
+wordpress-router: TASK = operativo (programmatic SEO)
+  |
+wp-programmatic-seo skill + wp-content-strategist agent
+```
+
+```
+Utente: "Quali post del blog generano piu vendite WooCommerce?"
+  |
+wordpress-router: TASK = operativo (content attribution)
+  |
+wp-content-attribution skill + wp-ecommerce-manager agent
+```
+
+```
+Utente: "Configura versioni italiano e spagnolo del nostro sito"
+  |
+wordpress-router: TASK = operativo (multi-language network)
+  |
+wp-multilang-network skill + wp-site-manager agent
+```
+
 ### Panoramica Skills di Sviluppo — Community (13)
 
 | Skill | Si attiva quando... | Risorse |
@@ -997,9 +1036,19 @@ Aggiunte in v1.8.0-v2.2.0, queste skill coprono e-commerce, multisite, CI/CD, mo
 | `wp-content-repurposing` | "riproponi contenuto", "social dal blog", "newsletter dai post", "atomizza" | 4 reference files, repurposing_inspect.mjs | `wp-content-strategist` |
 | `wp-webhooks` | "webhook", "notifica esterna", "Zapier", "WooCommerce webhook" | 5 reference files, webhook_inspect.mjs | `wp-site-manager` |
 
+### Panoramica Skills Strategia + SEO Internazionale (3)
+
+Aggiunte in v2.3.0, queste skill coprono SEO programmatico, attribuzione content-to-commerce e rete multilingua su Multisite.
+
+| Skill | Si attiva quando... | Risorse | Agent dedicato |
+|-------|---------------------|---------|----------------|
+| `wp-programmatic-seo` | "template pages", "city pages", "programmatic SEO", "bulk page generation" | 5 reference files, programmatic_seo_inspect.mjs | `wp-content-strategist` |
+| `wp-content-attribution` | "content ROI", "UTM tracking", "revenue per post", "quale contenuto genera vendite" | 5 reference files, attribution_inspect.mjs | `wp-ecommerce-manager` |
+| `wp-multilang-network` | "multilingua", "hreflang", "international SEO", "sub-site per lingua", "translate site" | 5 reference files, multilang_inspect.mjs | `wp-site-manager` |
+
 ### Script di Rilevamento Automatico
 
-Le skill includono 18 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
+Le skill includono 21 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
 
 | Script | Cosa rileva |
 |--------|-------------|
@@ -1021,6 +1070,9 @@ Le skill includono 18 script Node.js (`.mjs`) che eseguono analisi automatica de
 | `monitoring_inspect.mjs` | Uptime tools, Lighthouse CI, security plugins, logging config, fleet config (v2.1.0-v2.2.0) |
 | `repurposing_inspect.mjs` | Social plugins, email plugins, content volume, repurposing readiness (v2.2.0) |
 | `webhook_inspect.mjs` | WC webhooks, mu-plugin webhooks, webhook plugins, wp-config constants (v2.2.0) |
+| `programmatic_seo_inspect.mjs` | Headless frontend, SEO plugin, content counts, CPT, WPGraphQL, readiness (v2.3.0) |
+| `attribution_inspect.mjs` | WooCommerce, analytics plugin, UTM tracking, content/product volume, order meta (v2.3.0) |
+| `multilang_inspect.mjs` | Multisite, multilingual plugin, language patterns, hreflang tags, WPLANG (v2.3.0) |
 
 ### WordPress Playground — Ambienti Disposable
 
@@ -1055,7 +1107,7 @@ Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components`
 ```
 1. cd mio-progetto-wordpress/
 2. Claude esegue wp-project-triage → rileva "wp-block-plugin"
-3. wordpress-router v9 → instrada a wp-block-development
+3. wordpress-router v10 → instrada a wp-block-development
 4. Claude guida la creazione con block.json, edit.js, save.js
 5. wp-e2e-testing + wp-test-engineer → esegue test E2E con Playwright
 6. wp-accessibility + wp-accessibility-auditor → verifica WCAG 2.2
@@ -1563,6 +1615,55 @@ Claude (attiva skill wp-multisite):
 -> Report: network configurato con 3 sub-site attivi
 ```
 
+### Scenario 20: SEO Programmatico — City Pages
+
+```
+Tu: "Genera 200 city pages per il nostro servizio idraulico con schema LocalBusiness"
+
+Claude (attiva wp-content-strategist + skill wp-programmatic-seo):
+1. Detection con programmatic_seo_inspect.mjs (headless frontend? SEO plugin? CPT?)
+2. Progetta URL pattern: /idraulico/{citta} (es. /idraulico/roma, /idraulico/milano)
+3. Crea CPT "location" in WordPress con campi: citta, regione, telefono, indirizzo
+4. Definisce template pagina: H1 dinamico, meta description, contenuto localizzato
+5. Genera 200 pagine in bulk via create_content MCP tool
+6. Configura ISR su frontend headless (Next.js revalidate: 86400)
+7. Genera sitemap XML e submette a Search Console
+-> Report: 200 city pages create, sitemap generato, ISR configurato
+```
+
+### Scenario 21: Attribuzione Content-Commerce
+
+```
+Tu: "Quali post del blog generano piu vendite nel mio store WooCommerce?"
+
+Claude (attiva wp-ecommerce-manager + skill wp-content-attribution):
+1. Detection con attribution_inspect.mjs (WooCommerce? UTM tracking? Analytics?)
+2. Se UTM tracking assente: guida installazione mu-plugin per cattura UTM → order meta
+3. Pull dati vendite: wc_get_sales_report per ultimo trimestre
+4. Pull dati contenuti: list_content per stesso periodo
+5. Correla ordini con source UTM → identifica top converting content
+6. Applica attribution model (last-touch default)
+7. Calcola ROI per post: revenue attribuita / costo produzione contenuto
+-> Report: top 10 post per revenue, CAC per tipo contenuto, raccomandazioni
+```
+
+### Scenario 22: Rete Multilingua su Multisite
+
+```
+Tu: "Configura versioni italiano e spagnolo del nostro sito WordPress"
+
+Claude (attiva wp-site-manager + skill wp-multilang-network):
+1. Detection con multilang_inspect.mjs (multisite? plugin multilingua?)
+2. Se non multisite: guida conversione single → multisite
+3. Crea sub-site "it" con ms_create_site (italiano, sito principale)
+4. Crea sub-site "es" con ms_create_site (spagnolo)
+5. Installa e configura plugin multilingua (Polylang/MultilingualPress)
+6. Configura hreflang automatico via mu-plugin (slug-based matching)
+7. Setup language switcher e routing per lingua
+8. Verifica con checklist SEO internazionale (GSC properties, sitemaps per lingua)
+-> Report: network multilingua configurato, hreflang attivo, SEO verificato
+```
+
 ---
 
 ## 14. Amministrazione Avanzata
@@ -1831,8 +1932,23 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **Webhook** | Notifica HTTP outbound inviata automaticamente da WordPress quando si verifica un evento (es. ordine creato) |
 | **HMAC-SHA256** | Algoritmo di firma usato per autenticare webhook — il receiver verifica l'integrita del payload |
 | **mu-plugin** | Must-Use Plugin WordPress — plugin caricato automaticamente senza attivazione, usato per webhook core |
+| **Programmatic SEO** | Generazione sistematica di pagine search-optimized da dati strutturati (city pages, product variants, directory) |
+| **ISR (Incremental Static Regeneration)** | Rigenerazione incrementale di pagine statiche — aggiorna singole pagine senza rebuild completo |
+| **SSG (Static Site Generation)** | Generazione statica di tutte le pagine al build time — massima performance, dati non real-time |
+| **CPT (Custom Post Type)** | Tipo di contenuto personalizzato in WordPress, usato come data source per pagine programmatiche |
+| **Content Attribution** | Misurazione di quale contenuto WordPress genera conversioni e-commerce (vendite WooCommerce) |
+| **UTM Parameters** | Tag URL (utm_source, utm_medium, utm_campaign) per tracciare la provenienza del traffico |
+| **First-Touch Attribution** | Modello che attribuisce il 100% del credito al primo contenuto con cui l'utente ha interagito |
+| **Last-Touch Attribution** | Modello che attribuisce il 100% del credito all'ultimo contenuto prima dell'acquisto |
+| **CAC (Customer Acquisition Cost)** | Costo di acquisizione cliente — quanto costa in contenuto acquisire un nuovo cliente |
+| **LTV (Lifetime Value)** | Valore nel tempo di un cliente — revenue totale generata nel ciclo di vita |
+| **Multi-Language Network** | Architettura WordPress Multisite dove ogni sub-site serve una lingua diversa |
+| **hreflang** | Tag HTML che indica la lingua e la regione di una pagina, usato per SEO internazionale |
+| **x-default** | Valore hreflang speciale che indica la pagina fallback per utenti senza match di lingua |
+| **Content Sync** | Sincronizzazione di contenuti tra sub-site di lingua diversa in un network multilingua |
+| **MultilingualPress** | Plugin WordPress nativo per multisite multilingua — connessioni tra contenuti cross-site |
 
 ---
 
-*Guida v2.2.0 - WordPress Manager Plugin per Claude Code*
+*Guida v2.3.0 - WordPress Manager Plugin per Claude Code*
 *Ultimo aggiornamento: 2026-02-28*
