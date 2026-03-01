@@ -1,6 +1,6 @@
 # WP REST Bridge — Validation Report
 
-> Generated: 2026-03-01T20:57:46.631Z  
+> Generated: 2026-03-01T21:12:28.001Z  
 > Active site: `opencactus`  
 > Tools registered: 148 | On server: 135  
 > Runner: v1.2.0
@@ -27,8 +27,8 @@
 
 | Status | Count |
 |--------|-------|
-| passed | 42 |
-| failed | 1 |
+| passed | 43 |
+| failed | 0 |
 | error | 0 |
 | not_configured | 64 |
 | skipped_write | 38 |
@@ -116,8 +116,8 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| search_plugin_repository | READ | passed | 2026-03-01 | 1656ms |
-| get_plugin_details | READ | failed | 2026-03-01 | Error getting plugin details:  |
+| search_plugin_repository | READ | passed | 2026-03-01 | 1265ms |
+| get_plugin_details | READ | passed | 2026-03-01 | 661ms |
 
 ### server (wordpress_core)
 
@@ -336,14 +336,6 @@
 | sd_inject | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | sd_list_schemas | READ | skipped |  | Tool not registered on server |
 
-## Failed Tools Detail
-
-### get_plugin_details (failed)
-- **Tested**: 2026-03-01T20:20:57.142Z
-- **Duration**: 277ms
-- **Error**: Error getting plugin details: 
-- **Response**: Error getting plugin details: 
-
 ## Changelog
 
-- 2026-03-01T20:57:46.631Z — Run on `opencactus`: passed=42, failed=1, error=0, not_configured=64, skipped_write=38, skipped=3, untested=0
+- 2026-03-01T21:12:28.001Z — Run on `opencactus`: passed=43, failed=0, error=0, not_configured=64, skipped_write=38, skipped=3, untested=0
