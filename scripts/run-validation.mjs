@@ -2,12 +2,13 @@
 // scripts/run-validation.mjs — MCP Tool Validation Runner
 // Spawns wp-rest-bridge server, connects via MCP SDK, tests all registered tools.
 // Usage:
-//   node scripts/run-validation.mjs                    # test all read tools
-//   node scripts/run-validation.mjs --module=gsc       # single module
-//   node scripts/run-validation.mjs --include-writes   # include write tools
-//   node scripts/run-validation.mjs --test-writes      # CRUD sequence testing for write tools
-//   node scripts/run-validation.mjs --test-writes --tier=1  # only Tier 1 sequences
-//   node scripts/run-validation.mjs --delay=200        # ms between calls
+//   node scripts/run-validation.mjs                        # interactive mode
+//   node scripts/run-validation.mjs --site=opencactus      # target specific site
+//   node scripts/run-validation.mjs --module=gsc           # single module
+//   node scripts/run-validation.mjs --include-writes       # include write tools
+//   node scripts/run-validation.mjs --test-writes          # CRUD sequence testing
+//   node scripts/run-validation.mjs --test-writes --tier=1 # only Tier 1
+//   node scripts/run-validation.mjs --delay=200            # ms between calls
 
 import { createRequire } from 'module';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
@@ -20,7 +21,7 @@ const SERVER_DIR = resolve(PROJECT_ROOT, 'servers/wp-rest-bridge');
 const SDK_PATH = resolve(SERVER_DIR, 'node_modules/@modelcontextprotocol/sdk');
 const RESULTS_PATH = resolve(PROJECT_ROOT, 'docs/validation/results.json');
 const VALIDATION_MD_PATH = resolve(PROJECT_ROOT, 'docs/VALIDATION.md');
-const RUNNER_VERSION = '1.1.0';
+const RUNNER_VERSION = '1.2.0';
 
 // Dynamic import of MCP SDK from server's node_modules
 const require = createRequire(resolve(SERVER_DIR, 'package.json'));
@@ -34,11 +35,22 @@ const getArg = (name) => {
 const hasFlag = (name) => args.includes(`--${name}`);
 
 const filterModule = getArg('module');
+const filterSite = getArg('site');
 const includeWrites = hasFlag('include-writes');
 const testWrites = hasFlag('test-writes');
 const filterTier = getArg('tier') ? parseInt(getArg('tier'), 10) : null;
 const delay = parseInt(getArg('delay') || '100', 10);
 const TIMEOUT_MS = parseInt(getArg('timeout') || '10000', 10);
+
+// ── Site Configuration ──────────────────────────────────────────────
+function getConfiguredSites() {
+  const raw = process.env.WP_SITES_CONFIG;
+  if (!raw) return [];
+  try {
+    const sites = JSON.parse(raw);
+    return sites.map(s => ({ id: s.id, url: s.url }));
+  } catch { return []; }
+}
 
 // ── Tool Registry ────────────────────────────────────────────────────
 // All 148+ tools classified by module, service, and type.
@@ -390,7 +402,7 @@ function log(msg) {
 }
 
 // ── Write Sequence Executor ──────────────────────────────────────────
-async function executeWriteSequences(client, services, delay) {
+async function executeWriteSequences(client, services, delay, tierFilter = null) {
   const results = []; // per-tool results
   const cleanupQueue = []; // { tool, args } for emergency cleanup
 
@@ -406,7 +418,7 @@ async function executeWriteSequences(client, services, delay) {
 
   // Filter sequences by tier and service
   const sequences = WRITE_SEQUENCES.filter(seq => {
-    if (filterTier && seq.tier !== filterTier) return false;
+    if (tierFilter && seq.tier !== tierFilter) return false;
     const svc = services[seq.service];
     if (!svc || !svc.configured) return false;
     return true;
@@ -572,8 +584,96 @@ async function executeWriteSequences(client, services, delay) {
   return results;
 }
 
+// ── Interactive Mode ─────────────────────────────────────────────────
+async function interactiveMode() {
+  // Dynamic import of @clack/prompts from server's node_modules
+  const clackPath = resolve(SERVER_DIR, 'node_modules/@clack/prompts/dist/index.mjs');
+  const p = await import(clackPath);
+
+  p.intro('WP REST Bridge — Validation Runner v' + RUNNER_VERSION);
+
+  // 1. Site selection
+  const sites = getConfiguredSites();
+  let site = null;
+  if (sites.length > 0) {
+    site = await p.select({
+      message: 'Seleziona il sito target',
+      options: sites.map(s => ({ value: s.id, label: `${s.id} (${s.url})` })),
+    });
+    if (p.isCancel(site)) { p.cancel('Operazione annullata.'); return null; }
+  } else {
+    p.log.warn('Nessun sito configurato in WP_SITES_CONFIG — uso sito di default.');
+  }
+
+  // 2. Validation type
+  const validationType = await p.select({
+    message: 'Cosa vuoi validare?',
+    options: [
+      { value: 'read', label: 'Solo read tool' },
+      { value: 'write-t1', label: 'Solo write tool (Tier 1 — CRUD base)' },
+      { value: 'write-t2', label: 'Solo write tool (Tier 2 — con dipendenze)' },
+      { value: 'write-all', label: 'Solo write tool (tutti i tier)' },
+      { value: 'all', label: 'Tutto (read + write)' },
+    ],
+  });
+  if (p.isCancel(validationType)) { p.cancel('Operazione annullata.'); return null; }
+
+  // 3. Module filter
+  const uniqueModules = [...new Set(TOOL_REGISTRY.map(t => t.module))].sort();
+  const filterMod = await p.select({
+    message: 'Filtrare per modulo? (opzionale)',
+    options: [
+      { value: null, label: 'Tutti i moduli' },
+      ...uniqueModules.map(m => ({ value: m, label: m })),
+    ],
+  });
+  if (p.isCancel(filterMod)) { p.cancel('Operazione annullata.'); return null; }
+
+  // Derive config from selections
+  const testReads = validationType === 'read' || validationType === 'all';
+  const doTestWrites = validationType.startsWith('write') || validationType === 'all';
+  let tier = null;
+  if (validationType === 'write-t1') tier = 1;
+  else if (validationType === 'write-t2') tier = 2;
+
+  // 4. Confirmation
+  const typeLabel = {
+    'read': 'Read tools',
+    'write-t1': 'Write Tier 1',
+    'write-t2': 'Write Tier 2',
+    'write-all': 'Write tutti i tier',
+    'all': 'Read + Write',
+  }[validationType];
+  const modLabel = filterMod || 'tutti';
+  const siteLabel = site || 'default';
+
+  const confirmed = await p.confirm({
+    message: `Eseguire validazione su ${siteLabel}?\n  ${typeLabel} | Modulo: ${modLabel}`,
+  });
+  if (p.isCancel(confirmed) || !confirmed) { p.cancel('Operazione annullata.'); return null; }
+
+  return { site, testReads, testWrites: doTestWrites, filterTier: tier, filterModule: filterMod };
+}
+
 // ── Main ─────────────────────────────────────────────────────────────
 async function main() {
+  // ── Dual Mode Detection ────────────────────────────────────────
+  const isInteractive = process.argv.length === 2;
+  let config;
+
+  if (isInteractive) {
+    config = await interactiveMode();
+    if (!config) process.exit(0); // user cancelled
+  } else {
+    config = {
+      site: filterSite,
+      testReads: !testWrites,  // default: read if not --test-writes
+      testWrites: testWrites,
+      filterTier,
+      filterModule,
+    };
+  }
+
   log('WP REST Bridge Validation Runner v' + RUNNER_VERSION);
 
   // Ensure output directory exists
@@ -598,6 +698,12 @@ async function main() {
     await client.connect(transport);
     log('Connected to MCP server');
 
+    // Switch site if specified (interactive or --site flag)
+    if (config.site) {
+      log(`Switching to site: ${config.site}`);
+      await client.callTool({ name: 'switch_site', arguments: { site_id: config.site } });
+    }
+
     // List tools from server
     const { tools: serverTools } = await client.listTools();
     const serverToolNames = new Set(serverTools.map(t => t.name));
@@ -617,9 +723,9 @@ async function main() {
 
     // Filter registry by module if requested
     let registry = TOOL_REGISTRY;
-    if (filterModule) {
-      registry = registry.filter(t => t.module === filterModule);
-      log(`Filtered to module "${filterModule}": ${registry.length} tools`);
+    if (config.filterModule) {
+      registry = registry.filter(t => t.module === config.filterModule);
+      log(`Filtered to module "${config.filterModule}": ${registry.length} tools`);
     }
 
     // ── Service Detection ──────────────────────────────────────────
@@ -649,10 +755,10 @@ async function main() {
     }
     log('Service detection complete: ' + Object.entries(services).map(([k, v]) => `${k}=${v.configured ? 'OK' : 'NO'}`).join(', '));
 
-    // ── Write Sequence Testing (--test-writes) ───────────────────
-    if (testWrites) {
+    // ── Write Sequence Testing (--test-writes or interactive) ───
+    if (config.testWrites) {
       log('\n=== WRITE TOOL TESTING (CRUD Sequences) ===');
-      const writeResults = await executeWriteSequences(client, services, delay);
+      const writeResults = await executeWriteSequences(client, services, delay, config.filterTier);
 
       // Merge write results into existing results.json
       let existing = { meta: {}, services: {}, modules: {}, summary: { by_status: {} } };
@@ -668,7 +774,7 @@ async function main() {
         generated_at: new Date().toISOString(),
         runner_version: RUNNER_VERSION,
         last_write_test: new Date().toISOString(),
-        write_test_tier: filterTier || 'all',
+        write_test_tier: config.filterTier || 'all',
       };
       existing.services = { ...existing.services, ...services };
 
@@ -709,8 +815,11 @@ async function main() {
       log(`Results merged into ${RESULTS_PATH}`);
       log(`Markdown updated at ${VALIDATION_MD_PATH}`);
 
-      await client.close();
-      return;
+      // If not also testing reads, we're done
+      if (!config.testReads) {
+        await client.close();
+        return;
+      }
     }
 
     // ── Dynamic Args Resolution ──────────────────────────────────
@@ -789,8 +898,8 @@ async function main() {
         skip_reason: null,
       };
 
-      // Skip writes unless --include-writes
-      if (entry.type === 'write' && !includeWrites) {
+      // Skip writes unless --include-writes or interactive "all" mode
+      if (entry.type === 'write' && !includeWrites && !config.testWrites) {
         toolResult.status = 'skipped_write';
         toolResult.skip_reason = 'Write tool — use --include-writes to test';
         toolResults.push(toolResult);
@@ -906,8 +1015,8 @@ async function main() {
     };
 
     // ── Merge incrementale ─────────────────────────────────────────
-    if (filterModule && existsSync(RESULTS_PATH)) {
-      log(`Merging results for module "${filterModule}" into existing results.json`);
+    if (config.filterModule && existsSync(RESULTS_PATH)) {
+      log(`Merging results for module "${config.filterModule}" into existing results.json`);
       const existing = JSON.parse(readFileSync(RESULTS_PATH, 'utf-8'));
       existing.meta = results.meta;
       existing.services = { ...existing.services, ...results.services };
