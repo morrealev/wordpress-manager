@@ -1,7 +1,7 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 2.3.0
-**Ultimo aggiornamento:** 2026-02-28
+**Versione:** 2.6.0
+**Ultimo aggiornamento:** 2026-03-01
 **Repository:** https://github.com/morrealev/wordpress-manager
 
 ---
@@ -63,6 +63,9 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **SEO programmatico**: generare centinaia di pagine template da dati strutturati (city pages, product variants, directory)
 - **Attribuzione contenuti-vendite**: misurare quale contenuto WordPress genera conversioni WooCommerce (UTM tracking, attribution models, ROI)
 - **Rete multilingua**: orchestrare WordPress Multisite come network multilingua con hreflang, content sync e SEO internazionale
+- **Distribuzione social/email**: distribuire contenuti su Mailchimp, Buffer e SendGrid con workflow multi-canale
+- **Google Search Console**: monitorare keyword, indicizzazione, performance pagine e feedback SEO da GSC
+- **Ottimizzazione contenuti AI**: headline scoring, readability analysis, SEO scoring, meta optimization, content freshness e bulk triage
 
 ### Requisiti
 
@@ -99,15 +102,15 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v2.3.0
+wordpress-manager/                          # v2.6.0
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
 +-- CHANGELOG.md                            # Cronologia versioni
-+-- agents/                                 # 11 agenti specializzati
++-- agents/                                 # 12 agenti specializzati
 |   +-- wp-site-manager.md                      # Orchestratore centrale
 |   +-- wp-deployment-engineer.md               # Specialista deploy
-|   +-- wp-content-strategist.md                # Contenuti e SEO
+|   +-- wp-content-strategist.md                # Contenuti, SEO, GSC feedback, AI optimization
 |   +-- wp-security-auditor.md                  # Audit sicurezza (read-only)
 |   +-- wp-security-hardener.md                 # Hardening e incident response
 |   +-- wp-performance-optimizer.md             # Performance e CWV
@@ -116,9 +119,10 @@ wordpress-manager/                          # v2.3.0
 |   +-- wp-ecommerce-manager.md                 # WooCommerce store management (v1.8.0)
 |   +-- wp-cicd-engineer.md                     # CI/CD pipeline specialist (v2.0.0)
 |   +-- wp-monitoring-agent.md                  # Site monitoring read-only (v2.1.0)
+|   +-- wp-distribution-manager.md              # Multi-channel distribution (v2.4.0)
 +-- commands/                               # 5 slash commands
 |   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
-+-- skills/                                 # 33 skill totali
++-- skills/                                 # 36 skill totali
 |   +-- [OPERATIVE - 5 skill]
 |   +-- wp-deploy/                              # Procedure deploy
 |   +-- wp-audit/                               # Checklist audit
@@ -128,7 +132,7 @@ wordpress-manager/                          # v2.3.0
 |   +-- [AMBIENTE LOCALE - 1 skill]
 |   +-- wp-local-env/                           # Studio/LocalWP/wp-env
 |   +-- [SVILUPPO - 13 skill da WordPress/agent-skills]
-|   +-- wordpress-router/                       # Router unificato v10 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing + pseo + attribution + multilang)
+|   +-- wordpress-router/                       # Router unificato v13 (dev + local + ops + multisite + cicd + monitoring + webhooks + repurposing + pseo + attribution + multilang + distribution + gsc + content-optimization)
 |   +-- wp-project-triage/                      # Auto-detect tipo progetto
 |   +-- wp-block-development/                   # Blocchi Gutenberg
 |   +-- wp-block-themes/                        # Temi a blocchi
@@ -158,8 +162,12 @@ wordpress-manager/                          # v2.3.0
 |   +-- wp-programmatic-seo/                    # SEO programmatico scalabile (v2.3.0)
 |   +-- wp-content-attribution/                 # Attribuzione content-to-commerce (v2.3.0)
 |   +-- wp-multilang-network/                   # Rete multilingua su multisite (v2.3.0)
-+-- hooks/                                  # 7 hook di sicurezza
-|   +-- hooks.json                              # 5 prompt + 2 command
+|   +-- [DISTRIBUZIONE + SEO AVANZATO - 3 skill]
+|   +-- wp-social-email/                        # Distribuzione social/email multi-canale (v2.4.0)
+|   +-- wp-search-console/                      # Google Search Console integration (v2.5.0)
+|   +-- wp-content-optimization/                # AI content optimization e bulk triage (v2.6.0)
++-- hooks/                                  # 9 hook di sicurezza
+|   +-- hooks.json                              # 7 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
 +-- scripts/                                # Utility
 +-- servers/wp-rest-bridge/                 # MCP Server custom (TypeScript)
@@ -347,6 +355,9 @@ WordPress Manager comprende richieste in linguaggio naturale. Ecco come formular
 | SEO programmatico | "Genera city pages" / "Template pages" / "Pagine da dati" / "Programmatic SEO" |
 | Attribuzione contenuti | "Quale contenuto genera vendite?" / "UTM tracking" / "Content ROI" / "Revenue per post" |
 | Rete multilingua | "Sito multilingua" / "Hreflang" / "International SEO" / "Sub-site per lingua" |
+| Distribuzione social/email | "Distribuisci il post" / "Mailchimp campaign" / "Buffer schedule" / "SendGrid email" |
+| Google Search Console | "Keyword tracking" / "Search analytics" / "Indicizzazione" / "GSC performance" |
+| Ottimizzazione contenuti | "Ottimizza titoli" / "Headline score" / "Readability" / "Content triage" / "Quick wins" |
 
 ---
 
@@ -510,7 +521,7 @@ I comandi slash sono scorciatoie dirette per operazioni specifiche. Si invocano 
 
 Gli agenti sono "personalita" specializzate di Claude che vengono attivate automaticamente in base al contesto della conversazione. Non devi invocarli manualmente - Claude sceglie l'agente giusto per il compito.
 
-Il plugin include **11 agenti** organizzati per area di competenza. Alcuni agenti lavorano in coppia (audit → fix) o in modalita read-only (monitoraggio).
+Il plugin include **12 agenti** organizzati per area di competenza. Alcuni agenti lavorano in coppia (audit → fix) o in modalita read-only (monitoraggio).
 
 ### wp-site-manager (Orchestratore)
 
@@ -561,8 +572,8 @@ Il plugin include **11 agenti** organizzati per area di competenza. Alcuni agent
 | Proprieta | Valore |
 |-----------|--------|
 | Colore | Magenta |
-| Ruolo | Creazione contenuti, SEO, gestione editoriale, contenuti multilingue |
-| Attivazione | Creazione post, ottimizzazione SEO, gestione tassonomie |
+| Ruolo | Creazione contenuti, SEO, gestione editoriale, contenuti multilingue, GSC feedback, AI optimization |
+| Attivazione | Creazione post, ottimizzazione SEO, gestione tassonomie, keyword tracking, content optimization |
 
 **Ciclo di vita contenuti**:
 ```
@@ -584,7 +595,11 @@ IDEAZIONE -> BOZZA -> REVISIONE -> OTTIMIZZAZIONE -> PUBBLICAZIONE -> MONITORAGG
 
 **Programmatic SEO** (v2.3.0): Guida la generazione scalabile di pagine da dati strutturati — city pages, product variants, comparison pages, directory listings. Workflow: assess data source → design URL pattern → create CPT → build template → generate in bulk → configure ISR/SSG → submit sitemap. Usa la skill `wp-programmatic-seo`.
 
-**Skill correlata**: `wp-content`, `wp-i18n`, `wp-content-repurposing`, `wp-programmatic-seo`
+**SEO Feedback Loop** (v2.5.0): Integrazione con Google Search Console per feedback loop SEO. Workflow: pull GSC data (top queries, page performance) → identifica contenuti sotto-performanti → suggerisce ottimizzazioni basate su CTR, impressions, position → monitora risultati nel tempo. Usa la skill `wp-search-console` e i tool `gsc_*`.
+
+**AI Content Optimization** (v2.6.0): Pipeline AI-driven in 5 step per ottimizzazione contenuti: headline scoring → readability analysis (Flesch-Kincaid) → SEO scoring → meta optimization → content freshness check. Include bulk triage per analisi rapida di tutti i contenuti con classificazione Quick Wins / Maintain / Deep Review / Outdated. Usa la skill `wp-content-optimization`.
+
+**Skill correlata**: `wp-content`, `wp-i18n`, `wp-content-repurposing`, `wp-programmatic-seo`, `wp-search-console`, `wp-content-optimization`
 
 ---
 
@@ -827,7 +842,36 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 
 ---
 
-### Pattern di Collaborazione tra Agent
+### wp-distribution-manager (Distribuzione)
+
+| Proprieta | Valore |
+|-----------|--------|
+| Colore | Indigo |
+| Ruolo | Distribuzione multi-canale contenuti su Mailchimp, Buffer e SendGrid |
+| Attivazione | "Distribuisci il post", "invia newsletter", "programma social", "email campaign", "Buffer schedule" |
+
+**3 canali supportati**:
+
+| Canale | Servizio | Tool prefix | Operazioni |
+|--------|----------|-------------|-----------|
+| Email Marketing | Mailchimp | `mc_*` | Liste, campagne, template, audience |
+| Social Media | Buffer | `buf_*` | Profili, post scheduling, analytics |
+| Email Transazionale | SendGrid | `sg_*` | Template, invio, contatti, statistiche |
+
+**Workflow distribuzione**:
+1. Seleziona contenuto WordPress da distribuire (via `list_content`)
+2. Detection con `distribution_inspect.mjs` (servizi configurati, credenziali)
+3. Adatta contenuto per ogni canale (lunghezza, formato, CTA)
+4. Programma o invia su canali selezionati
+5. Report: conferma invio, link preview, metriche
+
+**Prerequisiti**: Almeno un servizio configurato in `WP_SITES_CONFIG` (Mailchimp API key, Buffer access token, o SendGrid API key).
+
+**Skill correlata**: `wp-social-email`
+
+---
+
+
 
 | Pattern | Flusso | Descrizione |
 |---------|--------|-------------|
@@ -835,12 +879,12 @@ Complementa `wp-security-auditor`: l'auditor **trova** i problemi, l'hardener **
 | **Monitor → Delegate** | `wp-monitoring-agent` → agent specializzati | Il monitoring rileva anomalie e delega agli agent competenti |
 | **Delegazione** | `wp-site-manager` → tutti gli altri | Il site manager delega a agent specializzati in base al task |
 
-Il `wp-site-manager` puo delegare a tutti gli 11 agent specializzati:
+Il `wp-site-manager` puo delegare a tutti i 12 agent specializzati:
 
 | Task | Agent delegato |
 |------|---------------|
 | Deploy, migrazione | `wp-deployment-engineer` |
-| Contenuti, SEO | `wp-content-strategist` |
+| Contenuti, SEO, AI optimization | `wp-content-strategist` |
 | Audit sicurezza | `wp-security-auditor` |
 | Hardening, incident response | `wp-security-hardener` |
 | Performance, CWV | `wp-performance-optimizer` |
@@ -849,6 +893,7 @@ Il `wp-site-manager` puo delegare a tutti gli 11 agent specializzati:
 | WooCommerce, e-commerce | `wp-ecommerce-manager` |
 | CI/CD pipeline | `wp-cicd-engineer` |
 | Site monitoring e health reports | `wp-monitoring-agent` |
+| Distribuzione social/email | `wp-distribution-manager` |
 
 ---
 
@@ -888,10 +933,11 @@ Le skill di sviluppo provengono da due fonti:
 - **5 skill estese** (MIT) aggiunte in v1.6.0: testing, security, internazionalizzazione, accessibilita, headless.
 - **6 skill e-commerce + infrastruttura** (MIT) aggiunte in v1.8.0-v2.2.0: WooCommerce, Multisite, CI/CD, Monitoring, Content Repurposing, Webhooks.
 - **3 skill strategia + SEO internazionale** (MIT) aggiunte in v2.3.0: Programmatic SEO, Content-Commerce Attribution, Multi-Language Network.
+- **3 skill distribuzione + SEO avanzato** (MIT) aggiunte in v2.4.0-v2.6.0: Social/Email Distribution, Google Search Console, AI Content Optimization.
 
 ### Il Router Unificato
 
-La skill `wordpress-router` (v10) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **undici categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook, programmatic SEO, content attribution, multi-language network.
+La skill `wordpress-router` (v13) e il punto d'ingresso per tutti i task WordPress. Classifica automaticamente il task in **quattordici categorie**: sviluppo, ambiente locale, operativo, multisite, CI/CD, monitoring, content repurposing, webhook, programmatic SEO, content attribution, multi-language network, social/email distribution, search console, content optimization.
 
 ```
 Utente: "Crea un blocco custom per la gallery"
@@ -991,6 +1037,30 @@ wordpress-router: TASK = operativo (multi-language network)
 wp-multilang-network skill + wp-site-manager agent
 ```
 
+```
+Utente: "Distribuisci l'ultimo post via Mailchimp e Buffer"
+  |
+wordpress-router: TASK = operativo (social/email distribution)
+  |
+wp-social-email skill + wp-distribution-manager agent
+```
+
+```
+Utente: "Quali keyword posizionano meglio il mio sito su Google?"
+  |
+wordpress-router: TASK = operativo (search console)
+  |
+wp-search-console skill + wp-content-strategist agent
+```
+
+```
+Utente: "Analizza e ottimizza i titoli dei miei post per CTR"
+  |
+wordpress-router: TASK = operativo (content optimization)
+  |
+wp-content-optimization skill + wp-content-strategist agent
+```
+
 ### Panoramica Skills di Sviluppo — Community (13)
 
 | Skill | Si attiva quando... | Risorse |
@@ -1046,9 +1116,19 @@ Aggiunte in v2.3.0, queste skill coprono SEO programmatico, attribuzione content
 | `wp-content-attribution` | "content ROI", "UTM tracking", "revenue per post", "quale contenuto genera vendite" | 5 reference files, attribution_inspect.mjs | `wp-ecommerce-manager` |
 | `wp-multilang-network` | "multilingua", "hreflang", "international SEO", "sub-site per lingua", "translate site" | 5 reference files, multilang_inspect.mjs | `wp-site-manager` |
 
+### Panoramica Skills Distribuzione + SEO Avanzato (3)
+
+Aggiunte in v2.4.0-v2.6.0, queste skill coprono distribuzione multi-canale, Google Search Console e ottimizzazione contenuti AI-driven.
+
+| Skill | Si attiva quando... | Risorse | Agent dedicato |
+|-------|---------------------|---------|----------------|
+| `wp-social-email` | "distribuisci", "Mailchimp", "Buffer", "SendGrid", "newsletter", "social schedule" | 6 reference files, distribution_inspect.mjs | `wp-distribution-manager` |
+| `wp-search-console` | "Search Console", "keyword tracking", "indicizzazione", "GSC", "search analytics" | 5 reference files, search_console_inspect.mjs | `wp-content-strategist` |
+| `wp-content-optimization` | "ottimizza titoli", "readability", "headline score", "content triage", "meta optimization" | 5 reference files, content_optimization_inspect.mjs | `wp-content-strategist` |
+
 ### Script di Rilevamento Automatico
 
-Le skill includono 21 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
+Le skill includono 24 script Node.js (`.mjs`) che eseguono analisi automatica del progetto:
 
 | Script | Cosa rileva |
 |--------|-------------|
@@ -1073,6 +1153,9 @@ Le skill includono 21 script Node.js (`.mjs`) che eseguono analisi automatica de
 | `programmatic_seo_inspect.mjs` | Headless frontend, SEO plugin, content counts, CPT, WPGraphQL, readiness (v2.3.0) |
 | `attribution_inspect.mjs` | WooCommerce, analytics plugin, UTM tracking, content/product volume, order meta (v2.3.0) |
 | `multilang_inspect.mjs` | Multisite, multilingual plugin, language patterns, hreflang tags, WPLANG (v2.3.0) |
+| `distribution_inspect.mjs` | Mailchimp, Buffer, SendGrid config, API keys, servizi attivi (v2.4.0) |
+| `search_console_inspect.mjs` | GSC service account, siti verificati, sitemap, keyword data (v2.5.0) |
+| `content_optimization_inspect.mjs` | Content volume, titoli, meta description, readability readiness (v2.6.0) |
 
 ### WordPress Playground — Ambienti Disposable
 
@@ -1107,7 +1190,7 @@ Senza il server MCP, la skill usa conoscenza generale di `@wordpress/components`
 ```
 1. cd mio-progetto-wordpress/
 2. Claude esegue wp-project-triage → rileva "wp-block-plugin"
-3. wordpress-router v10 → instrada a wp-block-development
+3. wordpress-router v13 → instrada a wp-block-development
 4. Claude guida la creazione con block.json, edit.js, save.js
 5. wp-e2e-testing + wp-test-engineer → esegue test E2E con Playwright
 6. wp-accessibility + wp-accessibility-auditor → verifica WCAG 2.2
@@ -1186,6 +1269,8 @@ Questi hook chiedono a Claude di valutare se l'operazione e stata esplicitamente
 | 3 | Import WordPress | `hosting_importWordpressWebsite` | Conferma prima di SOVRASCRIVERE l'installazione esistente |
 | 4 | Modifica DNS | `DNS_updateDNSRecordsV1`, `DNS_resetDNSRecordsV1` | Conferma prima di modificare i record DNS |
 | 5 | Eliminazione webhook WC | `wc_delete_webhook` | Conferma prima di eliminare un webhook (le integrazioni esterne smetteranno di ricevere eventi) |
+| 6 | Invio campagna Mailchimp | `mc_send_campaign` | Conferma prima di inviare una campagna email (azione irreversibile verso tutti i destinatari) |
+| 7 | Invio email SendGrid | `sg_send_email` | Conferma prima di inviare email transazionali (azione irreversibile) |
 
 ### Hook Command-Based (Validazione Script)
 
@@ -1242,7 +1327,7 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Sorgente | Custom TypeScript server in `servers/wp-rest-bridge/` |
 | Trasporto | stdio (JSON-RPC via stdin/stdout) |
 | Autenticazione | `WP_SITES_CONFIG` JSON env var |
-| Tool disponibili | 85 (41 WordPress + 34 WooCommerce + 10 Multisite) |
+| Tool disponibili | 111 (41 WordPress + 34 WooCommerce + 10 Multisite + 18 Distribution + 8 GSC) |
 
 **Categorie tool WordPress** (`wp/v2`):
 
@@ -1277,6 +1362,22 @@ MCP (Model Context Protocol) e il protocollo che permette a Claude di comunicare
 | Network Plugins | 3 | `ms_network_activate`, `ms_network_deactivate`, `ms_network_plugins` |
 | Admin | 2 | `ms_list_super_admins`, `ms_network_settings` |
 | DNS | 2 | `ms_domain_mapping`, `ms_site_url` |
+
+**Categorie tool Distribution** (richiede API key per ciascun servizio):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Mailchimp | 7 | `mc_list_audiences`, `mc_create_campaign`, `mc_send_campaign`, `mc_get_campaign_report`, `mc_list_templates`, `mc_add_subscriber`, `mc_list_campaigns` |
+| Buffer | 5 | `buf_list_profiles`, `buf_create_post`, `buf_list_scheduled`, `buf_get_analytics`, `buf_list_channels` |
+| SendGrid | 6 | `sg_send_email`, `sg_list_templates`, `sg_create_template`, `sg_list_contacts`, `sg_add_contact`, `sg_get_stats` |
+
+**Categorie tool Google Search Console** (`gsc_` prefix, richiede Service Account JSON):
+
+| Categoria | Tool | Esempio |
+|-----------|------|---------|
+| Site Management | 2 | `gsc_list_sites`, `gsc_inspect_url` |
+| Search Analytics | 3 | `gsc_search_analytics`, `gsc_top_queries`, `gsc_page_performance` |
+| Sitemaps | 3 | `gsc_list_sitemaps`, `gsc_submit_sitemap`, `gsc_delete_sitemap` |
 
 **Architettura multi-sito**: Il server mantiene una `Map<siteId, AxiosInstance>` dove ogni sito ha la propria istanza HTTP autenticata. Il cambio sito e istantaneo.
 
@@ -1664,6 +1765,55 @@ Claude (attiva wp-site-manager + skill wp-multilang-network):
 -> Report: network multilingua configurato, hreflang attivo, SEO verificato
 ```
 
+### Scenario 23: Distribuzione Multi-Canale con Mailchimp e Buffer
+
+```
+Tu: "Distribuisci l'ultimo post del blog via newsletter Mailchimp e programma sui social con Buffer"
+
+Claude (attiva wp-distribution-manager + skill wp-social-email):
+1. Detection con distribution_inspect.mjs (Mailchimp e Buffer configurati?)
+2. Seleziona ultimo post via list_content
+3. Estrae headline, excerpt, URL, immagine featured
+4. Crea campagna Mailchimp: mc_create_campaign con template, audience, subject line
+5. Conferma invio (hook mc_send_campaign) → mc_send_campaign
+6. Programma social post: buf_create_post per ogni profilo Buffer (LinkedIn, Twitter)
+7. Verifica scheduling: buf_list_scheduled
+-> Report: campagna email inviata, 3 social post programmati, link preview
+```
+
+### Scenario 24: Keyword Tracking con Google Search Console
+
+```
+Tu: "Quali keyword posizionano meglio il mio sito e quali pagine devo ottimizzare?"
+
+Claude (attiva wp-content-strategist + skill wp-search-console):
+1. Detection con search_console_inspect.mjs (GSC configurato? siti verificati?)
+2. Pull top queries: gsc_top_queries per ultimi 28 giorni
+3. Pull page performance: gsc_page_performance per tutte le pagine
+4. Identifica keyword ad alto impressions ma basso CTR (opportunita)
+5. Identifica pagine in posizione 5-20 (quick wins per salire in top 3)
+6. Verifica indicizzazione pagine chiave: gsc_inspect_url
+7. Cross-reference con contenuti WordPress (list_content)
+-> Report: top 20 keyword, pagine sotto-performanti, azioni SEO prioritizzate
+```
+
+### Scenario 25: AI Content Optimization e Bulk Triage
+
+```
+Tu: "Analizza tutti i post del blog e dimmi quali titoli migliorare e quali contenuti sono obsoleti"
+
+Claude (attiva wp-content-strategist + skill wp-content-optimization):
+1. Detection con content_optimization_inspect.mjs (volume contenuti, meta status)
+2. Pull tutti i post via list_content
+3. Bulk triage: classifica ogni post in Quick Wins / Maintain / Deep Review / Outdated
+4. Per Quick Wins: headline scoring (power words, lunghezza, emotional trigger)
+5. Readability analysis: Flesch-Kincaid score per ogni post
+6. SEO scoring: keyword in title, meta description, heading structure
+7. Content freshness: identifica post > 12 mesi senza aggiornamento
+8. Genera piano di ottimizzazione prioritizzato con stime di impatto
+-> Report: matrice triage, top 10 titoli da migliorare, 5 contenuti obsoleti, azioni immediate
+```
+
 ---
 
 ## 14. Amministrazione Avanzata
@@ -1914,7 +2064,7 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **RTL** | Right-to-Left — supporto per lingue scritte da destra a sinistra (arabo, ebraico) |
 | **WCAG** | Web Content Accessibility Guidelines — standard W3C per accessibilita web (target: 2.2 AA) |
 | **WPGraphQL** | Plugin WordPress che espone un'API GraphQL come alternativa alla REST API |
-| **WooCommerce** | Plugin e-commerce per WordPress; il WP REST Bridge espone 30 tool via namespace `wc/v3` |
+| **WooCommerce** | Plugin e-commerce per WordPress; il WP REST Bridge espone 34 tool via namespace `wc/v3` |
 | **Consumer Key/Secret** | Credenziali API WooCommerce per accesso REST (`wc/v3`), generate da WooCommerce > Settings > REST API |
 | **Multisite** | Funzionalita WordPress per gestire una rete di siti da una singola installazione (Network Admin) |
 | **Super Admin** | Ruolo utente WordPress con accesso a tutte le operazioni del network multisite |
@@ -1947,8 +2097,18 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 | **x-default** | Valore hreflang speciale che indica la pagina fallback per utenti senza match di lingua |
 | **Content Sync** | Sincronizzazione di contenuti tra sub-site di lingua diversa in un network multilingua |
 | **MultilingualPress** | Plugin WordPress nativo per multisite multilingua — connessioni tra contenuti cross-site |
+| **WCOP** | WordPress Content Optimization Pipeline — pipeline AI a 5 step per ottimizzazione contenuti (headline → readability → SEO → meta → freshness) |
+| **CTR (Click-Through Rate)** | Rapporto percentuale tra impressioni e click — metrica chiave in Google Search Console e email marketing |
+| **Flesch-Kincaid** | Formula di leggibilita che stima il livello scolastico necessario per comprendere un testo — usata nell'AI content optimization |
+| **Content Triage** | Classificazione rapida di tutti i contenuti in categorie di azione: Quick Wins, Maintain, Deep Review, Outdated |
+| **Quick Wins** | Contenuti che richiedono piccole ottimizzazioni (titolo, meta description) per ottenere significativi miglioramenti di performance |
+| **Service Account** | Account Google di servizio (JSON key) per accesso server-to-server a Google Search Console senza autenticazione interattiva |
+| **Mailchimp** | Piattaforma di email marketing per newsletter e campagne — integrata via API con 7 tool MCP (prefix `mc_*`) |
+| **Buffer** | Piattaforma di social media scheduling — integrata via API con 5 tool MCP (prefix `buf_*`) |
+| **SendGrid** | Servizio di email transazionale e marketing — integrato via API con 6 tool MCP (prefix `sg_*`) |
+| **GSC (Google Search Console)** | Strumento Google per monitorare presence del sito nei risultati di ricerca — integrato con 8 tool MCP (prefix `gsc_*`) |
 
 ---
 
-*Guida v2.3.0 - WordPress Manager Plugin per Claude Code*
-*Ultimo aggiornamento: 2026-02-28*
+*Guida v2.6.0 - WordPress Manager Plugin per Claude Code*
+*Ultimo aggiornamento: 2026-03-01*

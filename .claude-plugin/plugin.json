@@ -1,7 +1,7 @@
 {
   "name": "wordpress-manager",
-  "version": "2.5.0",
-  "description": "Unified WordPress management plugin for Claude Code. Orchestrates Hostinger MCP (infrastructure), WP REST API bridge (111 tools incl. WooCommerce + Multisite + Webhooks + Mailchimp + Buffer + SendGrid + Google Search Console), and WordPress.com MCP (hosted sites) with 12 specialized agents, 35 skills, and security hooks. Includes Google Search Console integration (keyword tracking, indexing, SEO feedback), social/email distribution (Mailchimp, Buffer, SendGrid), programmatic SEO, content-commerce attribution, multi-language network, fleet monitoring, content repurposing, webhook propagation, site monitoring, CI/CD pipeline automation, WordPress Multisite network management, WooCommerce store management, local dev environment support, development, testing, security, i18n, accessibility, headless, and operations.",
+  "version": "2.6.0",
+  "description": "Unified WordPress management plugin for Claude Code. Orchestrates Hostinger MCP (infrastructure), WP REST API bridge (111 tools incl. WooCommerce + Multisite + Webhooks + Mailchimp + Buffer + SendGrid + Google Search Console), and WordPress.com MCP (hosted sites) with 12 specialized agents, 36 skills, and security hooks. Includes AI content optimization (headline scoring, readability, SEO scoring, content triage), Google Search Console integration (keyword tracking, indexing, SEO feedback), social/email distribution (Mailchimp, Buffer, SendGrid), programmatic SEO, content-commerce attribution, multi-language network, fleet monitoring, content repurposing, webhook propagation, site monitoring, CI/CD pipeline automation, WordPress Multisite network management, WooCommerce store management, local dev environment support, development, testing, security, i18n, accessibility, headless, and operations.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -34,7 +34,10 @@
     "google-search-console",
     "gsc",
     "keyword-tracking",
-    "seo-feedback"
+    "seo-feedback",
+    "content-optimization",
+    "readability",
+    "headline-scoring"
   ],
   "mcpServers": "./.mcp.json"
 }

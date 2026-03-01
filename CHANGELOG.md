@@ -2,6 +2,31 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.6.0] - 2026-03-01
+
+### Added
+- **Content Optimization skill** (`wp-content-optimization`) — AI-driven content quality optimization using Claude's linguistic analysis
+  - 6 procedures: Headline Analysis, Readability Analysis, SEO Content Scoring, Meta Description Optimization, Content Freshness Audit, Bulk Content Triage
+  - 5 reference files: `headline-optimization.md`, `readability-analysis.md`, `seo-content-scoring.md`, `meta-optimization.md`, `content-freshness.md`
+  - Detection script: `content_optimization_inspect.mjs` (content volume, age, SEO plugins, readability, GSC availability, WooCommerce)
+  - Bulk Content Triage classification: Quick Wins, Needs Rewrite, Performing, Archive
+- **AI Content Optimization Workflow** in `wp-content-strategist` agent — 5-step content optimization pipeline with bulk triage
+
+### Changed
+- Router decision-tree.md upgraded to v13 with content optimization keywords and routing
+- Cross-references added: `wp-content` → wp-content-optimization, `wp-search-console` → wp-content-optimization, `wp-content-attribution` → wp-content-optimization, `wp-programmatic-seo` → wp-content-optimization
+- Plugin now has 36 skills, 12 agents, and 111 MCP tools — **Tier 3 WCOP complete**
+
+### WCOP Score
+| Layer | v2.3.1 | v2.6.0 |
+|-------|--------|--------|
+| Content Factory | 9/10 | 9/10 |
+| Quality Assurance | 8/10 | 9/10 |
+| Distribution | 4/10 | **8/10** |
+| Observability | 5/10 | **7/10** |
+| Automation | 4/10 | **7/10** |
+| **Total** | **6/10** | **8/10** |
+
 ## [2.5.0] - 2026-03-01
 
 ### Added
