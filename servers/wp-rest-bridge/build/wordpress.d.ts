@@ -11,6 +11,9 @@ interface SiteConfig {
     ssh_key?: string;
     ssh_port?: number;
     is_multisite?: boolean;
+    mailchimp_api_key?: string;
+    buffer_access_token?: string;
+    sendgrid_api_key?: string;
 }
 /**
  * Parse WP_SITES_CONFIG JSON and initialize all site clients
@@ -69,6 +72,12 @@ export declare function hasWooCommerce(siteId?: string): boolean;
  * Uses Consumer Key/Secret auth and wc/v3 namespace by default.
  */
 export declare function makeWooCommerceRequest(method: string, endpoint: string, data?: any, options?: WordPressRequestOptions): Promise<any>;
+export declare function hasMailchimp(siteId?: string): boolean;
+export declare function makeMailchimpRequest(method: string, endpoint: string, data?: any, siteId?: string): Promise<any>;
+export declare function hasBuffer(siteId?: string): boolean;
+export declare function makeBufferRequest(method: string, endpoint: string, data?: any, siteId?: string): Promise<any>;
+export declare function hasSendGrid(siteId?: string): boolean;
+export declare function makeSendGridRequest(method: string, endpoint: string, data?: any, siteId?: string): Promise<any>;
 /**
  * Search the WordPress.org Plugin Repository
  */

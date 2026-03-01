@@ -14,6 +14,10 @@ import { wcReportTools, wcReportHandlers } from './wc-reports.js';
 import { wcSettingTools, wcSettingHandlers } from './wc-settings.js';
 import { multisiteSiteTools, multisiteSiteHandlers } from './multisite-sites.js';
 import { multisiteNetworkTools, multisiteNetworkHandlers } from './multisite-network.js';
+import { wcWebhookTools, wcWebhookHandlers } from './wc-webhooks.js';
+import { mailchimpTools, mailchimpHandlers } from './mailchimp.js';
+import { bufferTools, bufferHandlers } from './buffer.js';
+import { sendgridTools, sendgridHandlers } from './sendgrid.js';
 // Combine all tools
 export const allTools = [
     ...unifiedContentTools, // 8 tools
@@ -32,6 +36,10 @@ export const allTools = [
     ...wcSettingTools, // 4 tools
     ...multisiteSiteTools, // 5 tools
     ...multisiteNetworkTools, // 5 tools
+    ...wcWebhookTools, // 4 tools
+    ...mailchimpTools, // 7 tools
+    ...bufferTools, // 5 tools
+    ...sendgridTools, // 6 tools
 ];
 // Combine all handlers
 export const toolHandlers = {
@@ -51,4 +59,8 @@ export const toolHandlers = {
     ...wcSettingHandlers,
     ...multisiteSiteHandlers,
     ...multisiteNetworkHandlers,
+    ...wcWebhookHandlers,
+    ...mailchimpHandlers,
+    ...bufferHandlers,
+    ...sendgridHandlers,
 };

@@ -233,6 +233,18 @@ export interface WCCoupon {
     minimum_amount: string;
     maximum_amount: string;
 }
+export interface WCWebhook {
+    id: number;
+    name: string;
+    status: string;
+    topic: string;
+    resource: string;
+    event: string;
+    delivery_url: string;
+    secret: string;
+    date_created: string;
+    date_modified: string;
+}
 export interface WPNetworkSite {
     blog_id: number;
     url: string;
@@ -245,5 +257,127 @@ export interface WPNetworkSite {
     mature: boolean;
     spam: boolean;
     deleted: boolean;
+}
+export interface MCMailchimpAudience {
+    id: string;
+    name: string;
+    member_count: number;
+    campaign_defaults: {
+        from_name: string;
+        from_email: string;
+        subject: string;
+    };
+    stats: {
+        member_count: number;
+        unsubscribe_count: number;
+        open_rate: number;
+        click_rate: number;
+    };
+    date_created: string;
+}
+export interface MCCampaign {
+    id: string;
+    type: string;
+    status: string;
+    emails_sent: number;
+    send_time: string;
+    settings: {
+        subject_line: string;
+        from_name: string;
+        reply_to: string;
+    };
+    report_summary?: {
+        opens: number;
+        unique_opens: number;
+        clicks: number;
+        subscriber_clicks: number;
+    };
+}
+export interface MCCampaignReport {
+    id: string;
+    campaign_title: string;
+    emails_sent: number;
+    opens: {
+        opens_total: number;
+        unique_opens: number;
+        open_rate: number;
+    };
+    clicks: {
+        clicks_total: number;
+        unique_clicks: number;
+        click_rate: number;
+    };
+    unsubscribed: number;
+    bounces: {
+        hard_bounces: number;
+        soft_bounces: number;
+    };
+}
+export interface BufProfile {
+    id: string;
+    service: string;
+    formatted_username: string;
+    avatar: string;
+    counts: {
+        sent: number;
+        pending: number;
+    };
+}
+export interface BufUpdate {
+    id: string;
+    text: string;
+    profile_id: string;
+    status: string;
+    sent_at?: number;
+    due_at?: number;
+    statistics?: {
+        clicks: number;
+        reach: number;
+        impressions: number;
+    };
+}
+export interface SGEmailRequest {
+    personalizations: {
+        to: {
+            email: string;
+            name?: string;
+        }[];
+        subject?: string;
+    }[];
+    from: {
+        email: string;
+        name?: string;
+    };
+    subject: string;
+    content: {
+        type: string;
+        value: string;
+    }[];
+    template_id?: string;
+}
+export interface SGTemplate {
+    id: string;
+    name: string;
+    generation: string;
+    updated_at: string;
+    versions: {
+        id: string;
+        name: string;
+        active: number;
+        subject: string;
+    }[];
+}
+export interface SGStats {
+    date: string;
+    stats: {
+        metrics: {
+            requests: number;
+            delivered: number;
+            opens: number;
+            clicks: number;
+            bounces: number;
+            spam_reports: number;
+        };
+    }[];
 }
 export {};

@@ -1,6 +1,125 @@
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 export declare const allTools: Tool[];
 export declare const toolHandlers: {
+    wc_list_webhooks: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        status: import("zod").ZodOptional<import("zod").ZodEnum<["active", "paused", "disabled"]>>;
+    }, "strict", import("zod").ZodTypeAny, {
+        status?: "active" | "paused" | "disabled" | undefined;
+    }, {
+        status?: "active" | "paused" | "disabled" | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    wc_create_webhook: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        name: import("zod").ZodString;
+        topic: import("zod").ZodString;
+        delivery_url: import("zod").ZodString;
+        secret: import("zod").ZodOptional<import("zod").ZodString>;
+        status: import("zod").ZodOptional<import("zod").ZodEnum<["active", "paused", "disabled"]>>;
+    }, "strict", import("zod").ZodTypeAny, {
+        name: string;
+        topic: string;
+        delivery_url: string;
+        status?: "active" | "paused" | "disabled" | undefined;
+        secret?: string | undefined;
+    }, {
+        name: string;
+        topic: string;
+        delivery_url: string;
+        status?: "active" | "paused" | "disabled" | undefined;
+        secret?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    wc_update_webhook: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        id: import("zod").ZodNumber;
+        name: import("zod").ZodOptional<import("zod").ZodString>;
+        topic: import("zod").ZodOptional<import("zod").ZodString>;
+        delivery_url: import("zod").ZodOptional<import("zod").ZodString>;
+        secret: import("zod").ZodOptional<import("zod").ZodString>;
+        status: import("zod").ZodOptional<import("zod").ZodEnum<["active", "paused", "disabled"]>>;
+    }, "strict", import("zod").ZodTypeAny, {
+        id: number;
+        status?: "active" | "paused" | "disabled" | undefined;
+        name?: string | undefined;
+        topic?: string | undefined;
+        delivery_url?: string | undefined;
+        secret?: string | undefined;
+    }, {
+        id: number;
+        status?: "active" | "paused" | "disabled" | undefined;
+        name?: string | undefined;
+        topic?: string | undefined;
+        delivery_url?: string | undefined;
+        secret?: string | undefined;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
+    wc_delete_webhook: (params: import("zod").TypeOf<import("zod").ZodObject<{
+        id: import("zod").ZodNumber;
+    }, "strict", import("zod").ZodTypeAny, {
+        id: number;
+    }, {
+        id: number;
+    }>>) => Promise<{
+        toolResult: {
+            content: {
+                type: string;
+                text: string;
+            }[];
+            isError?: undefined;
+        };
+    } | {
+        toolResult: {
+            isError: boolean;
+            content: {
+                type: string;
+                text: string;
+            }[];
+        };
+    }>;
     ms_list_network_plugins: (params: import("zod").TypeOf<import("zod").ZodObject<{
         site_id: import("zod").ZodOptional<import("zod").ZodString>;
     }, "strict", import("zod").ZodTypeAny, {
