@@ -1,6 +1,6 @@
 // src/tools/unified-content.ts
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
-import { makeWordPressRequest, logToFile, getActiveSite } from '../wordpress.js';
+import { makeWordPressRequest, logToFile, getActiveSite, getSiteConfig } from '../wordpress.js';
 import { z } from 'zod';
 
 // Site-aware cache for post types to reduce API calls
@@ -43,7 +43,15 @@ function getContentEndpoint(contentType: string): string {
 // Helper function to parse URL and extract slug and potential post type hints
 function parseUrl(url: string): { slug: string; pathHints: string[] } {
   try {
-    const urlObj = new URL(url);
+    let fullUrl = url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      const config = getSiteConfig();
+      const baseUrl = config?.url?.replace(/\/wp-json.*$/, '').replace(/\/$/, '') || '';
+      if (baseUrl) {
+        fullUrl = baseUrl + (url.startsWith('/') ? url : '/' + url);
+      }
+    }
+    const urlObj = new URL(fullUrl);
     const pathname = urlObj.pathname;
     
     // Remove trailing slash and split path

@@ -849,13 +849,27 @@ export async function makeSlackBotRequest(
 /**
  * Search the WordPress.org Plugin Repository
  */
+// Flatten nested objects into PHP-style bracket notation for query params
+function flattenParams(obj: Record<string, any>, prefix = ''): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    const fullKey = prefix ? `${prefix}[${key}]` : key;
+    if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+      Object.assign(result, flattenParams(value, fullKey));
+    } else {
+      result[fullKey] = String(value);
+    }
+  }
+  return result;
+}
+
 export async function searchWordPressPluginRepository(
   searchQuery: string,
   page: number = 1,
   perPage: number = 10
 ) {
   const apiUrl = 'https://api.wordpress.org/plugins/info/1.2/';
-  const requestData = {
+  const params = flattenParams({
     action: 'query_plugins',
     request: {
       search: searchQuery,
@@ -874,11 +888,8 @@ export async function searchWordPressPluginRepository(
         tags: true,
       },
     },
-  };
-
-  const response = await axios.post(apiUrl, requestData, {
-    headers: { 'Content-Type': 'application/json' },
   });
 
+  const response = await axios.get(apiUrl, { params });
   return response.data;
 }

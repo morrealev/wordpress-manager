@@ -36,11 +36,22 @@ function toZodType(prop, isRequired) {
         return prop;
     let zodType;
     switch (prop.type) {
-        case 'string': zodType = z.string(); break;
-        case 'number': case 'integer': zodType = z.number(); break;
-        case 'boolean': zodType = z.boolean(); break;
-        case 'array': zodType = z.array(z.any()); break;
-        case 'object': zodType = z.record(z.any()); break;
+        case 'string':
+            zodType = z.string();
+            break;
+        case 'number':
+        case 'integer':
+            zodType = z.number();
+            break;
+        case 'boolean':
+            zodType = z.boolean();
+            break;
+        case 'array':
+            zodType = z.array(z.any());
+            break;
+        case 'object':
+            zodType = z.record(z.any());
+            break;
         default: zodType = z.any();
     }
     if (prop.description)

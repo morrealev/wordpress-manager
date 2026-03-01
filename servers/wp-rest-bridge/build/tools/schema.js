@@ -1,4 +1,4 @@
-import { makeWordPressRequest, getActiveSite } from '../wordpress.js';
+import { makeWordPressRequest, getActiveSite, getSiteConfig } from '../wordpress.js';
 import axios from 'axios';
 import { z } from 'zod';
 
@@ -73,7 +73,15 @@ export const schemaHandlers = {
                 }
             } else {
                 // Fetch URL and extract ALL JSON-LD blocks
-                const response = await axios.get(url, { timeout: 15000 });
+                let resolvedUrl = url;
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    const config = getSiteConfig();
+                    const baseUrl = config?.url?.replace(/\/wp-json.*$/, '').replace(/\/$/, '') || '';
+                    if (baseUrl) {
+                        resolvedUrl = baseUrl + (url.startsWith('/') ? url : '/' + url);
+                    }
+                }
+                const response = await axios.get(resolvedUrl, { timeout: 15000 });
                 const html = response.data;
                 const jsonLdRegex = /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi;
                 const allJsonLd = [];

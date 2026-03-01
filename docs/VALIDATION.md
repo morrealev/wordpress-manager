@@ -1,8 +1,8 @@
 # WP REST Bridge — Validation Report
 
-> Generated: 2026-03-01T18:51:27.939Z  
+> Generated: 2026-03-01T19:34:05.941Z  
 > Active site: `opencactus`  
-> Tools registered: 148 | On server: 148  
+> Tools registered: 148 | On server: 135  
 > Runner: v1.0.0
 
 ## Service Configuration
@@ -20,19 +20,19 @@
 | plausible | NO | MCP error -32602: Input validation error: Invalid arguments for tool pl_get_stats: [   {     "code":... |
 | cwv | NO | Google API key not configured. Add google_api_key to WP_SITES_CONFIG. |
 | slack | NO | Slack Bot not configured. Add slack_bot_token to WP_SITES_CONFIG. |
-| linkedin | NO | LinkedIn not configured. Add linkedin_access_token to WP_SITES_CONFIG. |
-| twitter | NO | Twitter not configured. Add twitter_bearer_token to WP_SITES_CONFIG. |
+| linkedin | NO | probe tool not on server |
+| twitter | NO | probe tool not on server |
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| passed | 14 |
-| failed | 11 |
+| passed | 22 |
+| failed | 0 |
 | error | 0 |
 | not_configured | 64 |
 | skipped_write | 59 |
-| skipped | 0 |
+| skipped | 3 |
 | untested | 0 |
 | **Total** | **148** |
 
@@ -42,34 +42,34 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_content | READ | failed | 2026-03-01 | MCP error -32602: Input validation error: Invalid arguments for tool list_conten... |
-| get_content | READ | failed | 2026-03-01 | MCP error -32602: Input validation error: Invalid arguments for tool get_content... |
+| list_content | READ | passed | 2026-03-01 | 436ms |
+| get_content | READ | passed | 2026-03-01 | 374ms |
 | create_content | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | update_content | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | delete_content | WRITE | skipped_write |  | Write tool — use --include-writes to test |
-| discover_content_types | READ | passed | 2026-03-01 | 358ms |
-| find_content_by_url | READ | failed | 2026-03-01 | Error finding content by URL: Could not extract slug from URL |
-| get_content_by_slug | READ | failed | 2026-03-01 | Error getting content by slug: No content found with slug: hello-world |
+| discover_content_types | READ | passed | 2026-03-01 | 431ms |
+| find_content_by_url | READ | passed | 2026-03-01 | 462ms |
+| get_content_by_slug | READ | passed | 2026-03-01 | 518ms |
 
 ### unified-taxonomies (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| discover_taxonomies | READ | passed | 2026-03-01 | 341ms |
-| list_terms | READ | passed | 2026-03-01 | 431ms |
-| get_term | READ | passed | 2026-03-01 | 342ms |
+| discover_taxonomies | READ | passed | 2026-03-01 | 928ms |
+| list_terms | READ | passed | 2026-03-01 | 307ms |
+| get_term | READ | passed | 2026-03-01 | 386ms |
 | create_term | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | update_term | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | delete_term | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | assign_terms_to_content | WRITE | skipped_write |  | Write tool — use --include-writes to test |
-| get_content_terms | READ | failed | 2026-03-01 | MCP error -32602: Input validation error: Invalid arguments for tool get_content... |
+| get_content_terms | READ | passed | 2026-03-01 | 659ms |
 
 ### comments (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_comments | READ | passed | 2026-03-01 | 297ms |
-| get_comment | READ | failed | 2026-03-01 | Error getting comment: ID commento non valido. |
+| list_comments | READ | passed | 2026-03-01 | 416ms |
+| get_comment | READ | skipped |  | No data found for dynamic args resolution |
 | create_comment | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | update_comment | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | delete_comment | WRITE | skipped_write |  | Write tool — use --include-writes to test |
@@ -78,8 +78,8 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_media | READ | passed | 2026-03-01 | 287ms |
-| get_media | READ | failed | 2026-03-01 | Error getting media: ID articolo non valido. |
+| list_media | READ | passed | 2026-03-01 | 306ms |
+| get_media | READ | passed | 2026-03-01 | 352ms |
 | create_media | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | edit_media | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | delete_media | WRITE | skipped_write |  | Write tool — use --include-writes to test |
@@ -88,9 +88,9 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_users | READ | passed | 2026-03-01 | 379ms |
-| get_user | READ | passed | 2026-03-01 | 365ms |
-| get_me | READ | passed | 2026-03-01 | 371ms |
+| list_users | READ | passed | 2026-03-01 | 414ms |
+| get_user | READ | passed | 2026-03-01 | 407ms |
+| get_me | READ | passed | 2026-03-01 | 312ms |
 | create_user | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | update_user | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | delete_user | WRITE | skipped_write |  | Write tool — use --include-writes to test |
@@ -99,8 +99,8 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| list_plugins | READ | passed | 2026-03-01 | 439ms |
-| get_plugin | READ | failed | 2026-03-01 | Error retrieving plugin: Nessun percorso fornisce una corrispondenza tra l'URL e... |
+| list_plugins | READ | passed | 2026-03-01 | 394ms |
+| get_plugin | READ | passed | 2026-03-01 | 408ms |
 | activate_plugin | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | deactivate_plugin | WRITE | skipped_write |  | Write tool — use --include-writes to test |
 | create_plugin | WRITE | skipped_write |  | Write tool — use --include-writes to test |
@@ -110,22 +110,22 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| wp_search | READ | passed | 2026-03-01 | 337ms |
+| wp_search | READ | passed | 2026-03-01 | 418ms |
 
 ### plugin-repository (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| search_plugin_repository | READ | failed | 2026-03-01 | Error searching plugin repository: Request failed with status code 405 |
-| get_plugin_details | READ | failed | 2026-03-01 | Error getting plugin details: Request failed with status code 405 |
+| search_plugin_repository | READ | passed | 2026-03-01 | 1302ms |
+| get_plugin_details | READ | passed | 2026-03-01 | 670ms |
 
 ### server (wordpress_core)
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
 | switch_site | WRITE | skipped_write |  | Write tool — use --include-writes to test |
-| list_sites | READ | passed | 2026-03-01 | 1ms |
-| get_active_site | READ | passed | 2026-03-01 | 3ms |
+| list_sites | READ | passed | 2026-03-01 | 3ms |
+| get_active_site | READ | passed | 2026-03-01 | 2ms |
 
 ### multisite-network (multisite)
 
@@ -332,78 +332,10 @@
 
 | Tool | Type | Status | Tested | Note |
 |------|------|--------|--------|------|
-| sd_validate | READ | failed | 2026-03-01 | Error validating schema: Invalid URL |
+| sd_validate | READ | skipped |  | Tool not registered on server |
 | sd_inject | WRITE | skipped_write |  | Write tool — use --include-writes to test |
-| sd_list_schemas | READ | passed | 2026-03-01 | 477ms |
-
-## Failed Tools Detail
-
-### list_content (failed)
-- **Tested**: 2026-03-01T18:51:13.581Z
-- **Duration**: 3ms
-- **Error**: MCP error -32602: Input validation error: Invalid arguments for tool list_content: [   {     "code": "invalid_type",     "expected": "string",     "received": "undefined",     "path": [       "content...
-- **Response**: MCP error -32602: Input validation error: Invalid arguments for tool list_content: [   {     "code": "invalid_type",     "expected": "string",     "received": "undefined",     "path": [       "content...
-
-### get_content (failed)
-- **Tested**: 2026-03-01T18:51:13.685Z
-- **Duration**: 2ms
-- **Error**: MCP error -32602: Input validation error: Invalid arguments for tool get_content: [   {     "code": "invalid_type",     "expected": "string",     "received": "undefined",     "path": [       "content_...
-- **Response**: MCP error -32602: Input validation error: Invalid arguments for tool get_content: [   {     "code": "invalid_type",     "expected": "string",     "received": "undefined",     "path": [       "content_...
-
-### find_content_by_url (failed)
-- **Tested**: 2026-03-01T18:51:14.251Z
-- **Duration**: 5ms
-- **Error**: Error finding content by URL: Could not extract slug from URL
-- **Response**: Error finding content by URL: Could not extract slug from URL
-
-### get_content_by_slug (failed)
-- **Tested**: 2026-03-01T18:51:19.204Z
-- **Duration**: 4853ms
-- **Error**: Error getting content by slug: No content found with slug: hello-world
-- **Response**: Error getting content by slug: No content found with slug: hello-world
-
-### get_content_terms (failed)
-- **Tested**: 2026-03-01T18:51:20.723Z
-- **Duration**: 2ms
-- **Error**: MCP error -32602: Input validation error: Invalid arguments for tool get_content_terms: [   {     "code": "invalid_type",     "expected": "number",     "received": "undefined",     "path": [       "co...
-- **Response**: MCP error -32602: Input validation error: Invalid arguments for tool get_content_terms: [   {     "code": "invalid_type",     "expected": "number",     "received": "undefined",     "path": [       "co...
-
-### get_comment (failed)
-- **Tested**: 2026-03-01T18:51:21.772Z
-- **Duration**: 551ms
-- **Error**: Error getting comment: ID commento non valido.
-- **Response**: Error getting comment: ID commento non valido.
-
-### get_media (failed)
-- **Tested**: 2026-03-01T18:51:22.574Z
-- **Duration**: 315ms
-- **Error**: Error getting media: ID articolo non valido.
-- **Response**: Error getting media: ID articolo non valido.
-
-### get_plugin (failed)
-- **Tested**: 2026-03-01T18:51:25.044Z
-- **Duration**: 413ms
-- **Error**: Error retrieving plugin: Nessun percorso fornisce una corrispondenza tra l'URL ed il metodo richiesto.
-- **Response**: Error retrieving plugin: Nessun percorso fornisce una corrispondenza tra l'URL ed il metodo richiesto.
-
-### search_plugin_repository (failed)
-- **Tested**: 2026-03-01T18:51:26.197Z
-- **Duration**: 616ms
-- **Error**: Error searching plugin repository: Request failed with status code 405
-- **Response**: Error searching plugin repository: Request failed with status code 405
-
-### get_plugin_details (failed)
-- **Tested**: 2026-03-01T18:51:26.946Z
-- **Duration**: 648ms
-- **Error**: Error getting plugin details: Request failed with status code 405
-- **Response**: Error getting plugin details: Request failed with status code 405
-
-### sd_validate (failed)
-- **Tested**: 2026-03-01T18:51:27.258Z
-- **Duration**: 6ms
-- **Error**: Error validating schema: Invalid URL
-- **Response**: Error validating schema: Invalid URL
+| sd_list_schemas | READ | skipped |  | Tool not registered on server |
 
 ## Changelog
 
-- 2026-03-01T18:51:27.939Z — Run on `opencactus`: passed=14, failed=11, error=0, not_configured=64, skipped_write=59, skipped=0, untested=0
+- 2026-03-01T19:34:05.941Z — Run on `opencactus`: passed=22, failed=0, error=0, not_configured=64, skipped_write=59, skipped=3, untested=0

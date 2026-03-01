@@ -39,8 +39,6 @@ const bufSiteClients = new Map();
 const sgSiteClients = new Map();
 const plSiteClients = new Map();
 const slackBotClients = new Map();
-const liSiteClients = new Map();
-const twSiteClients = new Map();
 let activeSiteId = '';
 const parsedSiteConfigs = new Map();
 const MAX_CONCURRENT_PER_SITE = 5;
@@ -112,14 +110,6 @@ export async function initWordPress() {
         if (site.slack_bot_token) {
             await initSlackBotClient(site.id, site.slack_bot_token);
             logToStderr(`Initialized Slack Bot for site: ${site.id}`);
-        }
-        if (site.linkedin_access_token) {
-            await initLinkedInClient(site.id, site.linkedin_access_token);
-            logToStderr(`Initialized LinkedIn for site: ${site.id}`);
-        }
-        if (site.twitter_bearer_token) {
-            await initTwitterClient(site.id, site.twitter_bearer_token);
-            logToStderr(`Initialized Twitter for site: ${site.id}`);
         }
     }
     activeSiteId = defaultSite || sites[0].id;
@@ -243,30 +233,6 @@ async function initSlackBotClient(id, botToken) {
         timeout: DEFAULT_TIMEOUT_MS,
     });
     slackBotClients.set(id, client);
-}
-async function initLinkedInClient(id, accessToken) {
-    const client = axios.create({
-        baseURL: 'https://api.linkedin.com/rest/',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-            'LinkedIn-Version': '202401',
-            'X-Restli-Protocol-Version': '2.0.0',
-        },
-        timeout: DEFAULT_TIMEOUT_MS,
-    });
-    liSiteClients.set(id, client);
-}
-async function initTwitterClient(id, bearerToken) {
-    const client = axios.create({
-        baseURL: 'https://api.twitter.com/2/',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${bearerToken}`,
-        },
-        timeout: DEFAULT_TIMEOUT_MS,
-    });
-    twSiteClients.set(id, client);
 }
 // ── Site Management ──────────────────────────────────────────────────
 /**
@@ -681,73 +647,27 @@ export async function makeSlackBotRequest(method, endpoint, data, siteId) {
         limiter.release();
     }
 }
-// ── LinkedIn Interface ──────────────────────────────────────────
-export function hasLinkedIn(siteId) {
-    const id = siteId || activeSiteId;
-    return liSiteClients.has(id);
-}
-export async function makeLinkedInRequest(method, endpoint, data, siteId) {
-    const id = siteId || activeSiteId;
-    const client = liSiteClients.get(id);
-    if (!client) {
-        throw new Error(`LinkedIn not configured for site "${id}". Add linkedin_access_token to WP_SITES_CONFIG.`);
-    }
-    const limiter = getLimiter(id);
-    await limiter.acquire();
-    try {
-        const response = await client.request({ method, url: endpoint, data: method !== 'GET' ? data : undefined, params: method === 'GET' ? data : undefined });
-        return response.data;
-    }
-    finally {
-        limiter.release();
-    }
-}
-export function getLinkedInPersonUrn(siteId) {
-    const id = siteId || activeSiteId;
-    const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
-    const site = sites.find((s) => s.id === id);
-    if (!site?.linkedin_person_urn) {
-        throw new Error(`LinkedIn person URN not configured for site "${id}". Add linkedin_person_urn to WP_SITES_CONFIG.`);
-    }
-    return site.linkedin_person_urn;
-}
-// ── Twitter/X Interface ─────────────────────────────────────────
-export function hasTwitter(siteId) {
-    const id = siteId || activeSiteId;
-    return twSiteClients.has(id);
-}
-export async function makeTwitterRequest(method, endpoint, data, siteId) {
-    const id = siteId || activeSiteId;
-    const client = twSiteClients.get(id);
-    if (!client) {
-        throw new Error(`Twitter not configured for site "${id}". Add twitter_bearer_token to WP_SITES_CONFIG.`);
-    }
-    const limiter = getLimiter(id);
-    await limiter.acquire();
-    try {
-        const response = await client.request({ method, url: endpoint, data: method !== 'GET' ? data : undefined, params: method === 'GET' ? data : undefined });
-        return response.data;
-    }
-    finally {
-        limiter.release();
-    }
-}
-export function getTwitterUserId(siteId) {
-    const id = siteId || activeSiteId;
-    const sites = JSON.parse(process.env.WP_SITES_CONFIG || '[]');
-    const site = sites.find((s) => s.id === id);
-    if (!site?.twitter_user_id) {
-        throw new Error(`Twitter user ID not configured for site "${id}". Add twitter_user_id to WP_SITES_CONFIG.`);
-    }
-    return site.twitter_user_id;
-}
 // ── Plugin Repository (External API) ────────────────────────────────
 /**
  * Search the WordPress.org Plugin Repository
  */
+// Flatten nested objects into PHP-style bracket notation for query params
+function flattenParams(obj, prefix = '') {
+    const result = {};
+    for (const [key, value] of Object.entries(obj)) {
+        const fullKey = prefix ? `${prefix}[${key}]` : key;
+        if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+            Object.assign(result, flattenParams(value, fullKey));
+        }
+        else {
+            result[fullKey] = String(value);
+        }
+    }
+    return result;
+}
 export async function searchWordPressPluginRepository(searchQuery, page = 1, perPage = 10) {
     const apiUrl = 'https://api.wordpress.org/plugins/info/1.2/';
-    const requestData = {
+    const params = flattenParams({
         action: 'query_plugins',
         request: {
             search: searchQuery,
@@ -766,9 +686,7 @@ export async function searchWordPressPluginRepository(searchQuery, page = 1, per
                 tags: true,
             },
         },
-    };
-    const response = await axios.post(apiUrl, requestData, {
-        headers: { 'Content-Type': 'application/json' },
     });
+    const response = await axios.get(apiUrl, { params });
     return response.data;
 }

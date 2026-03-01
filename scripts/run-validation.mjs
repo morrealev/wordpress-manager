@@ -40,14 +40,14 @@ const TIMEOUT_MS = parseInt(getArg('timeout') || '10000', 10);
 // All 148+ tools classified by module, service, and type.
 const TOOL_REGISTRY = [
   // --- WordPress Core: Content ---
-  { name: 'list_content', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: { post_type: 'post', per_page: 1 } },
-  { name: 'get_content', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: { id: 1, post_type: 'post' } },
+  { name: 'list_content', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: { content_type: 'post', per_page: 1 } },
+  { name: 'get_content', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: 'dynamic' },
   { name: 'create_content', module: 'unified-content', service: 'wordpress_core', type: 'write' },
   { name: 'update_content', module: 'unified-content', service: 'wordpress_core', type: 'write' },
   { name: 'delete_content', module: 'unified-content', service: 'wordpress_core', type: 'write' },
   { name: 'discover_content_types', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: {} },
-  { name: 'find_content_by_url', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: { url: '/' } },
-  { name: 'get_content_by_slug', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: { slug: 'hello-world', post_type: 'post' } },
+  { name: 'find_content_by_url', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: 'dynamic' },
+  { name: 'get_content_by_slug', module: 'unified-content', service: 'wordpress_core', type: 'read', safeArgs: 'dynamic' },
 
   // --- WordPress Core: Taxonomies ---
   { name: 'discover_taxonomies', module: 'unified-taxonomies', service: 'wordpress_core', type: 'read', safeArgs: {} },
@@ -57,18 +57,18 @@ const TOOL_REGISTRY = [
   { name: 'update_term', module: 'unified-taxonomies', service: 'wordpress_core', type: 'write' },
   { name: 'delete_term', module: 'unified-taxonomies', service: 'wordpress_core', type: 'write' },
   { name: 'assign_terms_to_content', module: 'unified-taxonomies', service: 'wordpress_core', type: 'write' },
-  { name: 'get_content_terms', module: 'unified-taxonomies', service: 'wordpress_core', type: 'read', safeArgs: { post_type: 'post', id: 1, taxonomy: 'category' } },
+  { name: 'get_content_terms', module: 'unified-taxonomies', service: 'wordpress_core', type: 'read', safeArgs: 'dynamic' },
 
   // --- WordPress Core: Comments ---
   { name: 'list_comments', module: 'comments', service: 'wordpress_core', type: 'read', safeArgs: { per_page: 1 } },
-  { name: 'get_comment', module: 'comments', service: 'wordpress_core', type: 'read', safeArgs: { id: 1 } },
+  { name: 'get_comment', module: 'comments', service: 'wordpress_core', type: 'read', safeArgs: 'dynamic' },
   { name: 'create_comment', module: 'comments', service: 'wordpress_core', type: 'write' },
   { name: 'update_comment', module: 'comments', service: 'wordpress_core', type: 'write' },
   { name: 'delete_comment', module: 'comments', service: 'wordpress_core', type: 'write' },
 
   // --- WordPress Core: Media ---
   { name: 'list_media', module: 'media', service: 'wordpress_core', type: 'read', safeArgs: { per_page: 1 } },
-  { name: 'get_media', module: 'media', service: 'wordpress_core', type: 'read', safeArgs: { id: 1 } },
+  { name: 'get_media', module: 'media', service: 'wordpress_core', type: 'read', safeArgs: 'dynamic' },
   { name: 'create_media', module: 'media', service: 'wordpress_core', type: 'write' },
   { name: 'edit_media', module: 'media', service: 'wordpress_core', type: 'write' },
   { name: 'delete_media', module: 'media', service: 'wordpress_core', type: 'write' },
@@ -83,7 +83,7 @@ const TOOL_REGISTRY = [
 
   // --- WordPress Core: Plugins ---
   { name: 'list_plugins', module: 'plugins', service: 'wordpress_core', type: 'read', safeArgs: { status: 'active' } },
-  { name: 'get_plugin', module: 'plugins', service: 'wordpress_core', type: 'read', safeArgs: { plugin: 'akismet/akismet.php' } },
+  { name: 'get_plugin', module: 'plugins', service: 'wordpress_core', type: 'read', safeArgs: 'dynamic' },
   { name: 'activate_plugin', module: 'plugins', service: 'wordpress_core', type: 'write' },
   { name: 'deactivate_plugin', module: 'plugins', service: 'wordpress_core', type: 'write' },
   { name: 'create_plugin', module: 'plugins', service: 'wordpress_core', type: 'write' },
@@ -355,6 +355,66 @@ async function main() {
     }
     log('Service detection complete: ' + Object.entries(services).map(([k, v]) => `${k}=${v.configured ? 'OK' : 'NO'}`).join(', '));
 
+    // ── Dynamic Args Resolution ──────────────────────────────────
+    // For tools marked safeArgs:'dynamic', discover real IDs from the live site
+    const dynamicArgs = {};
+    if (services.wordpress_core?.configured) {
+      log('Resolving dynamic test arguments...');
+      try {
+        // Discover a real post ID and slug
+        const postsResult = await client.callTool({ name: 'list_content', arguments: { content_type: 'post', per_page: 1 } });
+        const postsText = postsResult.content?.[0]?.text || '';
+        const postId = JSON.parse(postsText)?.[0]?.id;
+        const postSlug = JSON.parse(postsText)?.[0]?.slug;
+        if (postId) {
+          dynamicArgs.get_content = { content_type: 'post', id: postId };
+          dynamicArgs.get_content_terms = { content_id: postId, content_type: 'post' };
+          log(`  Post ID=${postId}, slug="${postSlug}"`);
+        }
+        if (postSlug) {
+          dynamicArgs.get_content_by_slug = { slug: postSlug, content_types: ['post'] };
+          dynamicArgs.find_content_by_url = { url: '/' + postSlug + '/' };
+        }
+        await sleep(delay);
+
+        // Discover a real comment ID
+        const commentsResult = await client.callTool({ name: 'list_comments', arguments: { per_page: 1 } });
+        const commentsText = commentsResult.content?.[0]?.text || '';
+        const commentId = JSON.parse(commentsText)?.[0]?.id;
+        if (commentId) {
+          dynamicArgs.get_comment = { id: commentId };
+          log(`  Comment ID=${commentId}`);
+        }
+        await sleep(delay);
+
+        // Discover a real plugin name
+        const pluginsResult = await client.callTool({ name: 'list_plugins', arguments: { status: 'active' } });
+        const pluginsText = pluginsResult.content?.[0]?.text || '';
+        try {
+          const plugins = JSON.parse(pluginsText);
+          const firstPlugin = Array.isArray(plugins) ? plugins[0] : Object.values(plugins)[0];
+          const pluginSlug = firstPlugin?.plugin || firstPlugin?.textdomain;
+          if (pluginSlug) {
+            dynamicArgs.get_plugin = { plugin: pluginSlug };
+            log(`  Plugin="${pluginSlug}"`);
+          }
+        } catch { /* skip if parsing fails */ }
+        await sleep(delay);
+
+        // Discover a real media ID
+        const mediaResult = await client.callTool({ name: 'list_media', arguments: { per_page: 1 } });
+        const mediaText = mediaResult.content?.[0]?.text || '';
+        const mediaId = JSON.parse(mediaText)?.[0]?.id;
+        if (mediaId) {
+          dynamicArgs.get_media = { id: mediaId };
+          log(`  Media ID=${mediaId}`);
+        }
+        await sleep(delay);
+      } catch (err) {
+        log(`  Dynamic resolution error: ${err.message}`);
+      }
+    }
+
     // ── Tool Testing ───────────────────────────────────────────────
     log('Testing tools...');
     const toolResults = [];
@@ -388,8 +448,20 @@ async function main() {
         continue;
       }
 
+      // Resolve dynamic safeArgs
+      let resolvedArgs = entry.safeArgs;
+      if (entry.safeArgs === 'dynamic') {
+        resolvedArgs = dynamicArgs[entry.name] || null;
+        if (!resolvedArgs) {
+          toolResult.status = 'skipped';
+          toolResult.skip_reason = 'No data found for dynamic args resolution';
+          toolResults.push(toolResult);
+          continue;
+        }
+      }
+
       // Skip if no safeArgs defined for read tool
-      if (!entry.safeArgs) {
+      if (!resolvedArgs) {
         toolResult.status = 'skipped';
         toolResult.skip_reason = 'No safe test arguments defined';
         toolResults.push(toolResult);
@@ -408,7 +480,7 @@ async function main() {
       const startTime = Date.now();
       try {
         const result = await Promise.race([
-          client.callTool({ name: entry.name, arguments: entry.safeArgs }),
+          client.callTool({ name: entry.name, arguments: resolvedArgs }),
           new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), TIMEOUT_MS)),
         ]);
         const elapsed = Date.now() - startTime;

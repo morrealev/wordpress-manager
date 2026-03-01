@@ -101,8 +101,5 @@ export declare function hasSlackWebhook(siteId?: string): boolean;
 export declare function getSlackWebhookUrl(siteId?: string): string;
 export declare function hasSlackBot(siteId?: string): boolean;
 export declare function makeSlackBotRequest(method: string, endpoint: string, data?: Record<string, any>, siteId?: string): Promise<any>;
-/**
- * Search the WordPress.org Plugin Repository
- */
 export declare function searchWordPressPluginRepository(searchQuery: string, page?: number, perPage?: number): Promise<any>;
 export {};

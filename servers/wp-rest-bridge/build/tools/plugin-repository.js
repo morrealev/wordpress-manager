@@ -1,4 +1,5 @@
 import { searchWordPressPluginRepository } from '../wordpress.js';
+import axios from 'axios';
 import { z } from 'zod';
 // Define the schema for plugin repository search
 const searchPluginRepositorySchema = z.object({
@@ -70,38 +71,29 @@ export const pluginRepositoryHandlers = {
     },
     get_plugin_details: async (params) => {
         try {
-            // For plugin details, we use a different action in the WordPress.org API
             const apiUrl = 'https://api.wordpress.org/plugins/info/1.2/';
-            const requestData = {
-                action: 'plugin_information',
-                request: {
-                    slug: params.slug,
-                    fields: {
-                        description: true,
-                        sections: true,
-                        tested: true,
-                        requires: true,
-                        rating: true,
-                        ratings: true,
-                        downloaded: true,
-                        downloadlink: true,
-                        last_updated: true,
-                        homepage: true,
-                        tags: true,
-                        compatibility: true,
-                        author: true,
-                        contributors: true,
-                        banners: true,
-                        icons: true
-                    }
-                }
-            };
-            // Use axios directly for this specific request
-            const axios = (await import('axios')).default;
-            const response = await axios.post(apiUrl, requestData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+            // WordPress.org API requires GET with PHP-style bracket notation
+            const response = await axios.get(apiUrl, {
+                params: {
+                    action: 'plugin_information',
+                    'request[slug]': params.slug,
+                    'request[fields][description]': true,
+                    'request[fields][sections]': true,
+                    'request[fields][tested]': true,
+                    'request[fields][requires]': true,
+                    'request[fields][rating]': true,
+                    'request[fields][ratings]': true,
+                    'request[fields][downloaded]': true,
+                    'request[fields][downloadlink]': true,
+                    'request[fields][last_updated]': true,
+                    'request[fields][homepage]': true,
+                    'request[fields][tags]': true,
+                    'request[fields][compatibility]': true,
+                    'request[fields][author]': true,
+                    'request[fields][contributors]': true,
+                    'request[fields][banners]': true,
+                    'request[fields][icons]': true,
+                },
             });
             // Format the plugin details
             const plugin = response.data;
