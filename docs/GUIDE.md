@@ -2487,6 +2487,65 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/validate-wp-operation.sh 
 
 ---
 
+## 17. Content Framework
+
+The Content Framework connects Gen* ecosystem skills (GenCorpComm, GenMarketing, GenSignal) to WordPress publishing through structured Markdown files.
+
+### 17.1 Architecture
+
+The framework uses three types of MD files as configuration layer:
+
+| Type | Suffix | Purpose | Location |
+|------|--------|---------|----------|
+| Schema | `.schema.md` | Template definition | `skills/wp-content-pipeline/references/` |
+| Config | `.config.md` | Site-specific settings | `.content-state/{site_id}.config.md` |
+| Brief | `.brief.md` | Content instance | `.content-state/pipeline-active/` |
+
+### 17.2 Content Pipeline (Phase 1)
+
+**Skill**: `wp-content-pipeline`
+
+The pipeline orchestrates: `SCAN → CONFIG → VALIDATE → PUBLISH → DISTRIBUTE → UPDATE → ARCHIVE`
+
+**Creating a brief**:
+1. Generate content (via GenCorpComm or manually)
+2. Save as `.content-state/pipeline-active/BRF-YYYY-NNN.brief.md`
+3. Set frontmatter: site_id, title, categories, channels, SEO params
+4. Set `status: ready` when content is finalized
+
+**Publishing a brief**:
+1. Invoke `wp-content-pipeline` skill
+2. Pipeline reads all `status: ready` briefs
+3. Validates quality gates
+4. Creates WP post → distributes to channels → archives brief
+
+**Site configuration**:
+- One `.content-state/{site_id}.config.md` per managed site
+- Defines brand voice, default categories, active channels, SEO settings
+- Brief values override config defaults
+
+### 17.3 Directory Structure
+
+```
+.content-state/
+├── {site_id}.config.md          # site configuration
+├── pipeline-active/             # briefs in progress
+│   └── BRF-YYYY-NNN.brief.md
+└── pipeline-archive/            # completed briefs
+    └── BRF-YYYY-NNN.brief.md
+```
+
+### 17.4 Integration with Gen* Skills
+
+| Gen* Skill | Produces | Pipeline Consumes |
+|------------|----------|-------------------|
+| GenCorpComm | Multi-format content | Body + metadata → brief.md |
+| GenMarketing | Content calendar | Topics + dates → brief.md |
+| GenBrand | Brand voice | Tone + style → config.md |
+| GenSignal | Market signals | Topics → editorial planning (Phase 2) |
+
+---
+
 *Guida v2.12.2 — WordPress Manager Plugin per Claude Code*
 *Ultimo aggiornamento: 2026-03-01*
 *WCOP Score: 8.8/10 (Tier 4+5 complete)*
