@@ -2,6 +2,17 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.14.2] — 2026-03-02
+
+### Changed — Documentation Update
+
+Aggiornamento completo della documentazione utente per riflettere lo stato v2.14.x.
+
+- `docs/GUIDE.md` aggiornato da v2.12.2 a v2.14.1: +Sezione 17 (Content Framework), +Sezione 18 (Editorial Dashboard), workflow Step 0, directory tree aggiornato
+- `README.md` aggiornato da v1.7.0: architettura (12 agent, 46 skill, 148 tool), +18 entry Version History (v1.8.0–v2.14.1)
+
+---
+
 ## [2.14.1] — 2026-03-02
 
 ### Added — Context Snippet (Step 0)

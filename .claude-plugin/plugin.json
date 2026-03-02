@@ -1,6 +1,6 @@
 {
   "name": "wordpress-manager",
-  "version": "2.14.1",
+  "version": "2.14.2",
   "description": "Unified WordPress management plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (148 tools incl. WooCommerce, Multisite, Mailchimp, Buffer, SendGrid, GSC, GA4, Plausible, CWV, Slack, Workflows, LinkedIn, Twitter, Schema), and WordPress.com MCP with 46 skills, 12 agents, and security hooks. v2.14.1 adds Editorial Kanban Dashboard and Context Snippet (Step 0) in content skills.",
   "author": {
     "name": "vinmor",
