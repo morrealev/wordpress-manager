@@ -2,6 +2,61 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.13.0] — 2026-03-02
+
+### Added — Content Framework (3 Phases)
+
+Il Content Framework introduce un'architettura a 3 fasi che collega signal intelligence, content pipeline e editorial calendar. Zero nuovi MCP tool TypeScript — l'intera orchestrazione vive nel CLI via skill + file Markdown strutturati.
+
+**Phase 1: Content Pipeline Engine**
+- Nuova skill `wp-content-pipeline` con workflow 5-step: `RECEIVE → PREPARE → PUBLISH → DISTRIBUTE → ARCHIVE`
+- Schema `content-brief.schema.md` — formato di scambio tra Gen* skill e WordPress
+- Schema `site-config.schema.md` — configurazione per-sito (cadenza, canali, defaults)
+- Directory `.content-state/` con pipeline-active/archive per gestione brief
+- Supporto multi-sito (opencactus + altri)
+- Distribuzione automatica su Buffer + Mailchimp dopo pubblicazione
+
+**Phase 2: Content Intelligence**
+- Estesa skill `wp-analytics` con Step 7 (signal feed generation)
+- Schema `signals-feed.schema.md` — compatibile con GenSignal NormalizedEvent
+- Delta calculation: confronto metriche con periodo precedente
+- Riconoscimento automatico pattern GenSignal (Search Intent Shift, Early-Adopter Surge, Price-Floor Inversion)
+- Pipeline: analytics → signals-feed.md → insight azionabili
+
+**Phase 3: Editorial Calendar**
+- Nuova skill `wp-editorial-planner` con workflow 4-step: `PLAN → BRIEF → SCHEDULE → SYNC`
+- Schema `editorial.schema.md` — calendario mensile con tabelle settimanali (7 colonne)
+- Lifecycle entry: `planned → draft → ready → scheduled → published`
+- Integrazione cross-phase: signals-feed → topic suggestions → calendar → brief → WP post
+- SYNC bidirezionale: status WordPress → aggiornamento calendario
+
+**E2E Test su opencactus.com**
+- PLAN: anomalia signals-feed (acqua di cactus +120%) → topic assignment ✅
+- BRIEF: calendar entry → BRF-2026-005.brief.md con contenuto completo ✅
+- SCHEDULE: brief → WP post via AIWU ✅ (con limitazione `post_date` documentata)
+- SYNC: lettura status WP e verifica calendario ✅
+- Cleanup: test posts eliminati ✅
+
+**Known Limitation — AIWU MCP**
+- `wp_create_post` / `wp_update_post` non supportano `post_date`
+- `status: future` non funziona via AIWU (auto-publish)
+- Workaround: usare wp-rest-bridge `create_content` che supporta `date`
+
+### Added — Validation Runner v1.2.0
+
+- Sistema di validazione automatica per tutti i 148 MCP tool
+- Test CRUD per 26 write tool con sequenze automatiche a 2 tier
+- Modalità interattiva CLI con `@clack/prompts` (selezione sito, tipo validazione, filtro modulo)
+- Flag `--site=X` per selezione sito in batch mode
+- Report: 48 read passed, 26 write passed, 0 failed su opencactus
+
+### Stats
+
+- Skills: 43 → **45** (+wp-content-pipeline, +wp-editorial-planner)
+- Reference schemas: +4 (content-brief, site-config, signals-feed, editorial)
+- Architecture doc: `docs/plans/2026-03-02-content-framework-architecture.md`
+- GUIDE.md: +3 sezioni (17.4 Content Pipeline, 17.5 Content Intelligence, 17.6 Editorial Calendar)
+
 ## [2.12.2] — 2026-03-01
 
 ### Fixed — Structured Data Tools Rewrite
