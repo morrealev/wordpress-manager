@@ -56,7 +56,7 @@ WooCommerce sends the full resource object as the payload.
   "line_items": [
     {
       "id": 1,
-      "name": "Cactus Water - Dolce",
+      "name": "Sparkling Water - Dolce",
       "product_id": 78,
       "quantity": 6,
       "total": "29.99"
@@ -73,8 +73,8 @@ WooCommerce sends the full resource object as the payload.
 ```json
 {
   "id": 78,
-  "name": "Cactus Water - Dolce",
-  "slug": "cactus-water-dolce",
+  "name": "Sparkling Water - Dolce",
+  "slug": "premium-water-dolce",
   "type": "simple",
   "status": "publish",
   "price": "4.99",

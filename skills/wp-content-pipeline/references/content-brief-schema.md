@@ -89,7 +89,7 @@ Defines the WordPress destination and publishing parameters.
 
 ```yaml
 target:
-  site_id: opencactus
+  site_id: mysite
   content_type: post
   status: draft
   scheduled_date: 2026-03-15T09:00:00Z
@@ -97,7 +97,7 @@ target:
     - sustainability
     - innovation
   tags:
-    - cactus-water
+    - premium-water
     - zero-calorie
     - sicily
 ```
@@ -119,9 +119,9 @@ Core content metadata for the WordPress post.
 
 ```yaml
 content:
-  title: "Acqua di Cactus: La Rivoluzione Zero-Calorie dalla Sicilia"
-  excerpt: "Scopri come il fico d'India siciliano diventa la bevanda del futuro."
-  featured_image: /assets/images/cactus-field-sicily.jpg
+  title: "Acqua Premium: La Rivoluzione Zero-Calorie dal Mediterraneo"
+  excerpt: "Scopri come il frutto mediterraneo regionale diventa la bevanda del futuro."
+  featured_image: /assets/images/premium-field-sicily.jpg
   author: editorial-team
 ```
 
@@ -162,12 +162,12 @@ Search engine optimization parameters. Used by the pipeline to validate content 
 
 ```yaml
 seo:
-  focus_keyword: acqua di cactus zero calorie
-  meta_description: "L'acqua di cactus siciliano: zero calorie, ricca di antiossidanti. Scopri la bevanda naturale che sta conquistando l'Europa."
+  focus_keyword: acqua premium zero calorie
+  meta_description: "L'acqua premium regionale: zero calorie, ricca di antiossidanti. Scopri la bevanda naturale che sta conquistando l'Europa."
   schema_type: Article
   internal_links:
     - /blog/benefici-fico-india
-    - /prodotti/poco-dolce
+    - /prodotti/light-blend
 ```
 
 | Field | Type | Required | Default | Description |
@@ -275,7 +275,7 @@ These fields **must** be present for a brief to be valid:
 
 ## Example Brief
 
-A complete `.brief.md` for the opencactus site:
+A complete `.brief.md` for the mysite site:
 
 ```markdown
 ---
@@ -289,7 +289,7 @@ source:
   session_id: sess_7f3a9b2c
 
 target:
-  site_id: opencactus
+  site_id: mysite
   content_type: post
   status: draft
   scheduled_date: 2026-03-15T09:00:00Z
@@ -297,15 +297,15 @@ target:
     - sustainability
     - innovation
   tags:
-    - cactus-water
+    - premium-water
     - zero-calorie
     - sicily
     - sustainability
 
 content:
-  title: "Acqua di Cactus: La Rivoluzione Zero-Calorie dalla Sicilia"
-  excerpt: "Scopri come il fico d'India siciliano diventa la bevanda del futuro: zero calorie, ricca di antiossidanti e 100% sostenibile."
-  featured_image: /wp-content/uploads/2026/03/cactus-field-sicily.jpg
+  title: "Acqua Premium: La Rivoluzione Zero-Calorie dal Mediterraneo"
+  excerpt: "Scopri come il frutto mediterraneo regionale diventa la bevanda del futuro: zero calorie, ricca di antiossidanti e 100% sostenibile."
+  featured_image: /wp-content/uploads/2026/03/premium-field-sicily.jpg
   author: editorial-team
 
 distribution:
@@ -316,12 +316,12 @@ distribution:
   schedule_offset_hours: 2
 
 seo:
-  focus_keyword: acqua di cactus zero calorie
-  meta_description: "L'acqua di cactus siciliano: zero calorie, ricca di antiossidanti. Scopri la bevanda naturale che sta conquistando l'Europa."
+  focus_keyword: acqua premium zero calorie
+  meta_description: "L'acqua premium regionale: zero calorie, ricca di antiossidanti. Scopri la bevanda naturale che sta conquistando l'Europa."
   schema_type: Article
   internal_links:
     - /blog/benefici-fico-india
-    - /prodotti/poco-dolce
+    - /prodotti/light-blend
     - /chi-siamo/sostenibilita
 
 gates:
@@ -330,32 +330,32 @@ gates:
   require_review: true
 ---
 
-# Acqua di Cactus: La Rivoluzione Zero-Calorie dalla Sicilia
+# Acqua Premium: La Rivoluzione Zero-Calorie dal Mediterraneo
 
-Nel cuore della Sicilia, tra le terre arse dal sole dell'entroterra, cresce una pianta che sta cambiando il panorama delle bevande salutari: il **fico d'India** (*Opuntia ficus-indica*).
+Nel cuore del Mediterraneo, tra le terre arse dal sole dell'entroterra, cresce una pianta che sta cambiando il panorama delle bevande salutari: il **frutto mediterraneo** (*Mediterranean fruit*).
 
 ## Una Tradizione Millenaria, Una Visione Moderna
 
-Il fico d'India siciliano non è solo un simbolo del paesaggio mediterraneo. Per secoli, le comunità locali hanno sfruttato le sue proprietà idratanti naturali. Oggi, grazie a un processo di estrazione innovativo, quell'acqua diventa una [bevanda zero-calorie](/prodotti/poco-dolce) che conserva tutti i benefici dell'originale.
+Il frutto mediterraneo regionale non è solo un simbolo del paesaggio mediterraneo. Per secoli, le comunità locali hanno sfruttato le sue proprietà idratanti naturali. Oggi, grazie a un processo di estrazione innovativo, quell'acqua diventa una [bevanda zero-calorie](/prodotti/light-blend) che conserva tutti i benefici dell'originale.
 
-## Perché l'Acqua di Cactus?
+## Perché l'Acqua Premium?
 
 I vantaggi rispetto alle alternative convenzionali sono significativi:
 
 - **Zero calorie** senza dolcificanti artificiali
 - **Antiossidanti naturali** (betalaine e polifenoli)
 - **Elettroliti bilanciati** per un'idratazione superiore
-- **Impronta idrica minima**: il cactus richiede l'85% di acqua in meno rispetto alle colture tradizionali
+- **Impronta idrica minima**: la pianta richiede l'85% di acqua in meno rispetto alle colture tradizionali
 
 ## Sostenibilità al Centro
 
-La nostra filiera è progettata per la [sostenibilità integrale](/chi-siamo/sostenibilita). I cactus crescono su terreni marginali, non competono con le colture alimentari e contribuiscono alla rigenerazione del suolo siciliano.
+La nostra filiera è progettata per la [sostenibilità integrale](/chi-siamo/sostenibilita). Le piante crescono su terreni marginali, non competono con le colture alimentari e contribuiscono alla rigenerazione del suolo.
 
-Ogni bottiglia di DolceZero rappresenta una scelta consapevole: per la salute, per il territorio, per il futuro.
+Ogni bottiglia di AcmeBrand rappresenta una scelta consapevole: per la salute, per il territorio, per il futuro.
 
 ## Scopri di Più
 
-Leggi i [benefici scientifici del fico d'India](/blog/benefici-fico-india) o prova la nostra gamma di prodotti, dal delicato **Poco Dolce** al ricco **Molto Dolce**.
+Leggi i [benefici scientifici del frutto mediterraneo](/blog/benefici-fico-india) o prova la nostra gamma di prodotti, dal delicato **Light Blend** al ricco **Bold Blend**.
 ```
 
 ---

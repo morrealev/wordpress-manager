@@ -128,11 +128,11 @@ npx wp-env run cli wp wc tool run install_pages --user=1
 ```bash
 # Prodotto semplice
 npx wp-env run cli wp wc product create \
-  --name="Acqua di Cactus Poco Dolce" \
+  --name="Acqua Premium Light Blend" \
   --type=simple \
   --regular_price=3.50 \
-  --description="Bevanda naturale a base di acqua di cactus siciliano. Zero calorie." \
-  --short_description="Cactus water naturale, zero calorie" \
+  --description="Bevanda naturale premium a zero calorie. Zero calorie." \
+  --short_description="Premium sparkling water, zero calorie" \
   --categories='[{"id": 1}]' \
   --manage_stock=true \
   --stock_quantity=100 \
@@ -141,7 +141,7 @@ npx wp-env run cli wp wc product create \
 
 # Prodotto variabile (creare prima il prodotto padre, poi le varianti)
 npx wp-env run cli wp wc product create \
-  --name="T-Shirt DolceZero" \
+  --name="T-Shirt AcmeBrand" \
   --type=variable \
   --description="T-shirt ufficiale del brand" \
   --attributes='[{"name":"Taglia","options":["S","M","L","XL"],"variation":true,"visible":true}]' \

@@ -60,8 +60,8 @@ Each step reads specific files, calls specific tools, and has defined decision p
 **Output format:**
 ```
 Pipeline Scan Results:
-  1. BRF-2026-014 — "Acqua di Cactus: La Rivoluzione" → opencactus (post) [linkedin, twitter]
-  2. BRF-2026-015 — "Summer Campaign Launch" → opencactus (page) [mailchimp]
+  1. BRF-2026-014 — "Acqua Premium: La Rivoluzione" → mysite (post) [linkedin, twitter]
+  2. BRF-2026-015 — "Summer Campaign Launch" → mysite (page) [mailchimp]
 
 Which brief to process? (enter number, or "all")
 ```
@@ -76,8 +76,8 @@ Which brief to process? (enter number, or "all")
 - `.content-state/{site_id}.config.md` -- site configuration for the brief's target site
 
 **Procedure:**
-1. Read `target.site_id` from the selected brief (e.g., `opencactus`)
-2. Load `.content-state/{site_id}.config.md` (e.g., `.content-state/opencactus.config.md`)
+1. Read `target.site_id` from the selected brief (e.g., `mysite`)
+2. Load `.content-state/{site_id}.config.md` (e.g., `.content-state/mysite.config.md`)
 3. Parse the YAML frontmatter for site defaults, brand context, channel config, and SEO settings
 4. Apply the override hierarchy -- brief values take precedence over site config defaults:
 
@@ -182,7 +182,7 @@ Note: Even though the brief has `status: ready`, re-evaluate gates at publish ti
      content_type: {target.content_type}
      id: {post_id}
      categories: {target.categories}        # e.g., ["sustainability", "innovation"]
-     tags: {target.tags}                    # e.g., ["cactus-water", "zero-calorie"]
+     tags: {target.tags}                    # e.g., ["premium-water", "zero-calorie"]
    ```
 
 5. **Inject structured data** (if `seo.schema_type` is defined):
@@ -348,8 +348,8 @@ Note: Even though the brief has `status: ready`, re-evaluate gates at publish ti
    ```
    Pipeline Complete:
      Brief: BRF-2026-014
-     Title: "Acqua di Cactus: La Rivoluzione Zero-Calorie dalla Sicilia"
-     WordPress: https://opencactus.com/acqua-di-cactus-rivoluzione/ (published)
+     Title: "Acqua Premium: La Rivoluzione Zero-Calorie dal Mediterraneo"
+     WordPress: https://mysite.example.com/acqua-di-premium-rivoluzione/ (published)
      Distribution:
        - LinkedIn: posted ✓
        - Twitter: posted ✓

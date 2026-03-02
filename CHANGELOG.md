@@ -30,9 +30,9 @@ Dashboard HTML statico generato on-demand dai file `.content-state/`. Zero dipen
 - CLI: `--site=X`, `--month=YYYY-MM`, `--output=path`, `--no-open`
 - Auto-detect sito se configurazione unica
 - Apertura browser cross-platform (Linux/macOS/Windows)
-- npm script: `npm run dashboard -- --site=opencactus`
+- npm script: `npm run dashboard -- --site=mysite`
 
-**Verificato con dati reali opencactus.com**
+**Verificato con dati reali mysite.example.com**
 - 8 entry calendario (3 planned, 1 draft, 2 ready, 2 published)
 - 3 anomalie signals (+120%, +85%, +47%)
 - Output 13.7 KB, tutte le sezioni presenti
@@ -50,7 +50,7 @@ Il Content Framework introduce un'architettura a 3 fasi che collega signal intel
 - Schema `content-brief.schema.md` — formato di scambio tra Gen* skill e WordPress
 - Schema `site-config.schema.md` — configurazione per-sito (cadenza, canali, defaults)
 - Directory `.content-state/` con pipeline-active/archive per gestione brief
-- Supporto multi-sito (opencactus + altri)
+- Supporto multi-sito (mysite + altri)
 - Distribuzione automatica su Buffer + Mailchimp dopo pubblicazione
 
 **Phase 2: Content Intelligence**
@@ -67,8 +67,8 @@ Il Content Framework introduce un'architettura a 3 fasi che collega signal intel
 - Integrazione cross-phase: signals-feed → topic suggestions → calendar → brief → WP post
 - SYNC bidirezionale: status WordPress → aggiornamento calendario
 
-**E2E Test su opencactus.com**
-- PLAN: anomalia signals-feed (acqua di cactus +120%) → topic assignment ✅
+**E2E Test su mysite.example.com**
+- PLAN: anomalia signals-feed (acqua premium +120%) → topic assignment ✅
 - BRIEF: calendar entry → BRF-2026-005.brief.md con contenuto completo ✅
 - SCHEDULE: brief → WP post via AIWU ✅ (con limitazione `post_date` documentata)
 - SYNC: lettura status WP e verifica calendario ✅
@@ -85,7 +85,7 @@ Il Content Framework introduce un'architettura a 3 fasi che collega signal intel
 - Test CRUD per 26 write tool con sequenze automatiche a 2 tier
 - Modalità interattiva CLI con `@clack/prompts` (selezione sito, tipo validazione, filtro modulo)
 - Flag `--site=X` per selezione sito in batch mode
-- Report: 48 read passed, 26 write passed, 0 failed su opencactus
+- Report: 48 read passed, 26 write passed, 0 failed su mysite
 
 ### Stats
 
@@ -111,7 +111,7 @@ Il Content Framework introduce un'architettura a 3 fasi che collega signal intel
 - Now finds ALL JSON-LD scripts on a page (not just the first)
 - Reports per-schema issues with type labels
 
-### Validated end-to-end on opencactus.com
+### Validated end-to-end on mysite.example.com
 - sd_inject Article on post 2348: ✅
 - sd_list_schemas finds injected schema: ✅
 - sd_validate on live URL: ✅ (2 schemas detected)
@@ -134,7 +134,7 @@ Il Content Framework introduce un'architettura a 3 fasi che collega signal intel
 - Corrected tool count from 145 to 148 across GUIDE.md and package.json
 - WordPress core: Plugins 6 (not 5), Users 6 (not 5), Media 5 (not 4), +Search (1)
 
-### Validated end-to-end on opencactus.com
+### Validated end-to-end on mysite.example.com
 - `get_active_site`, `list_content`, `sd_validate` (markup + URL), `sd_list_schemas`
 - GSC, Mailchimp tools return correct "not configured" errors
 

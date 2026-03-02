@@ -47,10 +47,10 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is cactus water?",
+      "name": "What is sparkling water?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Cactus water is a beverage made from Sicilian prickly pear..."
+        "text": "Sparkling water is a beverage made from Mediterranean prickly pear..."
       }
     }
   ]
@@ -68,9 +68,9 @@
 ```json
 {
   "@type": "HowTo",
-  "name": "How to Make Cactus Water Smoothie",
+  "name": "How to Make Sparkling Water Smoothie",
   "step": [
-    { "@type": "HowToStep", "text": "Blend 200ml cactus water with ice" },
+    { "@type": "HowToStep", "text": "Blend 200ml sparkling water with ice" },
     { "@type": "HowToStep", "text": "Add fresh fruit of your choice" }
   ]
 }

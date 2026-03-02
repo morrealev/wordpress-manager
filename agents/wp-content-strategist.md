@@ -6,7 +6,7 @@ description: |
 
   <example>
   Context: User wants to create a new blog post with SEO optimization.
-  user: "Create a blog post about cactus water benefits for opencactus.com"
+  user: "Create a blog post about sparkling water benefits for mysite.example.com"
   assistant: "I'll use the wp-content-strategist agent to draft and publish the post with SEO optimization."
   <commentary>Content creation with SEO awareness requires specialized content workflow.</commentary>
   </example>
@@ -20,7 +20,7 @@ description: |
 
   <example>
   Context: User needs to manage taxonomies and organize content.
-  user: "Create product categories for the DolceZero line"
+  user: "Create product categories for the AcmeBrand line"
   assistant: "I'll use the wp-content-strategist agent to set up the taxonomy structure."
   <commentary>Taxonomy design impacts content architecture and SEO.</commentary>
   </example>

@@ -57,7 +57,7 @@ import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 const mod = await import('./scripts/context-scanner.mjs');
 // Test frontmatter parsing
-const config = await readFile('.content-state/opencactus.config.md', 'utf8');
+const config = await readFile('.content-state/mysite.config.md', 'utf8');
 const parsed = mod.parseFrontmatter(config);
 console.log('Config site_id:', parsed.frontmatter.site_id);
 console.log('Config channels:', Object.keys(parsed.frontmatter.channels || {}));
@@ -72,7 +72,7 @@ console.log('Planned (no title):', entries.filter(e => !e.title).length);
 ```
 
 Expected:
-- Config site_id: `opencactus`
+- Config site_id: `mysite`
 - Config channels include `linkedin`, `twitter`, `mailchimp`
 - Entries count: `8`
 - First entry has `date: "2026-03-04"`, `status: "published"`, `briefId: "BRF-2026-001"`
@@ -127,7 +127,7 @@ Run:
 ```bash
 node -e "
 const mod = await import('./scripts/context-scanner.mjs');
-const data = await mod.scanContentState('.content-state', 'opencactus');
+const data = await mod.scanContentState('.content-state', 'mysite');
 console.log('Site:', data.site.id, data.site.url);
 console.log('Calendar:', data.calendar?.id, '- entries:', data.calendar?.entries?.length);
 console.log('Briefs active:', data.briefs.active.length);
@@ -137,7 +137,7 @@ console.log('Signals:', data.signals?.anomalies?.length, 'anomalies');
 ```
 
 Expected:
-- Site: `opencactus https://opencactus.com`
+- Site: `mysite https://mysite.example.com`
 - Calendar: `CAL-2026-03` - entries: `8`
 - Briefs active: `1`
 - Briefs archived: `1`
@@ -191,7 +191,7 @@ Run:
 ```bash
 node -e "
 const mod = await import('./scripts/context-scanner.mjs');
-const data = await mod.scanContentState('.content-state', 'opencactus');
+const data = await mod.scanContentState('.content-state', 'mysite');
 const metrics = mod.aggregateMetrics(data, 'kanban');
 console.log('Progress:', metrics.postsPublished + '/' + metrics.postsTarget, '(' + metrics.progressPercent + '%)');
 console.log('Columns:', JSON.stringify(metrics.columns));
@@ -262,7 +262,7 @@ Run:
 node -e "
 const scanner = await import('./scripts/context-scanner.mjs');
 const renderer = await import('./scripts/dashboard-renderer.mjs');
-const data = await scanner.scanContentState('.content-state', 'opencactus');
+const data = await scanner.scanContentState('.content-state', 'mysite');
 const metrics = scanner.aggregateMetrics(data, 'kanban');
 const html = renderer.renderKanbanHTML(data, metrics);
 console.log('HTML length:', html.length, 'bytes');
@@ -309,7 +309,7 @@ Add to `dashboard-renderer.mjs`:
   9. If not `--no-open`: open in browser via `xdg-open` / `open` / `start`
   10. Print summary to terminal:
       ```
-      Dashboard generated: .content-state/.dashboard-opencactus-2026-03.html
+      Dashboard generated: .content-state/.dashboard-mysite-2026-03.html
       Posts: 2/8 published | Pipeline: 1 draft, 2 ready | Signals: 3 anomalies
       ```
 
@@ -336,18 +336,18 @@ Note: on WSL2, `xdg-open` should open the default Windows browser if `wslu` is i
 Run:
 ```bash
 # Test with --no-open (don't open browser in CI-like context)
-node scripts/dashboard-renderer.mjs --site=opencactus --no-open
+node scripts/dashboard-renderer.mjs --site=mysite --no-open
 ```
 
 Expected:
-- File created at `.content-state/.dashboard-opencactus-2026-03.html`
+- File created at `.content-state/.dashboard-mysite-2026-03.html`
 - Terminal output shows summary line
 - Exit code 0
 
 Verify the file:
 ```bash
-wc -c .content-state/.dashboard-opencactus-2026-03.html
-head -5 .content-state/.dashboard-opencactus-2026-03.html
+wc -c .content-state/.dashboard-mysite-2026-03.html
+head -5 .content-state/.dashboard-mysite-2026-03.html
 ```
 
 Expected:
@@ -412,7 +412,7 @@ Expected: `Has frontmatter: true`
 **Step 1: Generate dashboard and inspect HTML**
 
 ```bash
-node scripts/dashboard-renderer.mjs --site=opencactus --no-open --output=/tmp/kanban-test.html
+node scripts/dashboard-renderer.mjs --site=mysite --no-open --output=/tmp/kanban-test.html
 ```
 
 **Step 2: Verify HTML structure**
@@ -428,7 +428,7 @@ grep -c 'class="card' /tmp/kanban-test.html
 grep 'BRF-2026-001' /tmp/kanban-test.html
 
 # Check signals strip
-grep 'acqua di cactus' /tmp/kanban-test.html
+grep 'acqua premium' /tmp/kanban-test.html
 
 # Check progress bar
 grep 'pubblicati' /tmp/kanban-test.html
@@ -441,7 +441,7 @@ Expected:
 - 5 columns
 - 8 cards (or close — one per calendar entry)
 - BRF-2026-001 present in a published card
-- "acqua di cactus" in signals strip
+- "acqua premium" in signals strip
 - "pubblicati" in progress area
 - No external dependencies
 

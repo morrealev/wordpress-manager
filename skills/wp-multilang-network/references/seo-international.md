@@ -105,12 +105,12 @@ Add language to all structured data:
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Benefici dell'Acqua di Cactus",
+  "name": "Benefici dell'Acqua Premium",
   "inLanguage": "it",
-  "url": "https://example.com/it/benefici-acqua-cactus/",
+  "url": "https://example.com/it/benefici-acqua-premium/",
   "isPartOf": {
     "@type": "WebSite",
-    "name": "DolceZero Italia",
+    "name": "AcmeBrand Italia",
     "url": "https://example.com/it/",
     "inLanguage": "it"
   }
@@ -123,9 +123,9 @@ Add language to all structured data:
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "DolceZero",
+  "name": "AcmeBrand",
   "url": "https://example.com/",
-  "alternateName": ["DolceZero Italia", "DolceZero Deutschland"],
+  "alternateName": ["AcmeBrand Italia", "AcmeBrand Deutschland"],
   "contactPoint": [
     {
       "@type": "ContactPoint",
@@ -149,8 +149,8 @@ Add language to all structured data:
 
 | Scenario | Canonical Rule |
 |----------|---------------|
-| English product page | Self-canonical: `https://example.com/products/cactus-water/` |
-| Italian product page | Self-canonical: `https://example.com/it/prodotti/acqua-cactus/` |
+| English product page | Self-canonical: `https://example.com/products/premium-water/` |
+| Italian product page | Self-canonical: `https://example.com/it/prodotti/acqua-premium/` |
 | English = Italian (untranslated) | **Do NOT canonical Italian → English** — either translate or noindex |
 | URL with `?lang=` parameter | Canonical → clean URL without parameter |
 

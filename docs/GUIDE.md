@@ -346,7 +346,7 @@ WordPress Manager comprende richieste in linguaggio naturale. Ecco come formular
 
 | Cosa vuoi fare | Come chiederlo |
 |----------------|----------------|
-| Controllare lo stato | "Come sta il mio sito?" / "Status di opencactus" |
+| Controllare lo stato | "Come sta il mio sito?" / "Status di mysite" |
 | Creare un post | "Crea un post su..." / "Scrivi un articolo su..." |
 | Deploy un plugin | "Deploya il plugin X" / "Pusha il tema in produzione" |
 | Audit sicurezza | "Fai un audit di sicurezza" / "Controlla la sicurezza del sito" |
@@ -356,7 +356,7 @@ WordPress Manager comprende richieste in linguaggio naturale. Ecco come formular
 | Ripristinare un backup | "Ripristina il backup" / "Restore dal backup di ieri" |
 | Migrare un sito | "Migra il sito su Hostinger" / "Trasferisci il sito" |
 | Aggiungere un nuovo sito | "Configura un nuovo sito WordPress" |
-| Cambiare sito attivo | "Passa al sito bioinagro" / "Switch a opencactus" |
+| Cambiare sito attivo | "Passa al sito othersite" / "Switch a mysite" |
 | Eseguire test | "Esegui i test" / "Lancia Playwright" / "Testa il plugin" |
 | Hardening sicurezza | "Metti in sicurezza il sito" / "Hardening" |
 | Audit accessibilita | "Controlla l'accessibilita" / "WCAG audit" |
@@ -557,7 +557,7 @@ Il plugin include **12 agenti** organizzati per area di competenza. Alcuni agent
 - Switching tra siti multipli
 - Coordinamento tra tool Hostinger e WP REST Bridge
 
-**Esempio attivazione**: "Come sta il mio sito?", "Passa al sito opencactus", "Elenca tutti i siti configurati"
+**Esempio attivazione**: "Come sta il mio sito?", "Passa al sito mysite", "Elenca tutti i siti configurati"
 
 ---
 
@@ -982,7 +982,7 @@ wp-block-development: guida creazione blocco
 ```
 
 ```
-Utente: "Deploya il plugin su opencactus"
+Utente: "Deploya il plugin su mysite"
   |
 wordpress-router: TASK = operativo
   |
@@ -1373,7 +1373,7 @@ Questi hook eseguono script bash per validazioni tecniche:
 Per un'operazione di import WordPress, la catena e:
 
 ```
-Utente: "Importa il backup su opencactus"
+Utente: "Importa il backup su mysite"
   |
 Hook #6 (backup-reminder.sh) -> Stampa reminder backup
   |
@@ -1536,26 +1536,26 @@ Aggiungi piu siti a `WP_SITES_CONFIG`:
 ```bash
 export WP_SITES_CONFIG='[
   {
-    "id": "opencactus",
-    "url": "https://opencactus.com",
-    "username": "admin@opencactus.com",
+    "id": "mysite",
+    "url": "https://mysite.example.com",
+    "username": "admin@mysite.example.com",
     "password": "xxxx xxxx xxxx xxxx"
   },
   {
-    "id": "bioinagro",
-    "url": "https://bioinagro.com",
-    "username": "admin@bioinagro.com",
+    "id": "othersite",
+    "url": "https://othersite.example.com",
+    "username": "admin@othersite.example.com",
     "password": "yyyy yyyy yyyy yyyy"
   }
 ]'
-export WP_DEFAULT_SITE="opencactus"
+export WP_DEFAULT_SITE="mysite"
 ```
 
 ### Cambio Sito
 
 ```
-"Passa al sito bioinagro"
-"Switch to opencactus"
+"Passa al sito othersite"
+"Switch to mysite"
 "Elenca i siti configurati"
 ```
 
@@ -1578,7 +1578,7 @@ Il wp-site-manager agent determina automaticamente quale set di tool usare:
 ### Scenario 1: Check-up Mattutino del Sito
 
 ```
-Tu: "Come sta opencactus oggi?"
+Tu: "Come sta mysite oggi?"
 
 Claude:
 - Controlla raggiungibilita (HTTP 200)
@@ -1592,7 +1592,7 @@ Claude:
 ### Scenario 2: Pubblicare un Articolo Ottimizzato SEO
 
 ```
-Tu: "Scrivi e pubblica un articolo sulla bioeconomia del fico d'India in Sicilia"
+Tu: "Scrivi e pubblica un articolo sulla bioeconomia del frutto mediterraneo in Mediterraneo"
 
 Claude (attiva wp-content-strategist + skill wp-content):
 1. Propone struttura (H1, H2, H3)
@@ -1764,7 +1764,7 @@ Claude (attiva wp-cicd-engineer + skill wp-cicd):
 ### Scenario 14: Monitoring Continuo del Sito
 
 ```
-Tu: "Configura il monitoring completo per opencactus.com"
+Tu: "Configura il monitoring completo per mysite.example.com"
 
 Claude (attiva wp-monitoring-agent + skill wp-monitoring):
 1. Detection con monitoring_inspect.mjs (rileva setup esistente)
@@ -2014,7 +2014,7 @@ Claude (attiva wp-distribution-manager + skill wp-linkedin):
 ### Scenario 30: Thread Twitter/X dal Blog
 
 ```
-Tu: "Crea un thread Twitter dal mio ultimo articolo sul fico d'India"
+Tu: "Crea un thread Twitter dal mio ultimo articolo sul frutto mediterraneo"
 
 Claude (attiva wp-distribution-manager + skill wp-twitter):
 1. Detection con twitter_inspect.mjs (OAuth tokens configurati?)
@@ -2029,10 +2029,10 @@ Claude (attiva wp-distribution-manager + skill wp-twitter):
 ### Scenario 31: Generare Contenuto AI da Zero
 
 ```
-Tu: "Scrivi un articolo sui benefici dell'acqua di cactus per l'idratazione"
+Tu: "Scrivi un articolo sui benefici dell'acqua premium per l'idratazione"
 
 Claude (attiva wp-content-strategist + skill wp-content-generation):
-1. Brief: topic = acqua di cactus, audience = consumatori health-conscious, goal = informare, 1200-1500 parole
+1. Brief: topic = acqua premium, audience = consumatori health-conscious, goal = informare, 1200-1500 parole
 2. Keyword research: se GSC disponibile, gsc_query_analytics per keyword correlate; altrimenti suggerisce keyword semantiche
 3. Outline: pattern "Standard Article" — intro + 4 H2 (benefici, scienza, vs alternative, come usare) + conclusione
 4. Draft: scrive contenuto calibrato sulla voce del sito (analizza ultimi 5 post per tono)
@@ -2182,8 +2182,8 @@ Il menu guida attraverso 4 step:
 ┌  WP REST Bridge — Validation Runner v1.2.0
 │
 ◆  Seleziona il sito target
-│  ● opencactus (https://opencactus.com)
-│  ○ bioinagro (https://www.bioinagro.it)
+│  ● mysite (https://mysite.example.com)
+│  ○ othersite (https://othersite.example.com)
 └
 ◆  Cosa vuoi validare?
 │  ○ Solo read tool
@@ -2200,13 +2200,13 @@ Per automazione, CI, o uso da Claude Code si usano i flag:
 
 ```bash
 # Selezionare sito specifico
-node scripts/run-validation.mjs --site=opencactus
+node scripts/run-validation.mjs --site=mysite
 
 # Test solo read tool
-node scripts/run-validation.mjs --site=opencactus --module=unified-content
+node scripts/run-validation.mjs --site=mysite --module=unified-content
 
 # Test write CRUD sequences
-node scripts/run-validation.mjs --site=opencactus --test-writes
+node scripts/run-validation.mjs --site=mysite --test-writes
 
 # Solo Tier 1 (content, term, comment, user)
 node scripts/run-validation.mjs --test-writes --tier=1

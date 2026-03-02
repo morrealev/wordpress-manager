@@ -27,24 +27,24 @@ Ready-to-use templates for converting WordPress content into platform-specific f
 
 **Example input:**
 ```
-Title: "5 Benefits of Cactus Water for Summer Hydration"
-Excerpt: "Cactus water from Sicilian prickly pear is packed with electrolytes,
+Title: "5 Benefits of Sparkling Water for Summer Hydration"
+Excerpt: "Sparkling water from Mediterranean prickly pear is packed with electrolytes,
 antioxidants, and has zero calories. Here's why it's the perfect summer drink."
-Tags: ["cactus water", "hydration", "zero calorie"]
+Tags: ["sparkling water", "hydration", "zero calorie"]
 ```
 
 **Example output:**
 ```
-Zero calories, packed with electrolytes — cactus water is the summer drink
+Zero calories, packed with electrolytes — sparkling water is the summer drink
 you didn't know you needed 🌵
 
-https://dolcezero.com/cactus-water-benefits
+https://acmebrand.example.com/sparkling-water-benefits
 
-#cactuswater #hydration #zerocalorie
+#sparklingwater #hydration #zerocalorie
 ```
 
 **Hashtag generation logic:**
-1. Take post tags, lowercase, remove spaces → `#cactuswater`
+1. Take post tags, lowercase, remove spaces → `#sparklingwater`
 2. Add 1-2 category-based hashtags → `#healthydrinks`
 3. Cap at 3 hashtags for Twitter (engagement drops with more)
 
@@ -87,7 +87,7 @@ If you found this useful, check out the full article:
 
 **Example input:**
 ```
-Title: "5 Benefits of Cactus Water for Summer Hydration"
+Title: "5 Benefits of Sparkling Water for Summer Hydration"
 H2s: ["Rich in Electrolytes", "Zero Calories", "Antioxidant Power",
       "Sustainable Sourcing", "Naturally Refreshing"]
 ```
@@ -95,20 +95,20 @@ H2s: ["Rich in Electrolytes", "Zero Calories", "Antioxidant Power",
 **Example output:**
 ```
 Tweet 1:
-5 reasons cactus water is the smartest hydration choice this summer
+5 reasons sparkling water is the smartest hydration choice this summer
 
 A thread 🧵👇
 
 Tweet 2:
 1/ Rich in Electrolytes
 
-Prickly pear cactus naturally contains potassium, magnesium, and calcium —
+Prickly pear premium naturally contains potassium, magnesium, and calcium —
 the same electrolytes you'd find in sports drinks, without the sugar.
 
 Tweet 3:
 2/ Zero Calories
 
-Unlike coconut water (45 cal) or fruit juice (110+ cal), cactus water
+Unlike coconut water (45 cal) or fruit juice (110+ cal), sparkling water
 delivers hydration at exactly 0 calories per serving.
 
 ...
@@ -116,9 +116,9 @@ delivers hydration at exactly 0 calories per serving.
 Tweet 6:
 Found this useful? Read the full breakdown:
 
-https://dolcezero.com/cactus-water-benefits
+https://acmebrand.example.com/sparkling-water-benefits
 
-#cactuswater #hydration #zerocalorie
+#sparklingwater #hydration #zerocalorie
 ```
 
 ---
@@ -151,7 +151,7 @@ https://dolcezero.com/cactus-water-benefits
 ```
 Title: "How We Reduced Sugar Content to Zero Without Losing Taste"
 Excerpt: "Our R&D team spent 18 months developing a proprietary process
-that uses Sicilian prickly pear as a natural sweetness base..."
+that uses Mediterranean prickly pear as a natural sweetness base..."
 Tags: ["food technology", "zero sugar", "innovation"]
 ```
 
@@ -162,7 +162,7 @@ literally zero sugar?
 
 The answer surprised even our food scientists.
 
-Sicilian prickly pear cactus has a naturally sweet flavor profile.
+Mediterranean fruit plant has a naturally sweet flavor profile.
 By extracting and concentrating its essence, we created a beverage base
 that delivers sweetness perception without any added sugars or
 artificial sweeteners.
@@ -173,7 +173,7 @@ traditional sweetened beverages.
 Key insight: consumers don't want "less sugar." They want full flavor
 with zero compromise. That's what drove our entire product philosophy.
 
-Full story on our process → https://dolcezero.com/zero-sugar-innovation
+Full story on our process → https://acmebrand.example.com/zero-sugar-innovation
 
 #FoodTechnology #ZeroSugar #BeverageInnovation #ProductDevelopment
 ```
@@ -250,35 +250,35 @@ Preview: {first_line_preview_text}
 ```
 
 **Subject line formulas:**
-1. **Number + benefit**: "5 ways cactus water improves your hydration"
-2. **Question**: "Is cactus water the next coconut water?"
+1. **Number + benefit**: "5 ways sparkling water improves your hydration"
+2. **Question**: "Is sparkling water the next coconut water?"
 3. **How-to**: "How we made zero-calorie taste amazing"
-4. **Curiosity gap**: "The Sicilian secret behind our water"
+4. **Curiosity gap**: "The Mediterranean secret behind our water"
 
 **Example input:**
 ```
-Title: "5 Benefits of Cactus Water for Summer Hydration"
-Excerpt: "Cactus water from Sicilian prickly pear is packed with electrolytes..."
-URL: "https://dolcezero.com/cactus-water-benefits"
+Title: "5 Benefits of Sparkling Water for Summer Hydration"
+Excerpt: "Sparkling water from Mediterranean prickly pear is packed with electrolytes..."
+URL: "https://acmebrand.example.com/sparkling-water-benefits"
 ```
 
 **Example output:**
 ```
-Subject: 5 reasons cactus water beats coconut water this summer
+Subject: 5 reasons sparkling water beats coconut water this summer
 Preview: Zero calories, natural electrolytes, and a taste you won't believe
 
 ---
 
-5 Benefits of Cactus Water for Summer Hydration
+5 Benefits of Sparkling Water for Summer Hydration
 
-Cactus water from Sicilian prickly pear is packed with electrolytes,
+Sparkling water from Mediterranean prickly pear is packed with electrolytes,
 antioxidants, and has zero calories. It's everything you want from a
 hydration drink — without the sugar.
 
-Key finding: In our tests, cactus water delivered 40% more potassium
+Key finding: In our tests, sparkling water delivered 40% more potassium
 per serving than leading coconut water brands.
 
-[Read the full article →](https://dolcezero.com/cactus-water-benefits)
+[Read the full article →](https://acmebrand.example.com/sparkling-water-benefits)
 ```
 
 ---

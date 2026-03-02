@@ -47,7 +47,7 @@ Featured Image: [Relevant, optimized, with alt text]
 
 ```
 Title: [Number] [Keyword] [Benefit/Hook]
-Example: "7 Benefits of Cactus Water for Daily Hydration"
+Example: "7 Benefits of Sparkling Water for Daily Hydration"
 
 ---
 

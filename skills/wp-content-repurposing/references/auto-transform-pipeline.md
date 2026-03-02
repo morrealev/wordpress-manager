@@ -50,7 +50,7 @@ Parse the raw content into atomic elements for templating.
 **Tag-to-hashtag conversion:**
 ```
 "Zero Calorie" → #zerocalorie
-"Cactus Water" → #cactuswater
+"Sparkling Water" → #sparklingwater
 "Health Tips"  → #healthtips
 ```
 

@@ -6,21 +6,21 @@ description: |
 
   <example>
   Context: User wants to check the status of their WordPress site.
-  user: "What's the status of my opencactus.com site?"
+  user: "What's the status of my mysite.example.com site?"
   assistant: "I'll use the wp-site-manager agent to check your site status."
   <commentary>Site status check requires coordinating multiple API calls.</commentary>
   </example>
 
   <example>
   Context: User wants to manage content across multiple WordPress sites.
-  user: "List all draft posts on opencactus"
+  user: "List all draft posts on mysite"
   assistant: "I'll use the wp-site-manager agent to query your WordPress content."
   <commentary>Content management operations should go through this agent.</commentary>
   </example>
 
   <example>
   Context: User needs to switch between WordPress sites.
-  user: "Switch to my bioinagro site and list plugins"
+  user: "Switch to my othersite site and list plugins"
   assistant: "I'll use the wp-site-manager agent to handle multi-site operations."
   <commentary>Multi-site coordination is a core capability of this agent.</commentary>
   </example>

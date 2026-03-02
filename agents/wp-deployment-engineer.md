@@ -6,7 +6,7 @@ description: |
 
   <example>
   Context: User wants to deploy a custom plugin to their Hostinger-hosted WordPress site.
-  user: "Deploy the bioeconomy modal plugin to opencactus.com"
+  user: "Deploy the bioeconomy modal plugin to mysite.example.com"
   assistant: "I'll use the wp-deployment-engineer agent to handle the deployment."
   <commentary>Plugin deployment to Hostinger requires specialized deployment workflow.</commentary>
   </example>

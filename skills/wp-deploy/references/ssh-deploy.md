@@ -47,10 +47,10 @@ ssh user@host 'rm /tmp/theme-name.tar.gz'
 ## SSH Config for Hostinger
 
 ```
-Host opencactus-hostinger
+Host mysite-hostinger
     HostName <ip-or-hostname>
     User <hostinger-username>
-    IdentityFile ~/.ssh/hostinger_opencactus_20250904
+    IdentityFile ~/.ssh/hostinger_mysite_20250904
     IdentitiesOnly yes
 ```
 

@@ -110,7 +110,7 @@ CTA: Get the complete guide / Shop related products
 | Formula | Example |
 |---------|---------|
 | Number + Benefit | "5 ways to reduce sugar intake" |
-| Question | "Is cactus water the healthiest option?" |
+| Question | "Is sparkling water the healthiest option?" |
 | How-to | "How to save 200 calories a day" |
 | Curiosity gap | "The drink we didn't expect to love" |
 | Urgency | "Last chance: 20% off ends tonight" |

@@ -15,8 +15,8 @@ Each `.config.md` file consists of:
 
 ```
 ---
-site_id: opencactus
-site_url: https://opencactus.com
+site_id: mysite
+site_url: https://mysite.example.com
 last_updated: 2026-03-02
 # ... other fields ...
 ---
@@ -37,7 +37,7 @@ Free-form context that Claude uses when generating or adapting content for this 
 | Type | `string` |
 | Required | **Yes** |
 | Format | Lowercase alphanumeric with hyphens |
-| Example | `opencactus` |
+| Example | `mysite` |
 
 Unique identifier for the site. **Must match** the `id` field in the `WP_SITES_CONFIG` environment variable JSON array. This is how the pipeline resolves WordPress credentials (URL, username, app password) for API calls.
 
@@ -48,7 +48,7 @@ Unique identifier for the site. **Must match** the `id` field in the `WP_SITES_C
 | Type | `string` (URL) |
 | Required | **Yes** |
 | Format | `https://example.com` (no trailing slash) |
-| Example | `https://opencactus.com` |
+| Example | `https://mysite.example.com` |
 
 The public-facing URL of the WordPress site. Used for constructing internal links and verifying published content. Should match the `url` field in `WP_SITES_CONFIG`.
 
@@ -77,7 +77,7 @@ brand:
   language: it
   style_notes: |
     Voice: warm but authoritative. Avoid corporate jargon.
-    Always emphasize the Sicilian heritage and natural ingredients.
+    Always emphasize the Mediterranean heritage and natural ingredients.
     Use "noi" (we) when referring to the company.
     Sustainability is a core value, not a marketing angle.
 ```
@@ -290,8 +290,8 @@ The `WP_SITES_CONFIG` environment variable is a JSON array of site credentials:
 ```json
 [
   {
-    "id": "opencactus",
-    "url": "https://opencactus.com",
+    "id": "mysite",
+    "url": "https://mysite.example.com",
     "username": "api-user",
     "app_password": "xxxx xxxx xxxx xxxx"
   }
@@ -313,8 +313,8 @@ The mapping between `WP_SITES_CONFIG` and the config file:
 
 When the pipeline processes a brief, it resolves the site config via `brief.target.site_id`:
 
-1. Read `brief.target.site_id` (e.g., `opencactus`)
-2. Load `.content-state/opencactus.config.md`
+1. Read `brief.target.site_id` (e.g., `mysite`)
+2. Load `.content-state/mysite.config.md`
 3. Apply config defaults for any fields the brief omits
 4. Use `brand` block for content adaptation/generation
 5. Use `channels` block for distribution routing
@@ -323,12 +323,12 @@ When the pipeline processes a brief, it resolves the site config via `brief.targ
 
 ## Example Config
 
-A complete `.config.md` for the opencactus site:
+A complete `.config.md` for the mysite site:
 
 ```markdown
 ---
-site_id: opencactus
-site_url: https://opencactus.com
+site_id: mysite
+site_url: https://mysite.example.com
 last_updated: 2026-03-02
 
 brand:
@@ -336,11 +336,11 @@ brand:
   language: it
   style_notes: |
     Voice: warm but authoritative. Avoid corporate jargon.
-    Always emphasize the Sicilian heritage and natural ingredients.
+    Always emphasize the Mediterranean heritage and natural ingredients.
     Use "noi" (we) when referring to the company.
     Sustainability is a core value, not a marketing angle -- weave it naturally.
-    Product names are always capitalized: Poco Dolce, Dolce, Molto Dolce.
-    Refer to the fruit as "fico d'India" (not "cactus" in Italian content).
+    Product names are always capitalized: Light Blend, Dolce, Bold Blend.
+    Refer to the product using its brand name, not generic terms in marketing content.
     Scientific claims must cite specific compounds (betalaine, polifenoli).
 
 defaults:
@@ -353,7 +353,7 @@ defaults:
 channels:
   linkedin:
     enabled: true
-    profile_id: "urn:li:organization:opencactus"
+    profile_id: "urn:li:organization:mysite"
     format: professional
   twitter:
     enabled: true
@@ -364,7 +364,7 @@ channels:
     format: casual
   mailchimp:
     enabled: true
-    audience_id: "mc_aud_opencactus_main"
+    audience_id: "mc_aud_mysite_main"
     segment: newsletter-subscribers
 
 seo:
@@ -383,34 +383,34 @@ cadence:
 
 ## Brand Context
 
-OpenCactus is the digital home of DolceZero, an Italian zero-calorie beverage brand based on Sicilian cactus water (acqua di fico d'India). The brand sits at the intersection of traditional Sicilian agriculture and modern wellness.
+MySite is the digital home of AcmeBrand, an Italian zero-calorie beverage brand based on premium sparkling water (acqua premium). The brand sits at the intersection of traditional Mediterranean agriculture and modern wellness.
 
 ### Product Line
 
-- **Poco Dolce** -- Light sweetness, subtle cactus flavor. Entry-level product.
+- **Light Blend** -- Light sweetness, subtle premium flavor. Entry-level product.
 - **Dolce** -- Medium sweetness, balanced flavor profile. The core product.
-- **Molto Dolce** -- Full sweetness, rich cactus flavor. For those who prefer bolder taste.
+- **Bold Blend** -- Full sweetness, rich premium flavor. For those who prefer bolder taste.
 
 All variants are zero-calorie, naturally flavored, with no artificial sweeteners.
 
 ### Key Differentiators
 
-- Only cactus water brand with full Sicilian supply chain
-- Zero calorie without artificial sweeteners (uses natural cactus compounds)
+- Only sparkling water brand with full regional supply chain
+- Zero calorie without artificial sweeteners (uses natural premium compounds)
 - 85% lower water footprint than conventional beverages
 - Rich in betalains and polyphenols (natural antioxidants)
 
 ### Content Themes
 
 - Sustainability and environmental responsibility
-- Sicilian heritage and terroir
+- Mediterranean heritage and terroir
 - Health and wellness (zero-calorie, natural ingredients)
 - Innovation in food technology
 - Community and local farmers
 
 ### Competitor Positioning
 
-Avoid direct competitor mentions. Focus on DolceZero's unique attributes rather than comparison. Never claim "best" or "only" without substantiation.
+Avoid direct competitor mentions. Focus on AcmeBrand's unique attributes rather than comparison. Never claim "best" or "only" without substantiation.
 ```
 
 ---
@@ -424,7 +424,7 @@ Config files follow this naming pattern:
 ```
 
 Examples:
-- `opencactus.config.md`
+- `mysite.config.md`
 - `my-blog.config.md`
 - `corporate-site.config.md`
 

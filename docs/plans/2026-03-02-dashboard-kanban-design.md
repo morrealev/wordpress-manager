@@ -22,7 +22,7 @@ Generare un file HTML statico self-contained che visualizza lo stato editoriale 
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│  HEADER: Editorial Dashboard — opencactus.com — Marzo 2026                   │
+│  HEADER: Editorial Dashboard — mysite.example.com — Marzo 2026                   │
 │  Generato: 2026-03-02 14:30 | Posts: 2/8 pubblicati | Pipeline: 1 ready     │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
@@ -44,7 +44,7 @@ Generare un file HTML statico self-contained che visualizza lo stato editoriale 
 │                                                                              │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │  SIGNALS STRIP (se anomalie presenti)                                        │
-│  ▲ +120% "acqua di cactus" impressions | ▲ +85% LinkedIn referrals          │
+│  ▲ +120% "acqua premium" impressions | ▲ +85% LinkedIn referrals          │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │  FOOTER: WordPress Manager v2.14.0 | wp-dashboard skill                     │
 └──────────────────────────────────────────────────────────────────────────────┘
@@ -58,11 +58,11 @@ Ogni card rappresenta un contenuto nel ciclo editoriale.
 ┌─────────────────────────────┐
 │ Mar 18                   📝 │  ← data + icona tipo (📝 post, 📄 page)
 │                             │
-│ Acqua di cactus: perché le  │  ← titolo (troncato a 60 char)
+│ Acqua premium: perché le  │  ← titolo (troncato a 60 char)
 │ ricerche sono esplose...    │
 │                             │
 │ BRF-2026-005                │  ← brief ID (se esiste)
-│ #wellness #cactus-water     │  ← categorie/tag principali
+│ #wellness #premium-water     │  ← categorie/tag principali
 │                             │
 │ 🔗 in  📧 nl               │  ← icone canali distribuzione
 └─────────────────────────────┘
@@ -95,7 +95,7 @@ Ogni card rappresenta un contenuto nel ciclo editoriale.
 Il header contiene una riga di metriche riassuntive:
 
 ```
-Editorial Dashboard — opencactus.com — Marzo 2026
+Editorial Dashboard — mysite.example.com — Marzo 2026
 Generato: 2026-03-02 14:30 | Posts: 2/8 pubblicati | Pipeline: 1 ready, 1 draft | Next: Mar 11
 ```
 
@@ -111,9 +111,9 @@ Striscia opzionale sotto il Kanban, presente solo se `signals-feed.md` contiene 
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│  ⚡ Signals  ▲ +120% "acqua di cactus" impressions → content cluster        │
+│  ⚡ Signals  ▲ +120% "acqua premium" impressions → content cluster        │
 │              ▲ +85% LinkedIn referrals → scale posting frequency            │
-│              ▲ +47% /cactus-water-benefici pageviews → investigate           │
+│              ▲ +47% /premium-water-benefici pageviews → investigate           │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -121,7 +121,7 @@ Ogni anomalia mostra: direzione (`▲`/`▼`), delta percentuale, entità, azion
 
 ### 2.5 Palette Colori
 
-Coerenza con il brand system DolceZero/OpenCactus ma neutrale (il dashboard è uno strumento operativo, non un artefatto brand):
+Coerenza con il brand system AcmeBrand/MySite ma neutrale (il dashboard è uno strumento operativo, non un artefatto brand):
 
 ```css
 /* Background & Structure */
@@ -179,7 +179,7 @@ Lo scanner converte ogni riga in un oggetto:
 ```javascript
 {
   date: "2026-03-18",
-  title: "Acqua di cactus: perché le ricerche sono esplose del 120%",
+  title: "Acqua premium: perché le ricerche sono esplose del 120%",
   type: "post",
   status: "ready",
   briefId: "BRF-2026-005",
@@ -199,8 +199,8 @@ Lo scanner converte ogni riga in un oggetto:
 ```javascript
 {
   site: {
-    id: "opencactus",
-    url: "https://opencactus.com",
+    id: "mysite",
+    url: "https://mysite.example.com",
     brand: { tone: "...", language: "it", ... },
     cadence: { posts_per_week: 3, preferred_days: [...], publish_time: "09:00" },
     channels: { linkedin: { enabled: true, ... }, ... }
@@ -210,11 +210,11 @@ Lo scanner converte ogni riga in un oggetto:
     period: "2026-03-01..2026-03-31",
     goals: { posts_target: 8, posts_published: 2, ... },
     entries: [
-      { date: "2026-03-04", title: "Acqua di cactus: 5 benefici...", type: "post", status: "published", briefId: "BRF-2026-001", postId: 1234, channels: ["linkedin", "newsletter"] },
-      { date: "2026-03-06", title: "Come il fico d'India diventa bevanda", type: "post", status: "published", briefId: "BRF-2026-002", postId: 1235, channels: ["linkedin", "twitter"] },
+      { date: "2026-03-04", title: "Acqua premium: 5 benefici...", type: "post", status: "published", briefId: "BRF-2026-001", postId: 1234, channels: ["linkedin", "newsletter"] },
+      { date: "2026-03-06", title: "Come il frutto mediterraneo diventa bevanda", type: "post", status: "published", briefId: "BRF-2026-002", postId: 1235, channels: ["linkedin", "twitter"] },
       { date: "2026-03-11", title: "Zero calorie, tutto gusto: la scienza", type: "post", status: "ready", briefId: "BRF-2026-003", postId: null, channels: ["linkedin", "newsletter"] },
-      { date: "2026-03-13", title: "Sicilia e sostenibilità: la filiera", type: "post", status: "draft", briefId: "BRF-2026-004", postId: null, channels: ["linkedin"] },
-      { date: "2026-03-18", title: "Acqua di cactus: perché le ricerche...", type: "post", status: "ready", briefId: "BRF-2026-005", postId: null, channels: ["linkedin", "newsletter"] },
+      { date: "2026-03-13", title: "Mediterraneo e sostenibilità: la filiera", type: "post", status: "draft", briefId: "BRF-2026-004", postId: null, channels: ["linkedin"] },
+      { date: "2026-03-18", title: "Acqua premium: perché le ricerche...", type: "post", status: "ready", briefId: "BRF-2026-005", postId: null, channels: ["linkedin", "newsletter"] },
       { date: "2026-03-20", title: null, type: "post", status: "planned", briefId: null, postId: null, channels: [] },
       { date: "2026-03-25", title: null, type: "post", status: "planned", briefId: null, postId: null, channels: [] },
       { date: "2026-03-27", title: null, type: "post", status: "planned", briefId: null, postId: null, channels: [] }
@@ -222,19 +222,19 @@ Lo scanner converte ogni riga in un oggetto:
   },
   briefs: {
     active: [
-      { briefId: "BRF-2026-005", status: "ready", title: "Acqua di cactus: perché...", siteId: "opencactus", channels: ["linkedin", "newsletter"], signalRef: "FEED-opencactus-2026-02 → Keyword:acqua di cactus +120%" }
+      { briefId: "BRF-2026-005", status: "ready", title: "Acqua premium: perché...", siteId: "mysite", channels: ["linkedin", "newsletter"], signalRef: "FEED-mysite-2026-02 → Keyword:acqua premium +120%" }
     ],
     archived: [
-      { briefId: "BRF-2026-001", status: "published", title: "I Benefici dell'Acqua di Cactus...", postId: 2456, postUrl: "https://opencactus.com/benefici-..." }
+      { briefId: "BRF-2026-001", status: "published", title: "I Benefici dell'Acqua Premium...", postId: 2456, postUrl: "https://mysite.example.com/benefici-..." }
     ]
   },
   signals: {
-    feedId: "FEED-opencactus-2026-02",
+    feedId: "FEED-mysite-2026-02",
     period: "2026-02-01..2026-02-28",
     anomalies: [
-      { entity: "Keyword:acqua di cactus", metric: "search_impressions", delta: "+120%", pattern: "Search Intent Shift", action: "Investigate: content cluster opportunity" },
+      { entity: "Keyword:acqua premium", metric: "search_impressions", delta: "+120%", pattern: "Search Intent Shift", action: "Investigate: content cluster opportunity" },
       { entity: "Source:linkedin", metric: "referral_sessions", delta: "+85%", pattern: "Early-Adopter Surge", action: "Scale: increase posting frequency on linkedin" },
-      { entity: "Page:/cactus-water-benefici", metric: "pageviews", delta: "+47%", pattern: "Unclassified anomaly", action: "Review: investigate cause of +47% change in pageviews" }
+      { entity: "Page:/premium-water-benefici", metric: "pageviews", delta: "+47%", pattern: "Unclassified anomaly", action: "Review: investigate cause of +47% change in pageviews" }
     ]
   }
 }
@@ -277,7 +277,7 @@ Dall'output SCAN, calcola metriche aggregate per il rendering:
 
   // Signals summary
   signalsCount: 3,
-  signalsHighest: { entity: "acqua di cactus", delta: "+120%", pattern: "Search Intent Shift" },
+  signalsHighest: { entity: "acqua premium", delta: "+120%", pattern: "Search Intent Shift" },
 
   // Calendar fill rate
   fillRate: 62.5,                 // 5/8 entries con titolo assegnato * 100
@@ -354,7 +354,7 @@ scripts/
  * Scans .content-state/ directory for a specific site.
  *
  * @param {string} contentStatePath - Path to .content-state/ directory
- * @param {string} siteId - Site identifier (e.g., "opencactus")
+ * @param {string} siteId - Site identifier (e.g., "mysite")
  * @returns {object} Raw data: { site, calendar, briefs, signals }
  */
 export function scanContentState(contentStatePath, siteId) { ... }
@@ -384,7 +384,7 @@ export function renderContextSnippet(metrics, sliceType) { ... }
 ```bash
 # Uso:
 node scripts/dashboard-renderer.mjs                          # sito da config, mese corrente
-node scripts/dashboard-renderer.mjs --site=opencactus        # sito specifico
+node scripts/dashboard-renderer.mjs --site=mysite        # sito specifico
 node scripts/dashboard-renderer.mjs --month=2026-04          # mese specifico
 node scripts/dashboard-renderer.mjs --output=/tmp/dash.html  # output specifico
 node scripts/dashboard-renderer.mjs --no-open                # non aprire browser
@@ -433,7 +433,7 @@ Le tabelle editoriali hanno formato fisso:
 ```markdown
 | Data | Titolo | Tipo | Status | Brief ID | Post ID | Canali |
 |------|--------|------|--------|----------|---------|--------|
-| Mar 4 | Acqua di cactus: 5 benefici scientifici | post | published | BRF-2026-001 | 1234 | linkedin, newsletter |
+| Mar 4 | Acqua premium: 5 benefici scientifici | post | published | BRF-2026-001 | 1234 | linkedin, newsletter |
 ```
 
 Parser dedicato:
@@ -554,7 +554,7 @@ La skill è invocata esplicitamente dall'utente. Non è un step automatico di al
 
 ```html
 <header>
-  <h1>Editorial Dashboard — opencactus.com — Marzo 2026</h1>
+  <h1>Editorial Dashboard — mysite.example.com — Marzo 2026</h1>
   <div class="meta">
     Generato: 2026-03-02 14:30 | Next: Mar 11 — "Zero calorie, tutto gusto"
   </div>
@@ -580,13 +580,13 @@ La skill è invocata esplicitamente dall'utente. Non è un step automatico di al
     <span class="card-date">Mar 18</span>
     <span class="card-type" title="post">&#x1F4DD;</span>
   </div>
-  <div class="card-title">Acqua di cactus: perch&eacute; le ricerche sono esplose del 120%</div>
+  <div class="card-title">Acqua premium: perch&eacute; le ricerche sono esplose del 120%</div>
   <div class="card-meta">
     <span class="brief-id">BRF-2026-005</span>
   </div>
   <div class="card-tags">
     <span class="tag">#wellness</span>
-    <span class="tag">#cactus-water</span>
+    <span class="tag">#premium-water</span>
   </div>
   <div class="card-channels">
     <span class="channel" title="LinkedIn">in</span>
@@ -616,7 +616,7 @@ La skill è invocata esplicitamente dall'utente. Non è un step automatico di al
     <div class="signal signal--up">
       <span class="signal-arrow">&#x25B2;</span>
       <span class="signal-delta">+120%</span>
-      <span class="signal-entity">&quot;acqua di cactus&quot; impressions</span>
+      <span class="signal-entity">&quot;acqua premium&quot; impressions</span>
       <span class="signal-action">content cluster opportunity</span>
     </div>
     <!-- ... altre anomalie ... -->
@@ -694,7 +694,7 @@ Quando ci sono più siti configurati:
 .content-state/.dashboard-{siteId}-{YYYY-MM}.html
 ```
 
-Esempio: `.content-state/.dashboard-opencactus-2026-03.html`
+Esempio: `.content-state/.dashboard-mysite-2026-03.html`
 
 - Prefisso `.` (hidden file) perché è un artefatto generato, non dati
 - Nella directory `.content-state/` per coerenza (è uno "stato" derivato)
@@ -730,7 +730,7 @@ function openInBrowser(filepath) {
 
 ### 9.2 Test con Dati Reali
 
-Il dataset di test è lo stato corrente di `.content-state/` per opencactus (Marzo 2026):
+Il dataset di test è lo stato corrente di `.content-state/` per mysite (Marzo 2026):
 - 8 entries nel calendario (2 published, 1 draft, 2 ready, 3 planned)
 - 1 brief attivo (BRF-2026-005)
 - 1 brief archiviato (BRF-2026-001)

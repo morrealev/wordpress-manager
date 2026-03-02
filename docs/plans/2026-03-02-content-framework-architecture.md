@@ -38,12 +38,12 @@ source:
 
 # Target — dove pubblicare
 target:
-  site_id: opencactus          # id dal WP_SITES_CONFIG
+  site_id: mysite          # id dal WP_SITES_CONFIG
   content_type: post           # post | page
   status: draft                # draft | publish | future
   scheduled_date: null         # ISO 8601 se status=future
   categories: [blog, seo]
-  tags: [cactus-water, wellness]
+  tags: [premium-water, wellness]
 
 # Content Parameters — passati a wp-content per la creazione
 content:
@@ -86,8 +86,8 @@ Configurazione persistente per sito — brand voice, canali attivi, parametri di
 ```yaml
 ---
 # Site Configuration v1.0
-site_id: opencactus
-site_url: "https://opencactus.com"
+site_id: mysite
+site_url: "https://mysite.example.com"
 last_updated: "2026-03-02"
 
 # Brand Voice — alimentato da GenBrand output
@@ -97,7 +97,7 @@ brand:
   style_notes: |
     Stile divulgativo-scientifico. Evitare iperboli.
     Preferire dati concreti a claim generici.
-    Valorizzare il territorio siciliano.
+    Valorizzare il territorio.
 
 # Default Content Parameters
 defaults:
@@ -175,7 +175,7 @@ Questa skill orchestra il flusso brief → publish → distribute.
 ### 1.5 Flusso Operativo End-to-End
 
 ```
-Utente: "Genera un articolo sul cactus water per opencactus"
+Utente: "Genera un articolo sul sparkling water per mysite"
                 │
                 ▼
     GenCorpComm (content_marketing domain)
@@ -194,7 +194,7 @@ Utente: "Genera un articolo sul cactus water per opencactus"
     → legge brief → valida gates → crea post WP → distribuisce → archivia
                 │
                 ▼
-    Output: "Pubblicato: https://opencactus.com/cactus-water-benefici/
+    Output: "Pubblicato: https://mysite.example.com/premium-water-benefici/
              LinkedIn: schedulato in 2h
              Newsletter: campagna creata, pronta per invio"
 ```
@@ -214,8 +214,8 @@ Formato di scambio tra wp-analytics e GenSignal. Traduce metriche WP nel formato
 ```yaml
 ---
 # Signals Feed Schema v1.0
-feed_id: "FEED-opencactus-2026-03"
-site_id: opencactus
+feed_id: "FEED-mysite-2026-03"
+site_id: mysite
 generated: "2026-03-02T12:00:00Z"
 period: "2026-02-01..2026-02-28"
 source_tools:
@@ -232,7 +232,7 @@ source_tools:
 
 ```yaml
 events:
-  - entity_id: "Page:/cactus-water-benefici"
+  - entity_id: "Page:/premium-water-benefici"
     relation: pageviews
     value: 3240
     unit: count
@@ -240,9 +240,9 @@ events:
     delta_pct: +47        # variazione vs periodo precedente
     provenance:
       source_id: "ga4_top_pages"
-      site: opencactus
+      site: mysite
 
-  - entity_id: "Page:/cactus-water-benefici"
+  - entity_id: "Page:/premium-water-benefici"
     relation: avg_engagement_time
     value: 185
     unit: seconds
@@ -250,13 +250,13 @@ events:
     delta_pct: +12
     provenance:
       source_id: "ga4_report"
-      site: opencactus
+      site: mysite
 ```
 
 ## Search Signals
 
 ```yaml
-  - entity_id: "Keyword:acqua di cactus"
+  - entity_id: "Keyword:acqua premium"
     relation: search_impressions
     value: 8500
     unit: count
@@ -264,9 +264,9 @@ events:
     delta_pct: +120
     provenance:
       source_id: "gsc_query_analytics"
-      site: opencactus
+      site: mysite
 
-  - entity_id: "Keyword:acqua di cactus benefici"
+  - entity_id: "Keyword:acqua premium benefici"
     relation: search_ctr
     value: 4.2
     unit: percentage
@@ -274,7 +274,7 @@ events:
     delta_pct: -8
     provenance:
       source_id: "gsc_query_analytics"
-      site: opencactus
+      site: mysite
 ```
 
 ## Source Signals
@@ -288,20 +288,20 @@ events:
     delta_pct: +85
     provenance:
       source_id: "ga4_traffic_sources"
-      site: opencactus
+      site: mysite
 ```
 
 ## Performance Signals
 
 ```yaml
-  - entity_id: "Site:opencactus"
+  - entity_id: "Site:mysite"
     relation: lcp
     value: 2.1
     unit: seconds
     ts: "2026-02-28T23:59:59Z"
     provenance:
       source_id: "cwv_crux_origin"
-      site: opencactus
+      site: mysite
 ```
 
 # Anomalies & Patterns
@@ -310,9 +310,9 @@ Sezione che Claude popola dopo aver analizzato i delta:
 
 | Entity | Metric | Delta | Pattern Match | Action |
 |--------|--------|-------|---------------|--------|
-| Keyword:acqua di cactus | impressions | +120% | Search Intent Shift | Investigate: content cluster opportunity |
+| Keyword:acqua premium | impressions | +120% | Search Intent Shift | Investigate: content cluster opportunity |
 | Source:linkedin | referrals | +85% | Early-Adopter Surge | Scale: increase LinkedIn posting frequency |
-| Page:/cactus-water-benefici | CTR | -8% | Hype→Utility Crossover | Optimize: refresh meta description, test titles |
+| Page:/premium-water-benefici | CTR | -8% | Hype→Utility Crossover | Optimize: refresh meta description, test titles |
 ```
 
 **Dove vive**: `.content-state/signals-feed.md` (sovrascritta ad ogni generazione)
@@ -342,7 +342,7 @@ Step 7: GENERATE SIGNAL FEED
 ### 2.4 Flusso Intelligence Loop
 
 ```
-Utente: "analizza performance opencactus ultimo mese e genera segnali"
+Utente: "analizza performance mysite ultimo mese e genera segnali"
                 │
                 ▼
     wp-analytics (skill estesa)
@@ -352,7 +352,7 @@ Utente: "analizza performance opencactus ultimo mese e genera segnali"
                 │
                 ▼
     Claude presenta: "3 anomalie rilevate:
-     1. 'acqua di cactus' impressions +120% → Search Intent Shift
+     1. 'acqua premium' impressions +120% → Search Intent Shift
      2. LinkedIn referrals +85% → Early-Adopter Surge
      3. CTR -8% su pagina top → possibile title fatigue"
                 │
@@ -392,7 +392,7 @@ Pianificare contenuti nel tempo con un file `.state.md` che funge da calendario 
 ---
 # Editorial Calendar Schema v1.0
 calendar_id: "CAL-2026-03"
-site_id: opencactus
+site_id: mysite
 period: "2026-03-01..2026-03-31"
 created: "2026-02-28"
 last_updated: "2026-03-02"
@@ -402,9 +402,9 @@ status: active                 # active | archived
 goals:
   posts_target: 8
   posts_published: 2
-  focus_topics: [cactus-water, sustainability, wellness]
+  focus_topics: [premium-water, sustainability, wellness]
   seo_targets:
-    - keyword: "acqua di cactus"
+    - keyword: "acqua premium"
       target_position: top-5
     - keyword: "bevanda zero calorie naturale"
       target_position: top-10
@@ -416,15 +416,15 @@ goals:
 
 | Data | Titolo | Tipo | Status | Brief ID | Post ID | Canali |
 |------|--------|------|--------|----------|---------|--------|
-| Mar 4 | Acqua di cactus: 5 benefici scientifici | post | published | BRF-2026-001 | 1234 | linkedin, newsletter |
-| Mar 6 | Come il fico d'India diventa bevanda | post | published | BRF-2026-002 | 1235 | linkedin, twitter |
+| Mar 4 | Acqua premium: 5 benefici scientifici | post | published | BRF-2026-001 | 1234 | linkedin, newsletter |
+| Mar 6 | Come il frutto mediterraneo diventa bevanda | post | published | BRF-2026-002 | 1235 | linkedin, twitter |
 
 ## Settimana 2 (8-14 Mar)
 
 | Data | Titolo | Tipo | Status | Brief ID | Post ID | Canali |
 |------|--------|------|--------|----------|---------|--------|
 | Mar 11 | Zero calorie, tutto gusto: la scienza | post | ready | BRF-2026-003 | — | linkedin, newsletter |
-| Mar 13 | Sicilia e sostenibilità: la filiera | post | draft | BRF-2026-004 | — | linkedin |
+| Mar 13 | Mediterraneo e sostenibilità: la filiera | post | draft | BRF-2026-004 | — | linkedin |
 
 ## Settimana 3 (15-21 Mar)
 
@@ -521,8 +521,8 @@ Orchestra la pianificazione editoriale e la conversione piano → brief → post
 
 ```
 .content-state/
-├─ opencactus.config.md           # Fase 1: config sito
-├─ bioinagro.config.md            # config per altro sito
+├─ mysite.config.md           # Fase 1: config sito
+├─ othersite.config.md            # config per altro sito
 ├─ signals-feed.md                # Fase 2: ultimo feed segnali
 ├─ 2026-03-editorial.state.md     # Fase 3: calendario corrente
 ├─ 2026-02-editorial.state.md     # calendario precedente (archived)
@@ -577,7 +577,7 @@ Zero file `.ts` aggiunti. Tutte le operazioni usano i 148 MCP tool esistenti orc
 - [x] `site.config.md` schema definito e documentato
 - [x] `wp-content-pipeline` skill creata con workflow completo
 - [x] Flusso end-to-end testato: brief.md → WP post (distribuzione LinkedIn skipped — wp-rest-bridge non connesso, tool AIWU usato per WP)
-- [x] Supporto multi-sito (opencactus + almeno un altro)
+- [x] Supporto multi-sito (mysite + almeno un altro)
 
 ### Fase 2: Content Intelligence
 

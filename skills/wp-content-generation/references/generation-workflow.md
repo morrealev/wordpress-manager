@@ -12,8 +12,8 @@
 **Brief structure:**
 | Field | Description | Example |
 |-------|-------------|---------|
-| Topic | Main subject | "Benefits of cactus water for athletes" |
-| Primary keyword | Target search term | "cactus water benefits" |
+| Topic | Main subject | "Benefits of sparkling water for athletes" |
+| Primary keyword | Target search term | "sparkling water benefits" |
 | Audience | Who reads this | Health-conscious millennials |
 | Goal | Content purpose | Drive product page visits |
 | Format | Content type | Blog post / Tutorial / Listicle |

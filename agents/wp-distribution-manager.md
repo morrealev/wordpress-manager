@@ -128,4 +128,4 @@ After each distribution operation, provide:
 
 ## Context
 
-Working directory: `/home/vinmor/.claude/plugins/local/wordpress-manager`
+Working directory: `/home/user/.claude/plugins/local/wordpress-manager`

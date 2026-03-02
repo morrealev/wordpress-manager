@@ -1,7 +1,7 @@
 # WP REST Bridge — Validation Report
 
 > Generated: 2026-03-01T21:15:22.960Z  
-> Active site: `opencactus`  
+> Active site: `mysite`  
 > Tools registered: 148 | On server: 135  
 > Runner: v1.2.0
 
@@ -10,7 +10,7 @@
 | Service | Status | Note |
 |---------|--------|------|
 | wordpress_core | OK |  |
-| woocommerce | NO | Error listing products: WooCommerce not configured for site "opencactus". Add wc_consumer_key and wc... |
+| woocommerce | NO | Error listing products: WooCommerce not configured for site "mysite". Add wc_consumer_key and wc... |
 | multisite | NO | Error listing sites: Site is not configured as multisite. Set is_multisite: true in WP_SITES_CONFIG. |
 | mailchimp | NO | Mailchimp not configured. Add mailchimp_api_key to WP_SITES_CONFIG. |
 | buffer | NO | Buffer not configured. Add buffer_access_token to WP_SITES_CONFIG. |
@@ -338,4 +338,4 @@
 
 ## Changelog
 
-- 2026-03-01T21:15:22.960Z — Run on `opencactus`: passed=22, failed=0, error=0, not_configured=64, skipped_write=59, skipped=3, untested=0
+- 2026-03-01T21:15:22.960Z — Run on `mysite`: passed=22, failed=0, error=0, not_configured=64, skipped_write=59, skipped=3, untested=0

@@ -904,7 +904,7 @@ gh release create v2.6.0 --title "v2.6.0 — AI Content Optimization (Tier 3 WCO
 ### Task 24: Update Memory
 
 **Files:**
-- Modify: `/home/vinmor/.claude/projects/-home-vinmor/memory/wordpress-manager.md`
+- Modify: `/home/user/.claude/projects/-home-vinmor/memory/wordpress-manager.md`
 
 **Step 1: Update memory file**
 

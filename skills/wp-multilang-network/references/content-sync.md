@@ -109,17 +109,17 @@ When no multilingual plugin is used, sync content manually via MCP tools:
 ```bash
 # 1. Create content on primary site
 switch_site(site_id=1)  # Switch to English site
-create_content(type="post", title="Cactus Water Benefits", slug="cactus-water-benefits",
+create_content(type="post", title="Sparkling Water Benefits", slug="sparkling-water-benefits",
   content="...", status="publish")
 
 # 2. Replicate structure on Italian site
 switch_site(site_id=2)  # Switch to Italian site
-create_content(type="post", title="Benefici dell'Acqua di Cactus", slug="cactus-water-benefits",
+create_content(type="post", title="Benefici dell'Acqua Premium", slug="sparkling-water-benefits",
   content="[Italian translation]", status="draft")
 
 # 3. Replicate on German site
 switch_site(site_id=3)  # Switch to German site
-create_content(type="post", title="Vorteile von Kaktuswasser", slug="cactus-water-benefits",
+create_content(type="post", title="Vorteile von Kaktuswasser", slug="sparkling-water-benefits",
   content="[German translation]", status="draft")
 
 # 4. Switch back to primary

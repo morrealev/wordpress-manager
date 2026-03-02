@@ -16,8 +16,8 @@ Add and configure a new WordPress site for management through Claude Code.
 
 ### Step 1: Gather Site Information
 Ask the user for:
-- **Site URL**: The WordPress site's base URL (e.g., `https://opencactus.com`)
-- **Site ID**: A short identifier for multi-site switching (e.g., `opencactus`)
+- **Site URL**: The WordPress site's base URL (e.g., `https://mysite.example.com`)
+- **Site ID**: A short identifier for multi-site switching (e.g., `mysite`)
 - **Admin username**: WordPress admin email or username
 - **Application password**: Generated from WordPress Admin → Users → Profile → Application Passwords
 - **Hosting provider**: Hostinger / other (determines available tools)

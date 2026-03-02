@@ -16,7 +16,7 @@ Each `{YYYY-MM}-editorial.state.md` file consists of:
 ```
 ---
 calendar_id: "CAL-2026-03"
-site_id: opencactus
+site_id: mysite
 # ... other fields ...
 ---
 
@@ -175,12 +175,12 @@ Files are stored in:
 
 ## Example Calendar
 
-A complete `2026-03-editorial.state.md` for the opencactus site:
+A complete `2026-03-editorial.state.md` for the mysite site:
 
 ```markdown
 ---
 calendar_id: "CAL-2026-03"
-site_id: opencactus
+site_id: mysite
 period: "2026-03-01..2026-03-31"
 created: "2026-02-28"
 last_updated: "2026-03-02"
@@ -189,9 +189,9 @@ status: active
 goals:
   posts_target: 8
   posts_published: 2
-  focus_topics: [cactus-water, sustainability, wellness]
+  focus_topics: [premium-water, sustainability, wellness]
   seo_targets:
-    - keyword: "acqua di cactus"
+    - keyword: "acqua premium"
       target_position: top-5
     - keyword: "bevanda zero calorie naturale"
       target_position: top-10
@@ -203,15 +203,15 @@ goals:
 
 | Data | Titolo | Tipo | Status | Brief ID | Post ID | Canali |
 |------|--------|------|--------|----------|---------|--------|
-| Mar 4 | Acqua di cactus: 5 benefici scientifici | post | published | BRF-2026-001 | 1234 | linkedin, newsletter |
-| Mar 6 | Come il fico d'India diventa bevanda | post | published | BRF-2026-002 | 1235 | linkedin, twitter |
+| Mar 4 | Acqua premium: 5 benefici scientifici | post | published | BRF-2026-001 | 1234 | linkedin, newsletter |
+| Mar 6 | Come il frutto mediterraneo diventa bevanda | post | published | BRF-2026-002 | 1235 | linkedin, twitter |
 
 ## Settimana 2 (8-14 Mar)
 
 | Data | Titolo | Tipo | Status | Brief ID | Post ID | Canali |
 |------|--------|------|--------|----------|---------|--------|
 | Mar 11 | Zero calorie, tutto gusto: la scienza | post | ready | BRF-2026-003 | — | linkedin, newsletter |
-| Mar 13 | Sicilia e sostenibilità: la filiera | post | draft | BRF-2026-004 | — | linkedin |
+| Mar 13 | Mediterraneo e sostenibilità: la filiera | post | draft | BRF-2026-004 | — | linkedin |
 
 ## Settimana 3 (15-21 Mar)
 

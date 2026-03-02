@@ -52,10 +52,10 @@ The `entity_id` field uses a typed prefix to identify the entity:
 
 | Prefix | Format | Example |
 |--------|--------|---------|
-| `Page:` | `Page:{url_path}` | `Page:/cactus-water-benefici` |
-| `Keyword:` | `Keyword:{search_term}` | `Keyword:acqua di cactus` |
+| `Page:` | `Page:{url_path}` | `Page:/premium-water-benefici` |
+| `Keyword:` | `Keyword:{search_term}` | `Keyword:acqua premium` |
 | `Source:` | `Source:{source_name}` | `Source:linkedin` |
-| `Site:` | `Site:{site_id}` | `Site:opencactus` |
+| `Site:` | `Site:{site_id}` | `Site:mysite` |
 
 ### Valid Relations by Entity Type
 
@@ -301,12 +301,12 @@ If any validation fails, Step 7 logs the error and does not write the file.
 
 ## Example Feed
 
-A complete `signals-feed.md` for the opencactus site, February 2026.
+A complete `signals-feed.md` for the mysite site, February 2026.
 
 ````markdown
 ---
-feed_id: "FEED-opencactus-2026-02"
-site_id: opencactus
+feed_id: "FEED-mysite-2026-02"
+site_id: mysite
 generated: "2026-03-01T09:00:00Z"
 period: "2026-02-01..2026-02-28"
 comparison_period: "2026-01-01..2026-01-31"
@@ -325,7 +325,7 @@ status: generated
 ## Traffic Signals
 
 ```yaml
-- entity_id: "Page:/cactus-water-benefici"
+- entity_id: "Page:/premium-water-benefici"
   relation: pageviews
   value: 3240
   unit: count
@@ -333,9 +333,9 @@ status: generated
   delta_pct: +47
   provenance:
     source_id: ga4_top_pages
-    site: opencactus
+    site: mysite
 
-- entity_id: "Page:/cactus-water-benefici"
+- entity_id: "Page:/premium-water-benefici"
   relation: avg_engagement_time
   value: 185
   unit: seconds
@@ -343,7 +343,7 @@ status: generated
   delta_pct: +12
   provenance:
     source_id: ga4_top_pages
-    site: opencactus
+    site: mysite
 
 - entity_id: "Page:/prodotti"
   relation: pageviews
@@ -353,13 +353,13 @@ status: generated
   delta_pct: +8
   provenance:
     source_id: ga4_top_pages
-    site: opencactus
+    site: mysite
 ```
 
 ## Search Signals
 
 ```yaml
-- entity_id: "Keyword:acqua di cactus"
+- entity_id: "Keyword:acqua premium"
   relation: search_impressions
   value: 8500
   unit: count
@@ -367,9 +367,9 @@ status: generated
   delta_pct: +120
   provenance:
     source_id: gsc_search_analytics
-    site: opencactus
+    site: mysite
 
-- entity_id: "Keyword:acqua di cactus benefici"
+- entity_id: "Keyword:acqua premium benefici"
   relation: search_ctr
   value: 4.2
   unit: percentage
@@ -377,7 +377,7 @@ status: generated
   delta_pct: -8
   provenance:
     source_id: gsc_search_analytics
-    site: opencactus
+    site: mysite
 ```
 
 ## Source Signals
@@ -391,27 +391,27 @@ status: generated
   delta_pct: +85
   provenance:
     source_id: ga4_traffic_sources
-    site: opencactus
+    site: mysite
 ```
 
 ## Performance Signals
 
 ```yaml
-- entity_id: "Site:opencactus"
+- entity_id: "Site:mysite"
   relation: lcp
   value: 2.1
   unit: seconds
   ts: "2026-02-28T23:59:59Z"
   provenance:
     source_id: cwv_crux_origin
-    site: opencactus
+    site: mysite
 ```
 
 # Anomalies & Patterns
 
 | Entity | Metric | Delta | Pattern Match | Action |
 |--------|--------|-------|---------------|--------|
-| Keyword:acqua di cactus | search_impressions | +120% | Search Intent Shift | Investigate: content cluster opportunity |
+| Keyword:acqua premium | search_impressions | +120% | Search Intent Shift | Investigate: content cluster opportunity |
 | Source:linkedin | referral_sessions | +85% | Early-Adopter Surge | Scale: increase posting frequency on linkedin |
-| Page:/cactus-water-benefici | pageviews | +47% | Unclassified anomaly | Review: investigate cause of +47% change in pageviews |
+| Page:/premium-water-benefici | pageviews | +47% | Unclassified anomaly | Review: investigate cause of +47% change in pageviews |
 ````

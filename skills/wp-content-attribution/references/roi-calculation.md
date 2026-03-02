@@ -35,7 +35,7 @@ wc_list_orders(status="completed", after="2025-01-01", before="2025-01-31", per_
 list_content(type="post", status="publish", after="2025-01-01", before="2025-01-31")
 
 # Step 4: Match campaign slugs to post titles
-# Result: { post_title: "Cactus Water Benefits", slug: "cactus-water-benefits", revenue: 2500, orders: 15 }
+# Result: { post_title: "Sparkling Water Benefits", slug: "sparkling-water-benefits", revenue: 2500, orders: 15 }
 ```
 
 ### Revenue Per Post Benchmarks

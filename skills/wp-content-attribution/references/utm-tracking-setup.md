@@ -10,7 +10,7 @@ Use this file when setting up UTM parameter capture for WooCommerce orders — p
 | `utm_medium` | Marketing channel type | `organic`, `email`, `cpc`, `social`, `referral` |
 | `utm_campaign` | Specific campaign name | `spring-sale-2025`, `product-launch-x` |
 | `utm_content` | Differentiates ad/link variants | `cta-button`, `sidebar-banner`, `post-footer` |
-| `utm_term` | Paid search keywords | `cactus-water-buy`, `zero-calorie-drink` |
+| `utm_term` | Paid search keywords | `premium-water-buy`, `zero-calorie-drink` |
 
 ## mu-plugin Pattern: Capture UTM on Checkout
 
@@ -113,13 +113,13 @@ Tag all blog-to-product links with UTMs:
 
 ```html
 <!-- Blog post CTA linking to product -->
-<a href="/product/cactus-water/?utm_source=blog&utm_medium=cta&utm_campaign=cactus-water-benefits&utm_content=post-footer-button">
-  Buy Cactus Water
+<a href="/product/premium-water/?utm_source=blog&utm_medium=cta&utm_campaign=sparkling-water-benefits&utm_content=post-footer-button">
+  Buy Sparkling Water
 </a>
 
 <!-- Sidebar widget linking to product -->
-<a href="/product/cactus-water/?utm_source=blog&utm_medium=sidebar&utm_campaign=always-on&utm_content=product-widget">
-  Try Cactus Water
+<a href="/product/premium-water/?utm_source=blog&utm_medium=sidebar&utm_campaign=always-on&utm_content=product-widget">
+  Try Sparkling Water
 </a>
 ```
 

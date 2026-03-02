@@ -3,7 +3,7 @@
 // Spawns wp-rest-bridge server, connects via MCP SDK, tests all registered tools.
 // Usage:
 //   node scripts/run-validation.mjs                        # interactive mode
-//   node scripts/run-validation.mjs --site=opencactus      # target specific site
+//   node scripts/run-validation.mjs --site=mysite      # target specific site
 //   node scripts/run-validation.mjs --module=gsc           # single module
 //   node scripts/run-validation.mjs --include-writes       # include write tools
 //   node scripts/run-validation.mjs --test-writes          # CRUD sequence testing
@@ -380,7 +380,7 @@ const WRITE_SEQUENCES = [
     name: 'switch_site', tier: 3, service: 'wordpress_core',
     steps: [
       { action: 'verify', tool: 'get_active_site', args: {}, extract: 'site_id', as: 'originalSite', extractFn: text => { try { const d = JSON.parse(text); return d.site_id || d.id || text; } catch { return text; } } },
-      { action: 'update', tool: 'switch_site', args: { site_id: 'bioinagro' } },
+      { action: 'update', tool: 'switch_site', args: { site_id: 'othersite' } },
       { action: 'verify', tool: 'get_active_site', args: {}, expect: 'exists' },
       { action: 'update', tool: 'switch_site', argsFrom: ctx => ({ site_id: ctx.originalSite }) },
     ],

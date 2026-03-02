@@ -4,7 +4,7 @@
 //
 // Usage:
 //   node scripts/dashboard-renderer.mjs                          # auto-detect site, current month
-//   node scripts/dashboard-renderer.mjs --site=opencactus        # specific site
+//   node scripts/dashboard-renderer.mjs --site=mysite        # specific site
 //   node scripts/dashboard-renderer.mjs --month=2026-04          # specific month
 //   node scripts/dashboard-renderer.mjs --output=/tmp/dash.html  # custom output
 //   node scripts/dashboard-renderer.mjs --no-open                # skip browser launch

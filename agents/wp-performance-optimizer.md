@@ -6,7 +6,7 @@ description: |
 
   <example>
   Context: User's WordPress site is loading slowly.
-  user: "My opencactus.com site is really slow, can you help?"
+  user: "My mysite.example.com site is really slow, can you help?"
   assistant: "I'll use the wp-performance-optimizer agent to diagnose performance bottlenecks."
   <commentary>Performance diagnosis requires checking plugins, hosting, caching, and content delivery.</commentary>
   </example>

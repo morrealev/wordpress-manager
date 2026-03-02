@@ -6,7 +6,7 @@ description: |
 
   <example>
   Context: User wants to check their WordPress theme for accessibility compliance.
-  user: "Run an accessibility audit on my opencactus.com site"
+  user: "Run an accessibility audit on my mysite.example.com site"
   assistant: "I'll use the wp-accessibility-auditor agent to perform a WCAG 2.2 AA compliance audit."
   <commentary>Accessibility audits require automated scanning, code review, and manual testing guidance.</commentary>
   </example>

@@ -6,7 +6,7 @@ description: |
 
   <example>
   Context: User wants a security audit of their WordPress site.
-  user: "Run a security check on opencactus.com"
+  user: "Run a security check on mysite.example.com"
   assistant: "I'll use the wp-security-auditor agent to perform a comprehensive security audit."
   <commentary>Security audits require checking plugins, users, hosting config, and known vulnerabilities.</commentary>
   </example>

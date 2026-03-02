@@ -125,7 +125,7 @@ Lettura dei file `.content-state/` con parsing del frontmatter YAML:
 ```
 Input:
   .content-state/
-  ├── opencactus.config.md        → brand, canali, cadenza
+  ├── mysite.config.md        → brand, canali, cadenza
   ├── 2026-03-editorial.state.md  → piano editoriale corrente
   ├── pipeline-active/            → brief in lavorazione
   │   └── BRF-2026-005.brief.md
@@ -164,9 +164,9 @@ Due renderer dallo stesso dataset aggregato:
 - Esempio per `wp-content-pipeline`:
   ```
   ── Editorial Context ──────────────────────
-    opencactus.com | Mar 2026
+    mysite.example.com | Mar 2026
     Pipeline: 2 draft → 1 ready → 0 scheduled
-    Next deadline: Mar 18 — "Acqua di cactus..."
+    Next deadline: Mar 18 — "Acqua premium..."
     Briefs attivi: BRF-2026-005
   ───────────────────────────────────────────
   ```
@@ -204,7 +204,7 @@ Le dimensioni per cui il pattern si replica:
 
 | Dimensione | Esempio | Impatto su SCAN |
 |------------|---------|-----------------|
-| **Per sito** | opencactus, bioinagro | Filtro su `site_id` nei file `.content-state/` |
+| **Per sito** | mysite, othersite | Filtro su `site_id` nei file `.content-state/` |
 | **Per tipo tool** | content, analytics, social | Filtro su tipo di dato nel dataset |
 | **Per obiettivo** | awareness, conversion, retention | Filtro su categorie/tag nel editorial plan |
 | **Per timeframe** | settimana, mese, quarter | Filtro temporale su date nel calendar |
@@ -216,8 +216,8 @@ A basso volume (1-2 siti, < 20 brief/mese) lo scan diretto dei file è sufficien
 ```yaml
 # .content-state/index.yml (auto-generato, gitignored)
 sites:
-  - id: opencactus
-    config: opencactus.config.md
+  - id: mysite
+    config: mysite.config.md
     calendar: 2026-03-editorial.state.md
     active_briefs: 1
     published_this_month: 2

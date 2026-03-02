@@ -15,8 +15,8 @@
 - Avoid keyword stuffing
 
 ### Examples
-- Good: "Cactus Water Benefits — Zero Calorie Hydration | DolceZero"
-- Bad: "Cactus Water Benefits | Best Cactus Water | Buy Cactus Water"
+- Good: "Sparkling Water Benefits — Zero Calorie Hydration | AcmeBrand"
+- Bad: "Sparkling Water Benefits | Best Sparkling Water | Buy Sparkling Water"
 
 ## Meta Description (Excerpt)
 
@@ -33,8 +33,8 @@
 - Each page must have a unique meta description
 
 ### Examples
-- Good: "Discover the natural benefits of Sicilian cactus water. Zero calories, rich in antioxidants. Try DolceZero today."
-- Bad: "Welcome to our website. We sell cactus water products. Click here."
+- Good: "Discover the natural benefits of premium sparkling water. Zero calories, rich in antioxidants. Try AcmeBrand today."
+- Bad: "Welcome to our website. We sell sparkling water products. Click here."
 
 ## URL Slug Optimization
 
@@ -46,8 +46,8 @@
 - Never change an existing indexed slug (use 301 redirect)
 
 ### Examples
-- Good: `/cactus-water-benefits`
-- Bad: `/the-amazing-benefits-of-drinking-cactus-water-for-your-health-2026`
+- Good: `/sparkling-water-benefits`
+- Bad: `/the-amazing-benefits-of-drinking-premium-water-for-your-health-2026`
 
 ## Heading Hierarchy
 
@@ -91,13 +91,13 @@ Cluster posts link to each other where relevant
 
 ### File Naming
 ```
-Good: cactus-water-bottle-dolcezero.webp
+Good: product-bottle-acmebrand.webp
 Bad: IMG_20260226_123456.jpg
 ```
 
 ### Alt Text
 ```
-Good: "DolceZero cactus water bottle in three sweetness levels"
+Good: "AcmeBrand sparkling water bottle in three sweetness levels"
 Bad: "image" or "" (empty)
 ```
 

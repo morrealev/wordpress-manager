@@ -9,7 +9,7 @@ const server = new McpServer({
     version: '1.1.0',
 });
 // Register multi-site management tools
-server.tool('switch_site', { site_id: z.string().describe('Site ID to switch to (e.g., "opencactus", "bioinagro")') }, async (args) => {
+server.tool('switch_site', { site_id: z.string().describe('Site ID to switch to (e.g., "mysite", "othersite")') }, async (args) => {
     const { switchSite } = await import('./wordpress.js');
     try {
         const newSite = switchSite(args.site_id);

@@ -53,7 +53,7 @@ list_sites()
 | Element | Convention | Example |
 |---------|-----------|---------|
 | Site slug/path | ISO 639-1 language code | `/it/`, `/de/`, `/fr/` |
-| Site title | `{Brand} - {Language Name}` | "DolceZero - Italiano" |
+| Site title | `{Brand} - {Language Name}` | "AcmeBrand - Italiano" |
 | Admin email | Shared network admin email | `admin@example.com` |
 | Language constant | WordPress locale code | `it_IT`, `de_DE`, `fr_FR` |
 

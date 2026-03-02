@@ -42,8 +42,8 @@
 ### Hashtag Mix Strategy
 
 - **30% broad** (high volume): #marketing, #business, #health
-- **40% niche** (medium volume): #cactuswater, #zerocalorie, #healthydrinks
-- **30% branded** (low volume): #DolceZero, #SicilianWater
+- **40% niche** (medium volume): #sparklingwater, #zerocalorie, #healthydrinks
+- **30% branded** (low volume): #AcmeBrand, #PremiumWater
 
 ## Link Handling
 

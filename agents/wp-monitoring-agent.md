@@ -6,7 +6,7 @@ description: |
 
   <example>
   Context: User wants to set up monitoring for their WordPress site.
-  user: "Set up monitoring for my opencactus.com site"
+  user: "Set up monitoring for my mysite.example.com site"
   assistant: "I'll use the wp-monitoring-agent to establish a monitoring baseline and configure health checks."
   <commentary>Monitoring setup requires running detection, establishing baselines, and configuring checks.</commentary>
   </example>
