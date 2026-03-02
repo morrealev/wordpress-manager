@@ -2574,6 +2574,32 @@ The intelligence layer creates a feedback loop: analytics data → structured si
 
 **Signal feed file**: `.content-state/signals-feed.md` (overwritten each generation)
 
+### 17.6 Editorial Calendar (Phase 3)
+
+**Skill**: `wp-editorial-planner`
+
+The editorial planner manages monthly content calendars as `.state.md` files, bridging strategic planning to tactical execution.
+
+**Workflow**: `PLAN → BRIEF → SCHEDULE → SYNC`
+
+| Step | Action | Input | Output |
+|------|--------|-------|--------|
+| PLAN | Create monthly calendar | site config + signals feed | `{YYYY-MM}-editorial.state.md` |
+| BRIEF | Convert entries to briefs | calendar entries | `pipeline-active/BRF-*.brief.md` |
+| SCHEDULE | Create WP future posts | ready briefs | WordPress posts with `status: future` |
+| SYNC | Update calendar from WP | WordPress post status | Updated calendar entries |
+
+**Calendar structure**:
+- One `.content-state/{YYYY-MM}-editorial.state.md` per month
+- YAML frontmatter: monthly goals, posts target, focus topics, SEO targets
+- Markdown tables: one per week with columns Data, Titolo, Tipo, Status, Brief ID, Post ID, Canali
+
+**Entry lifecycle**: `planned → draft → ready → scheduled → published`
+
+**Cross-phase integration**:
+- Phase 2 signals → topic suggestions for `[da assegnare]` entries
+- Calendar entries → Phase 1 briefs → WordPress publishing pipeline
+
 ---
 
 *Guida v2.12.2 — WordPress Manager Plugin per Claude Code*
