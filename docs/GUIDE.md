@@ -1,7 +1,7 @@
 # WordPress Manager - Guida Completa per Utenti e Amministratori
 
-**Versione:** 2.12.2
-**Ultimo aggiornamento:** 2026-03-01
+**Versione:** 2.14.1
+**Ultimo aggiornamento:** 2026-03-02
 **Repository:** https://github.com/morrealev/wordpress-manager
 
 ---
@@ -24,6 +24,8 @@
 14. [Amministrazione Avanzata](#14-amministrazione-avanzata)
 15. [Troubleshooting](#15-troubleshooting)
 16. [Glossario](#16-glossario)
+17. [Content Framework](#17-content-framework)
+18. [Editorial Dashboard](#18-editorial-dashboard)
 
 ---
 
@@ -74,6 +76,9 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 - **Auto-transform contenuti**: convertire automaticamente post WordPress in tweet, thread, post LinkedIn, articoli LinkedIn, email snippet con template per piattaforma
 - **Generare contenuti AI**: pipeline 7 step (brief → keyword research → outline → draft → SEO optimize → structured data → publish) con template e pattern
 - **Gestire dati strutturati**: validare, iniettare e auditare Schema.org/JSON-LD (Article, Product, FAQ, HowTo, LocalBusiness, Event, Organization, BreadcrumbList)
+- **Content Framework**: collegare Gen* skill (GenCorpComm, GenMarketing, GenSignal) alla pubblicazione WordPress tramite content brief, signal feed e calendario editoriale
+- **Dashboard editoriale**: generare report HTML Kanban on-demand dallo stato `.content-state/`, con card per status, progress bar, anomalie segnali
+- **Contesto editoriale automatico**: ogni content skill mostra 3-5 righe di contesto operativo (pipeline status, prossima scadenza, brief attivi) prima di iniziare il workflow
 
 ### Requisiti
 
@@ -110,7 +115,7 @@ WordPress Manager e un plugin per **Claude Code** (la CLI ufficiale di Anthropic
 ### Componenti del Plugin
 
 ```
-wordpress-manager/                          # v2.12.2
+wordpress-manager/                          # v2.14.1
 +-- .claude-plugin/plugin.json              # Manifest
 +-- .mcp.json                               # Server MCP bundled
 +-- LICENSE                                 # MIT + GPL-2.0-or-later
@@ -183,10 +188,17 @@ wordpress-manager/                          # v2.12.2
 |   +-- wp-twitter/                             # Twitter/X direct posting e thread (v2.10.0)
 |   +-- wp-structured-data/                     # Schema.org/JSON-LD validation e injection (v2.12.2)
 |   +-- wp-content-generation/                  # AI content generation pipeline (v2.12.2)
+|   +-- [CONTENT FRAMEWORK - 3 skill]
+|   +-- wp-content-pipeline/                   # Brief → WP publish pipeline (v2.13.0)
+|   +-- wp-editorial-planner/                  # Calendario editoriale mensile (v2.13.0)
+|   +-- wp-dashboard/                          # Kanban HTML dashboard (v2.14.0)
 +-- hooks/                                  # 12 hook di sicurezza
 |   +-- hooks.json                              # 10 prompt + 2 command
 |   +-- scripts/                                # Script per hook command-type
 +-- scripts/                                # Utility
+|   +-- context-scanner.mjs                     # SCAN+AGGREGATE per dashboard e context snippet (v2.14.0)
+|   +-- dashboard-renderer.mjs                  # HTML Kanban renderer (v2.14.0)
+|   +-- run-validation.mjs                      # Validation runner per 148 tool (v2.13.0)
 +-- servers/wp-rest-bridge/                 # MCP Server custom (TypeScript)
 +-- docs/                                   # Documentazione
     +-- GUIDE.md                                # Questa guida
@@ -2505,7 +2517,9 @@ The framework uses three types of MD files as configuration layer:
 
 **Skill**: `wp-content-pipeline`
 
-The pipeline orchestrates: `SCAN → CONFIG → VALIDATE → PUBLISH → DISTRIBUTE → UPDATE → ARCHIVE`
+The pipeline orchestrates: `CONTEXT → SCAN → CONFIG → VALIDATE → PUBLISH → DISTRIBUTE → UPDATE → ARCHIVE`
+
+> **Step 0: CONTEXT** (v2.14.1) — Before starting, the pipeline reads site config, editorial calendar, and active briefs to display a 3-5 line context snippet showing pipeline status. This step is informational-only and never blocks the workflow.
 
 **Creating a brief**:
 1. Generate content (via GenCorpComm or manually)
@@ -2528,10 +2542,12 @@ The pipeline orchestrates: `SCAN → CONFIG → VALIDATE → PUBLISH → DISTRIB
 
 ```
 .content-state/
-├── {site_id}.config.md          # site configuration
-├── pipeline-active/             # briefs in progress
+├── {site_id}.config.md              # site configuration (Phase 1)
+├── signals-feed.md                  # latest signals snapshot (Phase 2)
+├── {YYYY-MM}-editorial.state.md     # current editorial calendar (Phase 3)
+├── pipeline-active/                 # briefs in progress
 │   └── BRF-YYYY-NNN.brief.md
-└── pipeline-archive/            # completed briefs
+└── pipeline-archive/                # completed briefs
     └── BRF-YYYY-NNN.brief.md
 ```
 
@@ -2580,7 +2596,9 @@ The intelligence layer creates a feedback loop: analytics data → structured si
 
 The editorial planner manages monthly content calendars as `.state.md` files, bridging strategic planning to tactical execution.
 
-**Workflow**: `PLAN → BRIEF → SCHEDULE → SYNC`
+**Workflow**: `CONTEXT → PLAN → BRIEF → SCHEDULE → SYNC`
+
+> **Step 0: CONTEXT** (v2.14.1) — Shows the next upcoming deadline and pipeline summary before starting. Informational-only.
 
 | Step | Action | Input | Output |
 |------|--------|-------|--------|
@@ -2602,6 +2620,83 @@ The editorial planner manages monthly content calendars as `.state.md` files, br
 
 ---
 
-*Guida v2.12.2 — WordPress Manager Plugin per Claude Code*
-*Ultimo aggiornamento: 2026-03-01*
-*WCOP Score: 8.8/10 (Tier 4+5 complete)*
+## 18. Editorial Dashboard
+
+Dashboard operativi che rendono visibile lo stato del Content Framework. Due livelli complementari: report HTML (Livello 1) e context snippet inline nelle skill (Livello 2).
+
+### 18.1 Kanban HTML Dashboard (v2.14.0)
+
+**Skill**: `wp-dashboard`
+
+Genera un file HTML statico self-contained dal contenuto di `.content-state/`. Zero dipendenze esterne, zero network call — un singolo file apribile nel browser.
+
+**Generazione**:
+```bash
+# Via npm script
+npm run dashboard -- --site=mysite
+
+# Via node diretto
+node scripts/dashboard-renderer.mjs --site=mysite [--month=2026-03] [--output=report.html] [--no-open]
+```
+
+**Contenuto del report**:
+- **Kanban board**: 5 colonne (Planned → Draft → Ready → Scheduled → Published) con card colorate
+- **Progress bar**: rapporto pubblicati/target del mese
+- **Signals strip**: anomalie dal signals-feed.md con delta percentuali
+- **Card info**: data, titolo, brief ID, WP post ID, badge canali distribuzione
+
+**Vincoli tecnici**:
+| Vincolo | Valore |
+|---------|--------|
+| Self-contained | Un singolo file `.html`, CSS inline |
+| Dimensione | < 50 KB |
+| JavaScript | Zero (report statico) |
+| Dipendenze CDN | Zero (offline-first) |
+| Generazione | < 2 secondi |
+
+### 18.2 Context Snippet (v2.14.1)
+
+Contesto operativo automatico all'inizio di ogni content skill. 3-5 righe che mostrano "ecco cosa sto per toccare" prima di iniziare il workflow.
+
+**Formato**:
+```
+── Editorial Context ──────────────────────
+  mysite | 2026-03-03 → 2026-03-30
+  Pipeline: 1 draft → 2 ready → 2 scheduled
+  Posts: 3/8 pubblicati
+───────────────────────────────────────────
+```
+
+**Slice per skill**:
+| Skill | Slice | Info aggiuntiva |
+|-------|-------|-----------------|
+| `wp-content-pipeline` | pipeline | Brief attivi con status (max 3) |
+| `wp-editorial-planner` | calendar | Prossima scadenza (data + titolo troncato) |
+
+**CLI standalone**:
+```bash
+node scripts/context-scanner.mjs --snippet --site=mysite [--slice=pipeline|calendar|signals]
+```
+
+**Comportamento**: Step 0 è informational-only — non blocca mai il workflow. File mancanti producono snippet parziali o skip silenzioso.
+
+### 18.3 Architettura Condivisa
+
+Entrambi i livelli condividono il modulo `scripts/context-scanner.mjs`:
+
+```
+SCAN → AGGREGATE → RENDER
+```
+
+| Funzione | Scopo |
+|----------|-------|
+| `scanContentState()` | Legge config, calendario, brief, signals da `.content-state/` |
+| `aggregateMetrics()` | Calcola colonne, progress, fill rate, next deadline |
+| `renderContextSnippet()` | Output terminale 3-5 righe (Livello 2) |
+| `dashboard-renderer.mjs` | Output HTML Kanban (Livello 1) |
+
+---
+
+*Guida v2.14.1 — WordPress Manager Plugin per Claude Code*
+*Ultimo aggiornamento: 2026-03-02*
+*WCOP Score: 9.2/10 (Content Framework + Dashboard complete)*

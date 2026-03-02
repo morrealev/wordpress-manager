@@ -6,13 +6,14 @@ Unified WordPress management **and** development plugin that orchestrates multip
 
 ```
 wordpress-manager/
-├── .claude-plugin/plugin.json    # Plugin manifest (v1.7.0)
+├── .claude-plugin/plugin.json    # Plugin manifest (v2.14.1)
 ├── .mcp.json                     # MCP server definitions
-├── agents/                       # 8 specialized agents
+├── agents/                       # 12 specialized agents
 ├── commands/                     # 5 slash commands
-├── skills/                       # 24 skills (5 operational + 18 development + 1 local env)
-├── hooks/hooks.json              # 6 safety hooks (PreToolUse)
-└── servers/wp-rest-bridge/       # Custom MCP server (TypeScript)
+├── skills/                       # 46 skills (operational + development + content framework)
+├── hooks/hooks.json              # 12 safety hooks (PreToolUse)
+├── scripts/                      # Dashboard renderer, context scanner, validation
+└── servers/wp-rest-bridge/       # Custom MCP server (TypeScript, 148 tools)
 ```
 
 ## MCP Servers
@@ -179,7 +180,7 @@ bash ~/.claude/plugins/local/wordpress-manager/scripts/health-check.sh
 | wp-rest-bridge | 40+ | Content (CRUD), Taxonomies, Media, Plugins, Users, Comments, Site Meta |
 | WordPress.com (external) | ~15 | Content Authoring, Site Settings, Editor Context |
 
-**Total**: ~175 tools available through the unified plugin interface.
+**Total**: 148 tools available through the unified plugin interface (validated end-to-end).
 
 ## Development
 
@@ -227,6 +228,24 @@ npx tsc              # Compile TypeScript to build/
 | 1.5.0 | Phase 6 | +1 local environment skill (`wp-local-env`): WordPress Studio, LocalWP, wp-env detection, unified management, router v3 |
 | 1.6.0 | Phase 7 | +5 development skills (testing, security, i18n, accessibility, headless), router v4, cross-references |
 | 1.7.0 | Phase 8 | +3 agents (test-engineer, security-hardener, accessibility-auditor), 5 agent upgrades, bidirectional cross-refs, audit→fix handoff chain |
+| 1.8.0 | WooCommerce | +30 WC tools (products, orders, customers, coupons, reports, settings), +wp-ecommerce-manager agent |
+| 1.9.0 | Multisite | +10 multisite tools, network management, sub-site CRUD, domain mapping |
+| 2.0.0 | CI/CD | GitHub Actions, GitLab CI, Bitbucket Pipelines, quality gates, deploy automation |
+| 2.1.0 | Monitoring | Uptime checks, performance baseline, security scanning, content integrity |
+| 2.2.0 | Tier 2 | Fleet monitoring, content repurposing, webhook propagation |
+| 2.3.0 | Tier 3a | Programmatic SEO, content-commerce attribution, multi-language network |
+| 2.4.0 | Tier 3b | Social/email distribution: +7 Mailchimp, +5 Buffer, +6 SendGrid tools |
+| 2.5.0 | Tier 3c | Google Search Console: +8 GSC tools, keyword tracking, indexing management |
+| 2.6.0 | Tier 3d | Content optimization AI: headline scoring, readability, SEO scoring, bulk triage |
+| 2.7.0 | Tier 4a | Analytics: +6 GA4, +4 Plausible, +4 CWV tools |
+| 2.8.0 | Tier 4b | Smart alerting: Slack webhook/Bot, SendGrid, severity routing |
+| 2.9.0 | Tier 4+5 | Automated workflows: cron triggers, content lifecycle hooks, multi-channel actions |
+| 2.10.0 | Tier 6a | Direct social: +5 LinkedIn, +5 Twitter/X tools |
+| 2.11.0 | Tier 6b | Auto-transform pipeline: blog→tweet/thread/LinkedIn/email templates |
+| 2.12.0 | Tier 7 | Content generation AI pipeline, structured data (Schema.org/JSON-LD) |
+| 2.13.0 | Content Framework | 3-phase framework: content pipeline, intelligence (signals), editorial calendar |
+| 2.14.0 | Dashboard | Editorial Kanban HTML dashboard, context-scanner module |
+| 2.14.1 | Context Snippet | Step 0 CONTEXT in content skills, CLI snippet mode |
 
 ## License
 
