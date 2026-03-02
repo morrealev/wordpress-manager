@@ -43,7 +43,7 @@ Each event in the feed body represents a single metric observation for an entity
 | `value` | number | Yes | Metric value for the current period |
 | `unit` | string | Yes | One of: `count`, `seconds`, `percentage`, `position` |
 | `ts` | ISO 8601 | Yes | End of measurement period |
-| `delta_pct` | integer | No | % change vs comparison period. Positive = increase. Omitted if no baseline |
+| `delta_pct` | integer | No | % change vs comparison period. Positive = increase. Omitted if no baseline. Note: in YAML `+47` and `47` are equivalent integers; the `+` prefix is a display convention only |
 | `provenance` | object | Yes | Data origin metadata |
 
 ### Entity Types
@@ -94,10 +94,12 @@ The `entity_id` field uses a typed prefix to identify the entity:
 | `total_pageviews` | count | Total page views across all pages |
 | `total_conversions` | count | Total conversions site-wide |
 | `lcp` | seconds | Largest Contentful Paint (Core Web Vital) |
-| `cls` | count | Cumulative Layout Shift (Core Web Vital, unitless score) |
+| `cls` | count | Cumulative Layout Shift (Core Web Vital, unitless score). `count` is used as catch-all for unitless numeric values when no more specific unit applies |
 | `inp` | seconds | Interaction to Next Paint (Core Web Vital) |
 | `fcp` | seconds | First Contentful Paint |
 | `ttfb` | seconds | Time to First Byte |
+
+> All CWV time-based metrics are normalized to **seconds** for consistency with other time metrics. API values in milliseconds should be divided by 1000.
 
 ### Provenance Object
 
@@ -142,11 +144,11 @@ The Markdown body after frontmatter contains YAML code blocks organized by signa
 
 ### Traffic Signals
 
-Contains `Page:` entity events sourced from `ga4_top_pages`, `ga4_report`, or `plausible_stats`. Each event is a YAML object in a fenced code block.
+Contains `Page:` entity events sourced from `ga4_top_pages`, `ga4_report`, or `pl_aggregate`. Each event is a YAML object in a fenced code block.
 
 ### Search Signals
 
-Contains `Keyword:` entity events sourced from `gsc_query_analytics`. Captures search visibility and click behavior.
+Contains `Keyword:` entity events sourced from `gsc_search_analytics`. Captures search visibility and click behavior.
 
 ### Source Signals
 
@@ -154,7 +156,7 @@ Contains `Source:` entity events sourced from `ga4_traffic_sources`. Tracks refe
 
 ### Performance Signals
 
-Contains `Site:` entity events sourced from `cwv_report` or `pagespeed_check`. Captures Core Web Vitals and loading metrics.
+Contains `Site:` entity events sourced from `cwv_crux_origin` (site-level) or `cwv_pagespeed` (URL-level). Captures Core Web Vitals and loading metrics.
 
 ### Anomalies & Patterns
 
@@ -204,11 +206,12 @@ Users are clicking more on existing rankings, indicating growing search intent f
 
 **Detection**: GSC shows `search_ctr` increasing while `search_position` remains stable -- users are clicking more on existing rankings without position changes.
 
-**Trigger conditions** (either):
+**Trigger conditions** (any):
 - `search_ctr` delta >= +20% sustained over the measurement period
-- `search_impressions` delta >= +50% on keywords containing commercial modifiers (e.g., "comprare", "prezzo", "migliore", "acquistare")
+- `search_impressions` delta >= +50% on keywords containing commercial modifiers (e.g., "comprare", "prezzo", "migliore", "acquistare") -- commercial modifiers are a strong signal qualifier
+- `search_impressions` delta >= +100% on any keyword, regardless of modifiers
 
-**Data sources**: `gsc_query_analytics`
+**Data sources**: `gsc_search_analytics`
 
 **Action template**: `"Investigate: content cluster opportunity"`
 
@@ -311,7 +314,8 @@ source_tools:
   - ga4_top_pages
   - ga4_traffic_sources
   - ga4_report
-  - gsc_query_analytics
+  - gsc_search_analytics
+  - cwv_crux_origin
 anomaly_threshold: 30
 status: generated
 ---
@@ -362,7 +366,7 @@ status: generated
   ts: "2026-02-28T23:59:59Z"
   delta_pct: +120
   provenance:
-    source_id: gsc_query_analytics
+    source_id: gsc_search_analytics
     site: opencactus
 
 - entity_id: "Keyword:acqua di cactus benefici"
@@ -372,7 +376,7 @@ status: generated
   ts: "2026-02-28T23:59:59Z"
   delta_pct: -8
   provenance:
-    source_id: gsc_query_analytics
+    source_id: gsc_search_analytics
     site: opencactus
 ```
 
@@ -399,7 +403,7 @@ status: generated
   unit: seconds
   ts: "2026-02-28T23:59:59Z"
   provenance:
-    source_id: ga4_report
+    source_id: cwv_crux_origin
     site: opencactus
 ```
 
@@ -408,6 +412,6 @@ status: generated
 | Entity | Metric | Delta | Pattern Match | Action |
 |--------|--------|-------|---------------|--------|
 | Keyword:acqua di cactus | search_impressions | +120% | Search Intent Shift | Investigate: content cluster opportunity |
-| Source:linkedin | referral_sessions | +85% | Early-Adopter Surge | Scale: increase LinkedIn posting frequency |
+| Source:linkedin | referral_sessions | +85% | Early-Adopter Surge | Scale: increase posting frequency on linkedin |
 | Page:/cactus-water-benefici | pageviews | +47% | Unclassified anomaly | Review: investigate cause of +47% change in pageviews |
 ````
