@@ -2,7 +2,7 @@
 
 **Data**: 2026-03-02
 **Versione**: 1.0.0
-**Stato**: Fase 1 Implementata
+**Stato**: Fase 2 Implementata
 **Prerequisito**: [Riflessioni Strategiche](2026-03-02-content-framework-strategic-reflections.md)
 
 ---
@@ -581,10 +581,10 @@ Zero file `.ts` aggiunti. Tutte le operazioni usano i 148 MCP tool esistenti orc
 
 ### Fase 2: Content Intelligence
 
-- [ ] `signals-feed.schema.md` compatibile con GenSignal NormalizedEvent
-- [ ] `wp-analytics` estesa con Step 7 (signal feed generation)
-- [ ] Delta calculation funzionante (confronto con periodo precedente)
-- [ ] Almeno 3 GenSignal patterns riconosciuti automaticamente
+- [x] `signals-feed.schema.md` compatibile con GenSignal NormalizedEvent
+- [x] `wp-analytics` estesa con Step 7 (signal feed generation)
+- [x] Delta calculation funzionante (confronto con periodo precedente)
+- [x] Almeno 3 GenSignal patterns riconosciuti automaticamente
 - [ ] Flusso testato: analytics → signals-feed.md → insight azionabili
 
 ### Fase 3: Editorial Calendar
