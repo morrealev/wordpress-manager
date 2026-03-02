@@ -2,6 +2,43 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.14.0] — 2026-03-02
+
+### Added — Editorial Kanban Dashboard
+
+Dashboard HTML statico generato on-demand dai file `.content-state/`. Zero dipendenze esterne, zero network call, zero framework — un singolo file HTML self-contained apribile nel browser.
+
+**Skill `wp-dashboard`**
+- Nuova skill con trigger in italiano e inglese ("mostra dashboard", "show editorial status", "apri kanban")
+- Workflow 4-step: sito target → mese → generazione → report
+- Guida visuale integrata: come leggere colonne, card, signals, progress bar
+- Tabella "Next Actions by Observation" che collega osservazioni visive ad azioni specifiche
+
+**Script `context-scanner.mjs` (modulo condiviso)**
+- Parser YAML frontmatter manuale (zero dipendenze npm) per `.content-state/` files
+- Parser tabelle Markdown editoriali con risoluzione date
+- `scanContentState()` — lettura aggregata di config, calendario, brief attivi/archiviati, signals
+- `aggregateMetrics()` — metriche pipeline: colonne, progress, fill rate, next deadline, channel usage
+- `renderContextSnippet()` — stub terminale per Fase B (context injection nelle skill esistenti)
+
+**Script `dashboard-renderer.mjs` (CLI + HTML)**
+- Template HTML Kanban con 5 colonne: Planned → Draft → Ready → Scheduled → Published
+- Card colorate per status con date, titoli, brief ID, WP post ID, badge canali
+- Progress bar con rapporto pubblicati/target
+- Signals strip con anomalie e delta percentuali
+- CSS Grid responsivo, stampa-friendly, ~14 KB output
+- CLI: `--site=X`, `--month=YYYY-MM`, `--output=path`, `--no-open`
+- Auto-detect sito se configurazione unica
+- Apertura browser cross-platform (Linux/macOS/Windows)
+- npm script: `npm run dashboard -- --site=opencactus`
+
+**Verificato con dati reali opencactus.com**
+- 8 entry calendario (3 planned, 1 draft, 2 ready, 2 published)
+- 3 anomalie signals (+120%, +85%, +47%)
+- Output 13.7 KB, tutte le sezioni presenti
+
+---
+
 ## [2.13.0] — 2026-03-02
 
 ### Added — Content Framework (3 Phases)

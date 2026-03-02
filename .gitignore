@@ -10,3 +10,6 @@ docs/validation/results.json
 .content-state/pipeline-archive/
 .content-state/signals-feed.md
 .content-state/*-editorial.state.md
+
+# Dashboard — generated HTML reports
+.content-state/.dashboard-*.html

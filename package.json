@@ -1,7 +1,7 @@
 {
   "name": "claude-plugin-wordpress-manager",
-  "version": "2.13.0",
-  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (148 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks + 7 Mailchimp + 5 Buffer + 6 SendGrid + 8 GSC + 6 GA4 + 4 Plausible + 4 CWV + 3 Slack + 4 Workflows + 5 LinkedIn + 5 Twitter + 3 Schema), and WordPress.com MCP with 45 skills, 12 agents, and security hooks. v2.13.0 adds Content Framework: 3-phase pipeline from signals intelligence to editorial calendar to WordPress publishing.",
+  "version": "2.14.0",
+  "description": "Unified WordPress management and development plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (148 tools incl. 30 WooCommerce + 10 Multisite + 4 Webhooks + 7 Mailchimp + 5 Buffer + 6 SendGrid + 8 GSC + 6 GA4 + 4 Plausible + 4 CWV + 3 Slack + 4 Workflows + 5 LinkedIn + 5 Twitter + 3 Schema), and WordPress.com MCP with 46 skills, 12 agents, and security hooks. v2.14.0 adds Editorial Kanban Dashboard: self-contained HTML report generated from .content-state/ files.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -70,7 +70,10 @@
     "content-framework",
     "content-pipeline",
     "editorial-calendar",
-    "signals-intelligence"
+    "signals-intelligence",
+    "dashboard",
+    "kanban",
+    "editorial-dashboard"
   ],
   "repository": {
     "type": "git",
@@ -83,7 +86,8 @@
   "scripts": {
     "validate": "node scripts/run-validation.mjs",
     "validate:module": "node scripts/run-validation.mjs --module",
-    "validate:all": "node scripts/run-validation.mjs --include-writes"
+    "validate:all": "node scripts/run-validation.mjs --include-writes",
+    "dashboard": "node scripts/dashboard-renderer.mjs"
   },
   "files": [
     ".claude-plugin/",

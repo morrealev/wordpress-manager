@@ -130,7 +130,7 @@ wordpress-manager/                          # v2.12.2
 |   +-- wp-distribution-manager.md              # Multi-channel distribution + LinkedIn + Twitter/X (v2.10.0)
 +-- commands/                               # 5 slash commands
 |   +-- wp-status.md / wp-deploy.md / wp-audit.md / wp-backup.md / wp-setup.md
-+-- skills/                                 # 45 skill totali
++-- skills/                                 # 46 skill totali
 |   +-- [OPERATIVE - 5 skill]
 |   +-- wp-deploy/                              # Procedure deploy
 |   +-- wp-audit/                               # Checklist audit
