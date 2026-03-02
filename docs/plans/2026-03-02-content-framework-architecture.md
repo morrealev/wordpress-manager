@@ -2,7 +2,7 @@
 
 **Data**: 2026-03-02
 **Versione**: 1.0.0
-**Stato**: Fase 3 Implementata
+**Stato**: Fase 3 Implementata — E2E Testata (2026-03-02)
 **Prerequisito**: [Riflessioni Strategiche](2026-03-02-content-framework-strategic-reflections.md)
 
 ---
@@ -592,8 +592,8 @@ Zero file `.ts` aggiunti. Tutte le operazioni usano i 148 MCP tool esistenti orc
 - [x] `editorial.schema.md` definito con tabelle settimanali
 - [x] `wp-editorial-planner` skill creata con 4 workflow steps
 - [x] Conversione calendar entry → brief automatica
-- [x] Scheduling WP post con status=future funzionante
-- [ ] Sync bidirezionale: WP publish status → calendar update
+- [x] Scheduling WP post con status=future funzionante (via wp-rest-bridge `create_content`; AIWU non supporta `post_date` — vedi Known Limitations in SKILL.md)
+- [x] Sync bidirezionale: WP publish status → calendar update (SYNC step definito; E2E read-only verificato via AIWU `wp_get_post`)
 
 ---
 

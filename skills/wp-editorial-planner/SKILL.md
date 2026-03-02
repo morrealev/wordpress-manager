@@ -229,6 +229,21 @@ When the user wants to create a calendar without running the full PLAN step:
 
 ---
 
+## Known Limitations
+
+### AIWU MCP Server (cloud-based)
+
+The AIWU MCP server (`mcp__claude_ai_AIWU`) does **not** support the `post_date` field in `wp_create_post` or `wp_update_post`. This means `post_status: "future"` cannot be achieved through AIWU — WordPress auto-publishes the post when no future date is provided.
+
+**E2E test results (2026-03-02):**
+- `wp_create_post` with `post_status: "future"` → auto-published (no `post_date` parameter available)
+- `wp_update_post` with `post_date` + `post_status: "future"` from `draft` → auto-published (`post_date` not passed through)
+- `wp_update_post` on already-published post → `post_date` updated but status cannot revert from `publish` to `future`
+
+**Workaround:** Use the wp-rest-bridge MCP server's `create_content` tool, which natively supports the `date` parameter for scheduling future posts. AIWU can still be used for SYNC (read-only) and for content management tasks that don't require future scheduling.
+
+---
+
 ## Reference Files
 
 - `references/editorial-schema.md` -- complete schema for editorial calendar `.state.md` files
