@@ -97,6 +97,15 @@ See `references/traffic-attribution.md`
 - Combining analytics with WooCommerce conversion data
 - Discrepancy analysis between platforms
 
+### Section 7: Signal Feed Generation (Content Intelligence)
+See `references/signals-feed-schema.md`
+- Generating `.content-state/signals-feed.md` from analytics data
+- NormalizedEvent format for GenSignal compatibility
+- Delta calculation against previous period
+- Anomaly detection with configurable threshold (default ±30%)
+- Pattern matching: Search Intent Shift, Early-Adopter Surge, Hype→Utility Crossover
+- Integration with wp-content-pipeline (Phase 1) and wp-editorial-planner (Phase 3)
+
 ## Reference Files
 
 | File | Content |
@@ -106,6 +115,147 @@ See `references/traffic-attribution.md`
 | `references/cwv-monitoring.md` | CWV metric definitions, thresholds, PageSpeed/CrUX APIs |
 | `references/analytics-dashboards.md` | Dashboard patterns, report templates, KPIs, combined data |
 | `references/traffic-attribution.md` | UTM params, source/medium, GA4 + WooCommerce conversions |
+| `references/signals-feed-schema.md` | NormalizedEvent format, delta rules, pattern matching, anomaly detection |
+
+## Signal Feed Generation Workflow
+
+### When to Use
+
+- User asks to "generate signals", "analyze performance and create signals", "run content intelligence"
+- User wants to understand which analytics trends are actionable
+- User mentions GenSignal integration or NormalizedEvent
+- After running a standard analytics report (Sections 1-6), user wants structured output for strategic planning
+
+### Prerequisites
+
+1. At least one analytics service configured (GA4, Plausible, or GSC)
+2. A `.content-state/{site_id}.config.md` exists for the target site
+3. Historical data for at least 2 periods (to calculate deltas)
+
+### Step 7: GENERATE SIGNAL FEED
+
+```
+COLLECT → BASELINE → NORMALIZE → DELTA → ANOMALY → PATTERN → WRITE
+```
+
+**7.1 COLLECT — Gather current period data**
+
+Call the following MCP tools for the requested period (default: last 30 days):
+
+| Tool | Data Collected | Entity Type |
+|------|---------------|-------------|
+| `ga4_top_pages` | Top 20 pages by pageviews, sessions, engagement time | Page |
+| `ga4_traffic_sources` | Source/medium breakdown with sessions, bounce rate | Source |
+| `ga4_report` | Site-level aggregate: total sessions, pageviews, conversions | Site |
+| `gsc_search_analytics` | Top 20 keywords by impressions, clicks, CTR, position | Keyword |
+| `pl_aggregate` | If Plausible configured: visitors, pageviews, bounce_rate | Site (cross-validate) |
+| `cwv_crux_origin` | If CrUX available: LCP, CLS, INP, FCP, TTFB | Site |
+
+Not all tools need to succeed. Generate events only from tools that return data. Record which tools contributed in `source_tools` frontmatter.
+
+**7.2 BASELINE — Load comparison period data**
+
+Read the existing `.content-state/signals-feed.md` if present. Extract the `period` and events to use as baseline for delta calculation.
+
+If no previous feed exists:
+- Call the same tools with date range offset by the period length (e.g., if current period = Feb, baseline = Jan)
+- If baseline tools fail: proceed without deltas (omit `delta_pct` fields)
+
+Record the comparison period in `comparison_period` frontmatter field.
+
+**7.3 NORMALIZE — Map to NormalizedEvent format**
+
+For each data point from 7.1, create a NormalizedEvent:
+
+```yaml
+- entity_id: "{EntityType}:{identifier}"
+  relation: "{metric_name}"
+  value: {numeric_value}
+  unit: "{count|seconds|percentage|position}"
+  ts: "{period_end_ISO8601}"
+  provenance:
+    source_id: "{mcp_tool_name}"
+    site: "{site_id}"
+```
+
+**Entity ID mapping:**
+- GA4 top pages → `Page:{page_path}`
+- GA4 traffic sources → `Source:{source_name}`
+- GA4 site aggregates → `Site:{site_id}`
+- GSC keywords → `Keyword:{query}`
+- CWV metrics → `Site:{site_id}` with relation = metric name
+
+**Relation mapping:**
+- GA4 `screenPageViews` → `pageviews`
+- GA4 `sessions` → `sessions` (page) or `total_sessions` (site)
+- GA4 `averageSessionDuration` → `avg_engagement_time`
+- GA4 `bounceRate` → `bounce_rate`
+- GSC `impressions` → `search_impressions`
+- GSC `clicks` → `search_clicks`
+- GSC `ctr` → `search_ctr`
+- GSC `position` → `search_position`
+- CWV metrics → lowercase (e.g., `lcp`, `cls`, `inp`)
+
+All CWV time-based metrics are normalized to seconds. API values in milliseconds should be divided by 1000.
+
+**7.4 DELTA — Calculate percentage changes**
+
+For each NormalizedEvent, find the matching baseline event (same `entity_id` + `relation`):
+
+```
+delta_pct = round(((current_value - baseline_value) / baseline_value) * 100)
+```
+
+Edge cases:
+- Baseline = 0, current > 0 → `delta_pct: +999`
+- Both = 0 → `delta_pct: 0`
+- No baseline match → omit `delta_pct`
+
+**7.5 ANOMALY — Identify significant changes**
+
+Read `anomaly_threshold` from feed config (default: 30). Filter events where `|delta_pct| >= anomaly_threshold`.
+
+**7.6 PATTERN — Match GenSignal patterns**
+
+Check each anomaly against 3 detectable patterns:
+
+**Search Intent Shift:**
+- Entity is `Keyword:*`
+- Conditions (any): `search_ctr` delta ≥ +20% with `search_position` delta ≤ +5%, OR `search_impressions` delta ≥ +50% on keywords with commercial modifiers, OR `search_impressions` delta ≥ +100% on any keyword
+- Action: "Investigate: content cluster opportunity"
+
+**Early-Adopter Surge:**
+- Entity is `Source:*`
+- Conditions: `referral_sessions` delta ≥ +50% AND site-level `total_sessions` delta < +20%
+- Action: "Scale: increase posting frequency on {source}"
+
+**Hype→Utility Crossover:**
+- Entity is `Page:*`
+- Conditions: `avg_engagement_time` delta ≥ +15% AND `bounce_rate` delta ≤ -10% AND `pageviews` delta between -20% and +10%
+- Action: "Shift: add conversion touchpoints to {page}"
+
+No pattern match → "Unclassified anomaly" / "Review: investigate cause"
+
+**7.7 WRITE — Generate signals-feed.md**
+
+Write `.content-state/signals-feed.md` with YAML frontmatter and organized body sections. See `references/signals-feed-schema.md` for exact format.
+
+**After writing**, present summary to user:
+
+```
+Signal Feed generato per {site_id}:
+- Periodo: {period}
+- Eventi normalizzati: {count}
+- Anomalie rilevate: {anomaly_count}
+- Pattern riconosciuti: {pattern_list}
+
+Anomalie principali:
+1. {entity} — {relation} {delta}% → {pattern}: {action}
+2. ...
+
+Per approfondire un segnale con GenSignal: "approfondisci il segnale N con GenSignal"
+Per creare brief dai segnali: "crea brief per i segnali azionabili"
+```
 
 ## MCP Tools
 
@@ -136,6 +286,7 @@ Use the **`wp-monitoring-agent`** for automated analytics reporting, performance
 - **`wp-content-optimization`** — use analytics data to prioritize content optimization efforts
 - **`wp-content-attribution`** — track content sources and attribute traffic to specific campaigns
 - **`wp-monitoring`** — monitor site uptime and health alongside analytics performance
+- **`wp-content-pipeline`** — use signal insights to create content briefs for publishing
 
 ## Cross-references
 
@@ -143,6 +294,8 @@ Use the **`wp-monitoring-agent`** for automated analytics reporting, performance
 - CWV monitoring feeds into `wp-performance` for technical optimization
 - Traffic attribution connects to `wp-social-email` for campaign tracking
 - Dashboard patterns support `wp-monitoring` alerting workflows
+- Signal feed generation bridges to `wp-content-pipeline` for data-driven content creation
+- GenSignal integration: signals-feed.md is the exchange format between wp-analytics and GenSignal pattern detection
 
 ## Troubleshooting
 
