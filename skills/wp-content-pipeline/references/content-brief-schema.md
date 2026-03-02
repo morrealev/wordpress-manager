@@ -17,7 +17,7 @@ Each `.brief.md` file consists of:
 ---
 brief_id: BRF-2026-001
 status: draft
-...
+# ... other fields ...
 ---
 
 # Article Title
@@ -77,7 +77,7 @@ source:
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `skill` | `string` | **Yes** | `manual` | Gen\* skill that produced the brief. Values: `gencorpcomm`, `genmarketing`, `gensocial`, `genseo`, `manual` |
+| `skill` | `string` | **Yes** | -- | Gen\* skill that produced the brief. Values: `gencorpcomm`, `genmarketing`, `gensignal`, `genbrand`, `manual`. For manually created briefs, set to `manual` |
 | `domain` | `string` | No | `general` | Content domain or department. Free-form but recommended values: `corporate-communications`, `marketing`, `product`, `engineering`, `support` |
 | `session_id` | `string` | No | `null` | Claude Code session ID that generated the brief, for traceability |
 
@@ -150,7 +150,7 @@ distribution:
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `channels` | `string[]` | No | `[]` | External distribution channels. Supported: `linkedin`, `twitter`, `buffer`, `mailchimp`, `telegram` |
+| `channels` | `string[]` | No | `[]` | External distribution channels. Supported: `linkedin`, `twitter`, `buffer`, `mailchimp` |
 | `adapt_format` | `boolean` | No | `true` | Adapt content format for each channel (e.g., shorten for Twitter, professional tone for LinkedIn) |
 | `schedule_offset_hours` | `integer` | No | `0` | Hours to delay distribution after WordPress publication. `0` = immediate |
 
@@ -176,6 +176,8 @@ seo:
 | `meta_description` | `string` | No | Value of `content.excerpt` | Custom meta description (max 160 chars recommended) |
 | `schema_type` | `string` | No | `Article` | JSON-LD schema type: `Article`, `BlogPosting`, `HowTo`, `FAQPage`, `Product`, `Recipe`, `NewsArticle` |
 | `internal_links` | `string[]` | No | `[]` | Paths to internal pages that should be linked within the content body |
+
+**Note:** the architecture draft defines `internal_links` as `auto | manual | none`. This schema uses explicit path lists instead — automatic link discovery is configured at the site level via `seo.auto_internal_links` in `{site_id}.config.md`.
 
 ---
 
@@ -334,9 +336,9 @@ Nel cuore della Sicilia, tra le terre arse dal sole dell'entroterra, cresce una 
 
 ## Una Tradizione Millenaria, Una Visione Moderna
 
-Il fico d'India siciliano non e' solo un simbolo del paesaggio mediterraneo. Per secoli, le comunita' locali hanno sfruttato le sue proprieta' idratanti naturali. Oggi, grazie a un processo di estrazione innovativo, quell'acqua diventa una [bevanda zero-calorie](/prodotti/poco-dolce) che conserva tutti i benefici dell'originale.
+Il fico d'India siciliano non è solo un simbolo del paesaggio mediterraneo. Per secoli, le comunità locali hanno sfruttato le sue proprietà idratanti naturali. Oggi, grazie a un processo di estrazione innovativo, quell'acqua diventa una [bevanda zero-calorie](/prodotti/poco-dolce) che conserva tutti i benefici dell'originale.
 
-## Perche' l'Acqua di Cactus?
+## Perché l'Acqua di Cactus?
 
 I vantaggi rispetto alle alternative convenzionali sono significativi:
 
@@ -345,13 +347,13 @@ I vantaggi rispetto alle alternative convenzionali sono significativi:
 - **Elettroliti bilanciati** per un'idratazione superiore
 - **Impronta idrica minima**: il cactus richiede l'85% di acqua in meno rispetto alle colture tradizionali
 
-## Sostenibilita' al Centro
+## Sostenibilità al Centro
 
-La nostra filiera e' progettata per la [sostenibilita' integrale](/chi-siamo/sostenibilita). I cactus crescono su terreni marginali, non competono con le colture alimentari e contribuiscono alla rigenerazione del suolo siciliano.
+La nostra filiera è progettata per la [sostenibilità integrale](/chi-siamo/sostenibilita). I cactus crescono su terreni marginali, non competono con le colture alimentari e contribuiscono alla rigenerazione del suolo siciliano.
 
 Ogni bottiglia di DolceZero rappresenta una scelta consapevole: per la salute, per il territorio, per il futuro.
 
-## Scopri di Piu'
+## Scopri di Più
 
 Leggi i [benefici scientifici del fico d'India](/blog/benefici-fico-india) o prova la nostra gamma di prodotti, dal delicato **Poco Dolce** al ricco **Molto Dolce**.
 ```
