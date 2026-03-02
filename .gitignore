@@ -3,3 +3,10 @@ servers/wp-rest-bridge/build/
 *.log
 .DS_Store
 docs/validation/results.json
+
+# Content Framework state — instance files are local, schemas are tracked
+.content-state/*.config.md
+.content-state/pipeline-active/*.brief.md
+.content-state/pipeline-archive/
+.content-state/signals-feed.md
+.content-state/*-editorial.state.md
