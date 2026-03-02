@@ -85,7 +85,7 @@ brand:
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
 | `tone` | `string` | **Yes** | -- | Comma-separated tone descriptors. Used by Claude to calibrate writing style. Examples: `professional, warm`, `casual, witty`, `technical, precise` |
-| `language` | `string` | **Yes** | `en` | ISO 639-1 language code for the site's primary content language. Affects content generation, SEO, and readability scoring |
+| `language` | `string` | **Yes** | -- | ISO 639-1 language code for the site's primary content language. Affects content generation, SEO, and readability scoring |
 | `style_notes` | `string` (multi-line) | No | `null` | Free-form editorial guidelines in YAML literal block scalar (`|`) format. Can include voice rules, banned words, preferred terminology, formatting conventions. No length limit |
 
 ---
@@ -139,7 +139,7 @@ channels:
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `enabled` | `boolean` | **Yes** | `false` | Whether LinkedIn distribution is active for this site |
+| `enabled` | `boolean` | **Yes** | -- | Whether LinkedIn distribution is active for this site |
 | `profile_id` | `string` | Yes (if enabled) | -- | LinkedIn profile URN. Required by `li_create_post` MCP tool. Format: `urn:li:person:XXXXX` or `urn:li:organization:XXXXX` |
 | `format` | `string` | No | `professional` | Content adaptation style: `professional`, `thought-leadership`, `casual` |
 
@@ -147,7 +147,7 @@ channels:
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `enabled` | `boolean` | **Yes** | `false` | Whether Twitter/X distribution is active for this site |
+| `enabled` | `boolean` | **Yes** | -- | Whether Twitter/X distribution is active for this site |
 | `format` | `string` | No | `concise` | Content adaptation style: `concise`, `thread`, `conversational` |
 
 **Note:** Twitter tools (`tw_create_tweet`, `tw_create_thread`) authenticate via the MCP server configuration, so no `profile_id` is needed here.
@@ -156,7 +156,7 @@ channels:
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `enabled` | `boolean` | **Yes** | `false` | Whether Buffer distribution is active for this site |
+| `enabled` | `boolean` | **Yes** | -- | Whether Buffer distribution is active for this site |
 | `profile_id` | `string` | Yes (if enabled) | -- | Buffer profile ID. Required by `buf_create_update` MCP tool |
 | `format` | `string` | No | `casual` | Content adaptation style: `professional`, `casual`, `promotional` |
 
@@ -164,7 +164,7 @@ channels:
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `enabled` | `boolean` | **Yes** | `false` | Whether Mailchimp distribution is active for this site |
+| `enabled` | `boolean` | **Yes** | -- | Whether Mailchimp distribution is active for this site |
 | `audience_id` | `string` | Yes (if enabled) | -- | Mailchimp audience/list ID. Required by `mc_create_campaign` MCP tool |
 | `segment` | `string` | No | `null` | Mailchimp segment or tag to target within the audience. If `null`, sends to the full audience |
 
@@ -184,14 +184,14 @@ seo:
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
 | `default_schema` | `string` | No | `Article` | Default JSON-LD schema type for content: `Article`, `BlogPosting`, `HowTo`, `FAQPage`, `Product`, `Recipe`, `NewsArticle` |
-| `min_score` | `integer` (0-100) | No | `70` | Minimum SEO score threshold. Briefs below this score cannot transition from `draft` to `ready`. Maps to `gates.seo_score_min` in briefs when not specified |
+| `min_score` | `integer` (0-100) | No | `70` | Default value for `brief.gates.seo_score_min` when the brief omits that field. Does not enforce a gate directly -- the gate is enforced at the brief level |
 | `auto_internal_links` | `boolean` | No | `true` | Automatically discover and suggest internal links based on existing site content. When `true`, the pipeline scans the site's published posts to find relevant linking opportunities |
 
 ---
 
 ### `cadence` block
 
-Editorial calendar configuration. Used by planning features (Phase 3) to schedule content and by the pipeline to validate scheduling conflicts.
+Editorial calendar configuration. Used by Phase 3 planning features. In Phase 1, the pipeline reads `publish_time` as default when `target.scheduled_date` is set without an explicit time.
 
 ```yaml
 cadence:
@@ -264,7 +264,7 @@ Specific overrides:
 - `brief.content.author` > `config.defaults.author`
 - `brief.seo.schema_type` > `config.seo.default_schema`
 - `brief.gates.seo_score_min` > `config.seo.min_score`
-- `brief.distribution.channels` > channels with `enabled: true` in config
+- `brief.distribution.channels` -- selects which enabled channels to use; cannot activate a channel the config has `enabled: false`
 
 ---
 

@@ -104,7 +104,7 @@ target:
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `site_id` | `string` | **Yes** | -- | WordPress site identifier from `sites.yml` configuration |
+| `site_id` | `string` | **Yes** | -- | WordPress site identifier from `WP_SITES_CONFIG` environment variable JSON array |
 | `content_type` | `string` | **Yes** | `post` | WordPress content type: `post`, `page`, or any registered custom post type (e.g., `product`, `recipe`) |
 | `status` | `string` | No | `draft` | WordPress post status on publish: `draft`, `pending`, `publish`, `future`, `private` |
 | `scheduled_date` | `string` (ISO 8601) | No | `null` | Schedule publication for a future date. Required when `status: future`. Ignored for other statuses |
