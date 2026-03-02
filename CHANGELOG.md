@@ -2,6 +2,28 @@
 
 All notable changes to the WordPress Manager plugin for Claude Code.
 
+## [2.14.1] — 2026-03-02
+
+### Added — Context Snippet (Step 0)
+
+Contesto editoriale automatico nelle content skill. Ogni invocazione di `wp-content-pipeline` o `wp-editorial-planner` mostra 3-5 righe di stato operativo prima di iniziare il workflow — "ecco cosa sto per toccare".
+
+**Step 0: CONTEXT nelle skill**
+- `wp-content-pipeline/SKILL.md` — Step 0 con pipeline slice: mostra brief attivi con status
+- `wp-editorial-planner/SKILL.md` — Step 0 con calendar slice: mostra prossima scadenza
+- Workflow aggiornato: `CONTEXT → SCAN → CONFIG → ...` e `CONTEXT → PLAN → BRIEF → ...`
+- Step 0 è informational-only: non blocca mai il workflow, gestisce file mancanti gracefully
+
+**CLI snippet in `context-scanner.mjs`**
+- Nuovo entry point: `node scripts/context-scanner.mjs --snippet --site=mysite [--slice=pipeline|calendar|signals]`
+- `renderContextSnippet()` enhanced: nuovo parametro `activeBriefs` per pipeline slice
+- Output su stderr (coerente con pattern MCP server)
+
+**Design document**
+- `docs/plans/2026-03-02-context-snippet-design.md` — architettura, formato, vincoli
+
+---
+
 ## [2.14.0] — 2026-03-02
 
 ### Added — Editorial Kanban Dashboard

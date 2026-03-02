@@ -421,9 +421,9 @@ export function aggregateMetrics(rawData, viewType = 'kanban') {
   };
 }
 
-// ── RENDER: Context Snippet (Fase B stub) ──────────────────────────
+// ── RENDER: Context Snippet (Livello 2 — inline nelle content skill) ──
 
-export function renderContextSnippet(metrics, sliceType = 'pipeline') {
+export function renderContextSnippet(metrics, sliceType = 'pipeline', activeBriefs = []) {
   const m = metrics;
   const period = m.calendarPeriod ? m.calendarPeriod.replace('..', ' → ') : 'no calendar';
   const lines = [
@@ -434,6 +434,15 @@ export function renderContextSnippet(metrics, sliceType = 'pipeline') {
     `───────────────────────────────────────────`,
   ];
 
+  if (sliceType === 'pipeline' && activeBriefs.length > 0) {
+    const briefSummary = activeBriefs
+      .slice(0, 3)
+      .map(b => `${b.briefId} (${b.status})`)
+      .join(', ');
+    const extra = activeBriefs.length > 3 ? ` +${activeBriefs.length - 3} more` : '';
+    lines.splice(3, 0, `  Briefs: ${briefSummary}${extra}`);
+  }
+
   if (sliceType === 'calendar' && m.nextDeadline) {
     lines.splice(3, 0, `  Next: ${m.nextDeadline.date} — "${m.nextDeadline.title?.substring(0, 40)}..."`);
   }
@@ -443,4 +452,44 @@ export function renderContextSnippet(metrics, sliceType = 'pipeline') {
   }
 
   return lines.join('\n');
+}
+
+// ── CLI Entry Point ─────────────────────────────────────────────────
+// Usage: node scripts/context-scanner.mjs --snippet --site=mysite [--slice=pipeline] [--month=2026-03]
+
+async function cli() {
+  const args = process.argv.slice(2);
+  if (!args.includes('--snippet')) return;
+
+  const siteArg = args.find(a => a.startsWith('--site='));
+  if (!siteArg) {
+    process.stderr.write('Error: --site=<site_id> is required\n');
+    process.exit(1);
+  }
+  const siteId = siteArg.split('=')[1];
+
+  const sliceArg = args.find(a => a.startsWith('--slice='));
+  const sliceType = sliceArg ? sliceArg.split('=')[1] : 'pipeline';
+
+  const monthArg = args.find(a => a.startsWith('--month='));
+  const month = monthArg ? monthArg.split('=')[1] : undefined;
+
+  try {
+    const rawData = await scanContentState('.content-state', siteId, month);
+    const metrics = aggregateMetrics(rawData);
+    const snippet = renderContextSnippet(metrics, sliceType, rawData.briefs.active);
+    process.stderr.write(snippet + '\n');
+  } catch (err) {
+    process.stderr.write(`Context snippet error: ${err.message}\n`);
+    process.exit(1);
+  }
+}
+
+// Only run CLI when executed directly (not imported as module)
+const isMainModule = process.argv[1] && (
+  process.argv[1].endsWith('context-scanner.mjs') ||
+  process.argv[1].endsWith('context-scanner')
+);
+if (isMainModule) {
+  cli();
 }

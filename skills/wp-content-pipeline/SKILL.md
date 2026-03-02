@@ -26,10 +26,41 @@ The content pipeline orchestrates a structured workflow from content brief files
 ## Pipeline Workflow
 
 ```
-SCAN → CONFIG → VALIDATE → PUBLISH → DISTRIBUTE → UPDATE → ARCHIVE
+CONTEXT → SCAN → CONFIG → VALIDATE → PUBLISH → DISTRIBUTE → UPDATE → ARCHIVE
 ```
 
 Each step reads specific files, calls specific tools, and has defined decision points. If any step fails or requires user input, the pipeline stops and reports status -- it never silently skips steps.
+
+---
+
+## Step 0: CONTEXT
+
+**What it does:** Provides editorial context before the main workflow begins. This is an informational step -- it never blocks the workflow.
+
+**Trigger:** Automatic -- run this step at every skill invocation, before Step 1.
+
+**Procedure:**
+
+1. Determine the target `site_id` from user context (explicit mention, active site, or ask the user)
+2. Read `.content-state/{site_id}.config.md` -- extract `site_url` from frontmatter
+3. Find the most recent `.content-state/*-editorial.state.md` file -- parse the editorial table and count entries by status (`planned`, `draft`, `ready`, `scheduled`, `published`). Extract `goals.posts_target` from frontmatter
+4. List `.content-state/pipeline-active/*.brief.md` files -- read each brief's `brief_id` and `status` from frontmatter
+5. Display the context snippet:
+
+```
+── Editorial Context ──────────────────────
+  {site_url} | {calendar period}
+  Pipeline: {draft_count} draft → {ready_count} ready → {scheduled_count} scheduled
+  Briefs: {brief_id} ({status}), {brief_id} ({status})
+  Posts: {published_count}/{posts_target} pubblicati
+───────────────────────────────────────────
+```
+
+**If files are missing:**
+- No config file → skip snippet, note "No site config found for {site_id}" and continue to Step 1
+- No editorial calendar → show partial snippet with "no calendar" in place of period
+- No active briefs → omit the Briefs line
+- Never stop the workflow because of missing context -- Step 0 is informational only
 
 ---
 

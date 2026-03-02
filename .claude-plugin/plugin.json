@@ -1,7 +1,7 @@
 {
   "name": "wordpress-manager",
-  "version": "2.13.0",
-  "description": "Unified WordPress management plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (148 tools incl. WooCommerce, Multisite, Mailchimp, Buffer, SendGrid, GSC, GA4, Plausible, CWV, Slack, Workflows, LinkedIn, Twitter, Schema), and WordPress.com MCP with 45 skills, 12 agents, and security hooks. v2.13.0 adds Content Framework: 3-phase pipeline from signals intelligence to editorial calendar to WordPress publishing.",
+  "version": "2.14.1",
+  "description": "Unified WordPress management plugin for Claude Code. Orchestrates Hostinger MCP, WP REST API bridge (148 tools incl. WooCommerce, Multisite, Mailchimp, Buffer, SendGrid, GSC, GA4, Plausible, CWV, Slack, Workflows, LinkedIn, Twitter, Schema), and WordPress.com MCP with 46 skills, 12 agents, and security hooks. v2.14.1 adds Editorial Kanban Dashboard and Context Snippet (Step 0) in content skills.",
   "author": {
     "name": "vinmor",
     "email": "morreale.v@gmail.com"
@@ -42,7 +42,10 @@
     "content-pipeline",
     "editorial-calendar",
     "signals-intelligence",
-    "structured-data"
+    "structured-data",
+    "dashboard",
+    "kanban",
+    "context-snippet"
   ],
   "mcpServers": "./.mcp.json"
 }
