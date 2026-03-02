@@ -576,7 +576,7 @@ Zero file `.ts` aggiunti. Tutte le operazioni usano i 148 MCP tool esistenti orc
 - [x] `content-brief.schema.md` definito e documentato
 - [x] `site.config.md` schema definito e documentato
 - [x] `wp-content-pipeline` skill creata con workflow completo
-- [ ] Flusso end-to-end testato: brief.md → WP post → distribuzione social
+- [x] Flusso end-to-end testato: brief.md → WP post (distribuzione LinkedIn skipped — wp-rest-bridge non connesso, tool AIWU usato per WP)
 - [x] Supporto multi-sito (opencactus + almeno un altro)
 
 ### Fase 2: Content Intelligence
