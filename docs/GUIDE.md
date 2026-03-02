@@ -2544,6 +2544,36 @@ The pipeline orchestrates: `SCAN → CONFIG → VALIDATE → PUBLISH → DISTRIB
 | GenBrand | Brand voice | Tone + style → config.md |
 | GenSignal | Market signals | Topics → editorial planning (Phase 2) |
 
+### 17.5 Content Intelligence (Phase 2)
+
+**Skill**: `wp-analytics` (extended with Step 7: Signal Feed Generation)
+
+The intelligence layer creates a feedback loop: analytics data → structured signals → actionable insights.
+
+**Generating a signals feed**:
+1. Run `wp-analytics` signal feed generation for a site
+2. Step 7 collects data from GA4, GSC, Plausible, CWV tools
+3. Calculates delta % vs previous period
+4. Maps metrics to GenSignal NormalizedEvent format
+5. Identifies anomalies (±30% threshold by default)
+6. Matches 3 GenSignal patterns automatically
+7. Writes `.content-state/signals-feed.md`
+
+**Detectable patterns**:
+
+| Pattern | Detection Source | Trigger |
+|---------|-----------------|---------|
+| Search Intent Shift | GSC queries | CTR ≥ +20% with stable position |
+| Early-Adopter Surge | GA4 traffic sources | Single source ≥ +50% vs site < +20% |
+| Hype→Utility Crossover | GA4 page metrics | Engagement ≥ +15% with bounce ≤ -10% |
+
+**Acting on signals**:
+- "Approfondisci con GenSignal" → Full SignalCard with scoring and next_actions
+- "Crea brief dai segnali" → Auto-generate content briefs in pipeline-active/
+- Signals feed topic suggestions → Editorial calendar (Phase 3)
+
+**Signal feed file**: `.content-state/signals-feed.md` (overwritten each generation)
+
 ---
 
 *Guida v2.12.2 — WordPress Manager Plugin per Claude Code*
