@@ -107,6 +107,8 @@ Brief value > Site config default > System default
 
 **What it does:** Checks quality gates before publishing.
 
+Note: Even though the brief has `status: ready`, re-evaluate gates at publish time as a safety check -- briefs may be manually promoted without automated gate validation.
+
 **Procedure:**
 1. Verify all required brief fields are present:
    - `brief_id`, `status`, `source.skill`, `target.site_id`, `target.content_type`, `content.title`
@@ -158,8 +160,11 @@ Brief value > Site config default > System default
    switch_site:
      site_id: {target.site_id}
    ```
+   If `switch_site` fails (site_id not found in WP_SITES_CONFIG) → stop, report: "Site `{site_id}` not configured. Add credentials to WP_SITES_CONFIG before publishing."
 
-2. **Create content as draft first** (safety rule -- always draft first):
+2. **Check for slug duplicates**: Before creating content, check for existing content with the same slug using `list_content` with a search parameter matching the intended slug. If a match is found, report to the user and ask before creating a duplicate.
+
+3. **Create content as draft first** (safety rule -- always draft first):
    ```
    create_content:
      content_type: {target.content_type}   # e.g., "post"
@@ -171,7 +176,7 @@ Brief value > Site config default > System default
    ```
    Record the returned `post_id` and `post_url`.
 
-3. **Assign taxonomy terms**:
+4. **Assign taxonomy terms**:
    ```
    assign_terms_to_content:
      content_type: {target.content_type}
@@ -180,18 +185,18 @@ Brief value > Site config default > System default
      tags: {target.tags}                    # e.g., ["cactus-water", "zero-calorie"]
    ```
 
-4. **Inject structured data** (if `seo.schema_type` is defined):
+5. **Inject structured data** (if `seo.schema_type` is defined):
    ```
    sd_inject:
      post_id: {post_id}
      schema_type: {seo.schema_type}         # e.g., "Article"
    ```
 
-5. **Present draft to user for final confirmation**:
+6. **Present draft to user for final confirmation**:
    - Show: title, post URL (draft), categories, tags, schema type
    - Ask: "Content created as draft. Publish now?"
 
-6. **Update to target status** (after user confirms, or if `target.status` is explicitly `publish` in the brief):
+7. **Update to target status** (after user confirms, or if `target.status` is explicitly `publish` in the brief):
    ```
    update_content:
      content_type: {target.content_type}
@@ -234,15 +239,16 @@ Brief value > Site config default > System default
    ```
    li_create_post:
      profile_id: {config.channels.linkedin.profile_id}
-     content: {adapted content for LinkedIn}
-     post_url: {published WordPress URL}
+     text: {adapted content for LinkedIn}
+     link_url: {published WordPress URL}
+     visibility: "PUBLIC"
    ```
 
    **Twitter** (`config.channels.twitter`):
    - For short content or `format: concise`:
      ```
      tw_create_tweet:
-       content: {adapted content for Twitter}
+       text: {adapted content for Twitter}
        url: {published WordPress URL}
      ```
    - For long content or `format: thread`:
@@ -253,21 +259,26 @@ Brief value > Site config default > System default
      ```
 
    **Buffer** (`config.channels.buffer`):
+   Compute `scheduled_at` as: current date at `config.cadence.publish_time` plus `distribution.schedule_offset_hours` hours, expressed as UTC ISO 8601 timestamp (e.g., `2026-03-15T14:00:00Z`).
    ```
    buf_create_update:
-     profile_id: {config.channels.buffer.profile_id}
-     content: {adapted content}
-     url: {published WordPress URL}
-     scheduled_at: {publish_time + schedule_offset_hours}
+     profile_ids: [{config.channels.buffer.profile_id}]
+     text: {adapted content}
+     media:
+       photo: {featured image URL if available}
+     scheduled_at: {ISO 8601 UTC timestamp}
    ```
 
    **Mailchimp** (`config.channels.mailchimp`):
    ```
    mc_create_campaign:
+     type: "regular"
      audience_id: {config.channels.mailchimp.audience_id}
      subject: {content.title}
      from_name: {from site brand}
-
+   ```
+   Convert the brief's Markdown body to HTML before passing to `mc_set_campaign_content`. Use standard Markdown-to-HTML rendering.
+   ```
    mc_set_campaign_content:
      campaign_id: {returned campaign_id}
      html: {email-formatted content from brief}
